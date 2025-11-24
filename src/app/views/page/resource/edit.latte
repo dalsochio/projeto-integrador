@@ -1,0 +1,22 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <p class="text-xl font-semibold">{$resource['display_name']} - Editar registro</p>
+        </div>
+        <span>{$resource['description'] ?? ''}</span>
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 p-4">
+            {include ../../component/shared/form.latte,
+            resource: $resource,
+            fields: $fields,
+            data: $data,
+            method: 'POST',
+            action: rtrim($_SERVER['REQUEST_URI'], '/') . '/../',
+            submitLabel: 'Atualizar',
+            cancelUrl: '../'
+            }
+        </div>
+    </div>
+
+{/block}

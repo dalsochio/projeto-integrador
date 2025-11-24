@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block');
+
+@import '@tabler/icons-webfont/dist/tabler-icons.min.css';
+
+@import "toastify-js/src/toastify.css";
+
+@import "gridjs/dist/theme/mermaid.css";
+
+@import 'tailwindcss';
+
+@plugin "daisyui" {
+    themes: light --default, dark;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@layer utilities {
+    * {
+        font-family: "DM Sans", sans-serif;
+    }
+
+}
+
+.error-message {
+    @apply scroll-mt-32 mt-1 mb-2 text-red-600 text-sm;
+}
+
+.loading-animation {
+    animation: loading-animation 1s infinite linear;
+}
+
+.left-right {
+    transform-origin: 0% 50%;
+}
+
+@keyframes loading-animation {
+    0% {
+        transform: translateX(0) scaleX(0);
+    }
+    40% {
+        transform: translateX(0) scaleX(0.4);
+    }
+    100% {
+        transform: translateX(100%) scaleX(0.5);
+    }
+}
+
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+
+.checkbox::before {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+}
+
+.input:focus,
+.input:focus-visible,
+.textarea:focus,
+.textarea:focus-visible,
+.select:focus,
+.select:focus-visible,
+.checkbox:focus, .checkbox:focus-visible,
+.radio:focus, .radio:focus-visible,
+.toggle:focus, .toggle:focus-visible {
+    outline: none !important;
+}
+
+label > div:first-child:has(input:disabled):hover {
+    background-color: inherit !important;
+    cursor: default !important;
+}
+
+body {
+    
+    background-color: #f5f6f8;
+}
+
+
+.prose {
+    color: inherit;
+    max-width: 100%;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+    font-weight: 600;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.prose h1 { font-size: 1.5em; }
+.prose h2 { font-size: 1.3em; }
+.prose h3 { font-size: 1.15em; }
+
+.prose p {
+    margin-bottom: 0.75em;
+}
+
+.prose ul, .prose ol {
+    margin-left: 1.5em;
+    margin-bottom: 0.75em;
+}
+
+.prose ul {
+    list-style-type: disc;
+}
+
+.prose ol {
+    list-style-type: decimal;
+}
+
+.prose li {
+    margin-bottom: 0.25em;
+}
+
+.prose a {
+    color: #0066cc;
+    text-decoration: underline;
+}
+
+.prose code {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 0.125em 0.25em;
+    border-radius: 0.25em;
+    font-size: 0.875em;
+    font-family: monospace;
+}
+
+.prose pre {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    padding: 1em;
+    border-radius: 0.5em;
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+.prose pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.prose blockquote {
+    border-left: 4px solid #ddd;
+    padding-left: 1em;
+    margin: 1em 0;
+    font-style: italic;
+    color: #666;
+}
+
+.prose strong {
+    font-weight: 600;
+}
+
+.prose em {
+    font-style: italic;
+}

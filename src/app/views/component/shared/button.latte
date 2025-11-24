@@ -1,0 +1,11 @@
+{default ?string $icon}
+{default ?string $label}
+
+<button type="button" class="btn btn-primary">
+    {if !is_null($icon)}
+    <span class="material-symbols-outlined">{$icon}</span>
+    {/if}
+    {if !is_null($label)}
+        <p class="hidden lg:inline-block uppercase">{$label ?? $display_name}</p>
+    {/if}
+</button>

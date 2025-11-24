@@ -1,0 +1,32 @@
+{layout ../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+        <div class="text-center">
+            <span class="material-symbols-outlined text-error" style="font-size: 120px;">
+                block
+            </span>
+        </div>
+
+        <div class="text-center space-y-4">
+            <h1 class="text-4xl font-bold text-error">403 - Acesso Negado</h1>
+            <p class="text-xl text-base-content/70 max-w-lg">
+                {$message ?? 'Você não tem permissão para acessar este recurso.'}
+            </p>
+            <p class="text-sm text-base-content/50">
+                Entre em contato com o administrador do sistema se você acredita que deveria ter acesso a este recurso.
+            </p>
+        </div>
+
+        <div class="flex gap-3">
+            <a href="javascript:history.back()" class="btn btn-outline">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Voltar
+            </a>
+            <a href="/" class="btn btn-primary">
+                <span class="material-symbols-outlined">home</span>
+                Ir para Início
+            </a>
+        </div>
+    </div>
+{/block}

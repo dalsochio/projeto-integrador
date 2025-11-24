@@ -1,0 +1,56 @@
+
+
+{default $id = $name}
+{default $value = $value ?? $field['default_value'] ?? '#000000'}
+{default $attributes = []}
+
+{var $isRequired = !$field['is_nullable']}
+{var $isReadonly = !$field['is_editable']}
+
+<div class="form-control w-full">
+    <label for="{$id}" class="label">
+        <span class="label-text">
+            {$field['display_name'] ?? $field['name']}
+            {if $isRequired}<span class="text-error ml-1">*</span>{/if}
+        </span>
+        {if $field['tooltip']}
+            <span class="label-text-alt tooltip tooltip-left" data-tip="{$field['tooltip']}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </span>
+        {/if}
+    </label>
+
+    <div class="flex items-center gap-3">
+        <input type="color"
+               id="{$id}"
+               name="{$name}"
+               value="{$value}"
+               {if $isRequired}required{/if}
+               {if $isReadonly}disabled{/if}
+               n:attr="$attributes"
+               class="w-16 h-12 rounded cursor-pointer border-2 border-base-300" />
+
+        <input type="text"
+               value="{$value}"
+               placeholder="{$field['input_placeholder'] ?? '#000000'}"
+               {if $isReadonly}readonly{/if}
+               class="input input-bordered flex-1"
+               onchange="document.getElementById('{$id}').value = this.value" />
+    </div>
+
+    {if $field['help_text']}
+        <label class="label">
+            <span class="label-text-alt">{$field['help_text']}</span>
+        </label>
+    {/if}
+</div>
+
+<script>
+    const colorId = {$id}
+
+    document.getElementById(colorId).addEventListener('input', function(e) {
+        this.nextElementSibling.value = e.target.value;
+    });
+</script>

@@ -1,0 +1,50 @@
+{layout ../layout/app.latte}
+
+{block content}
+
+<section class="h-screen grid grid-rows-[1fr_auto] gap-8 pt-8">
+    <div class="container mx-auto h-full flex flex-col gap-8 justify-center items-center">
+        <div>
+            <img src="/public/assets/img/methone.png"
+                 alt="logo panel" class="max-h-44 max-w-xs rounded-box"/>
+        </div>
+        <form method="post"
+              class="align-center w-xs h-fit bg-base-200 p-4 rounded-box flex flex-col gap-2 justify-center">
+
+            <h2 class="text-2xl font-bold text-center mb-2">Criar Conta</h2>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Nome de Usuário</legend>
+                <input type="text" name="username" class="input" required minlength="3"
+                       autocomplete="username"/>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Email</legend>
+                <input type="email" name="email" class="input" required
+                       autocomplete="email"/>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Senha</legend>
+                <input type="password" name="password" class="input" placeholder="********" required minlength="6"
+                       autocomplete="new-password"/>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Confirmar Senha</legend>
+                <input type="password" name="password_confirm" class="input" placeholder="********" required minlength="6"
+                       autocomplete="new-password"/>
+            </fieldset>
+
+            <button class="btn btn-active" type="submit">
+                CRIAR CONTA
+            </button>
+
+            <div class="text-center mt-2">
+                <a href="/login" class="link link-hover text-sm">Já tem uma conta? Faça login</a>
+            </div>
+        </form>
+    </div>
+    <Footer/>
+</section>

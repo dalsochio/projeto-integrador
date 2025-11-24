@@ -1,0 +1,263 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+<div class="audit-detail-container">
+    
+    <div class="mb-6">
+        <a href="/panel/audit" class="btn btn-ghost btn-sm mb-4">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Voltar
+        </a>
+        <h1 class="text-3xl font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined">description</span>
+            Detalhes do Log #{$log['id']}
+        </h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <span class="material-symbols-outlined">info</span>
+                        Informações Gerais
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Ação</label>
+                            <div class="mt-1">
+                                {if $log['action'] == 'POST'}
+                                    <div class="badge badge-success badge-lg gap-2">
+                                        <span class="material-symbols-outlined">add</span>
+                                        Criar
+                                    </div>
+                                {elseif $log['action'] == 'PUT'}
+                                    <div class="badge badge-warning badge-lg gap-2">
+                                        <span class="material-symbols-outlined">edit</span>
+                                        Atualizar
+                                    </div>
+                                {elseif $log['action'] == 'DELETE'}
+                                    <div class="badge badge-error badge-lg gap-2">
+                                        <span class="material-symbols-outlined">delete</span>
+                                        Deletar
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Módulo</label>
+                            <div class="mt-1 font-medium text-lg">
+                                {$log['table_display_name'] ?? $log['table_name']}
+                            </div>
+                            <div class="text-xs text-base-content/60 font-mono">
+                                {$log['table_name']}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Registro ID</label>
+                            <div class="mt-1 font-mono text-lg">
+                                #{$log['record_id'] ?? 'N/A'}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Origem</label>
+                            <div class="mt-1">
+                                {if $log['route_type'] == 'api'}
+                                    <div class="badge badge-info badge-lg gap-2">
+                                        <span class="material-symbols-outlined">api</span>
+                                        API
+                                    </div>
+                                {else}
+                                    <div class="badge badge-primary badge-lg gap-2">
+                                        <span class="material-symbols-outlined">dashboard</span>
+                                        Painel
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Data e Hora</label>
+                            <div class="mt-1 font-mono">
+                                {$log['created_at']|date:'d/m/Y H:i:s'}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Usuário</label>
+                            <div class="mt-1 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base-content/60">person</span>
+                                <span class="font-medium">{$log['username']}</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">Endereço IP</label>
+                            <div class="mt-1 font-mono text-sm">
+                                {$log['ip_address'] ?? 'N/A'}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-base-content/70">User Agent</label>
+                            <div class="mt-1 text-sm text-base-content/80 truncate" title="{$log['user_agent']}">
+                                {$log['user_agent'] ?? 'N/A'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            {if !empty($log['data_decoded'])}
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            <span class="material-symbols-outlined">data_object</span>
+                            Dados Enviados
+                        </h2>
+                        
+                        <div class="overflow-x-auto mt-4">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="w-1/3">Campo</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {foreach $log['data_decoded'] as $key => $value}
+                                        <tr>
+                                            <td class="font-mono text-sm font-semibold">{$key}</td>
+                                            <td>
+                                                {if is_array($value)}
+                                                    <pre class="text-xs bg-base-200 p-2 rounded overflow-auto">{json_encode($value, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE)}</pre>
+                                                {elseif is_bool($value)}
+                                                    <span class="badge badge-sm {if $value}badge-success{else}badge-error{/if}">
+                                                        {if $value}true{else}false{/if}
+                                                    </span>
+                                                {elseif is_null($value)}
+                                                    <span class="text-base-content/50 italic">null</span>
+                                                {elseif strlen($value) > 100}
+                                                    <details class="collapse collapse-arrow bg-base-200">
+                                                        <summary class="collapse-title text-xs">
+                                                            {substr($value, 0, 100)}... (clique para expandir)
+                                                        </summary>
+                                                        <div class="collapse-content">
+                                                            <pre class="text-xs whitespace-pre-wrap">{$value}</pre>
+                                                        </div>
+                                                    </details>
+                                                {else}
+                                                    <span class="font-medium">{$value}</span>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {/if}
+
+            
+            {if !empty($log['changes_decoded'])}
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            <span class="material-symbols-outlined">compare_arrows</span>
+                            Alterações
+                        </h2>
+                        
+                        <div class="overflow-x-auto mt-4">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Campo</th>
+                                        <th>Antes</th>
+                                        <th></th>
+                                        <th>Depois</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {foreach $log['changes_decoded'] as $key => $change}
+                                        <tr>
+                                            <td class="font-mono text-sm font-semibold">{$key}</td>
+                                            <td class="text-error line-through">{$change['old'] ?? 'N/A'}</td>
+                                            <td class="text-center">→</td>
+                                            <td class="text-success font-medium">{$change['new'] ?? 'N/A'}</td>
+                                        </tr>
+                                    {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {/if}
+        </div>
+
+        
+        <div class="space-y-6">
+            
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-base">
+                        <span class="material-symbols-outlined">code</span>
+                        JSON Raw
+                    </h2>
+                    
+                    <div class="mt-4">
+                        <button 
+                            onclick="copyToClipboard(document.getElementById('raw-json').textContent)" 
+                            class="btn btn-sm btn-ghost w-full">
+                            <span class="material-symbols-outlined">content_copy</span>
+                            Copiar JSON
+                        </button>
+                    </div>
+
+                    <pre id="raw-json" class="text-xs bg-base-200 p-3 rounded overflow-auto max-h-96 mt-2">{json_encode([
+                        'id' => $log['id'],
+                        'user_id' => $log['user_id'],
+                        'action' => $log['action'],
+                        'table_name' => $log['table_name'],
+                        'record_id' => $log['record_id'],
+                        'data' => $log['data_decoded'] ?? null,
+                        'changes' => $log['changes_decoded'] ?? null,
+                        'ip_address' => $log['ip_address'],
+                        'user_agent' => $log['user_agent'],
+                        'route_type' => $log['route_type'],
+                        'created_at' => $log['created_at']
+                    ], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE)}</pre>
+                </div>
+            </div>
+
+            
+            <div class="card bg-info text-info-content shadow-xl">
+                <div class="card-body">
+                    <h3 class="font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined">info</span>
+                        Informação
+                    </h3>
+                    <p class="text-sm">
+                        Os logs de auditoria são somente leitura e não podem ser editados ou removidos manualmente.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('JSON copiado para a área de transferência!');
+    });
+}
+</script>
+{/block}

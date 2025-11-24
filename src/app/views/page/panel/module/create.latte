@@ -1,0 +1,677 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4" x-data="formBuilder()">
+        <div class="flex flex-row justify-between">
+            <p class="text-xl font-semibold">Novo módulo</p>
+        </div>
+
+
+        <ul class="steps steps-horizontal w-full">
+            <li class="step" :class="currentStep >= 1 ? 'step-primary' : ''" @click="goToStep(1)">
+                <span class="hidden sm:inline">Configuração</span>
+                <span class="sm:hidden">Config</span>
+            </li>
+            <li class="step" :class="currentStep >= 2 ? 'step-primary' : ''" @click="canGoToStep(2) && goToStep(2)">
+                <span class="hidden sm:inline">Campos</span>
+                <span class="sm:hidden">Campos</span>
+            </li>
+            <li class="step" :class="currentStep >= 3 ? 'step-primary' : ''" @click="canGoToStep(3) && goToStep(3)">
+                <span class="hidden sm:inline">Preview</span>
+                <span class="sm:hidden">Preview</span>
+            </li>
+            <li class="step" :class="currentStep >= 4 ? 'step-primary' : ''" @click="canGoToStep(4) && goToStep(4)">
+                <span class="hidden sm:inline">Resumo</span>
+                <span class="sm:hidden">Resumo</span>
+            </li>
+        </ul>
+
+        <div class="rounded-box border border-base-content/5 bg-base-100 p-4 h-full">
+
+
+            <div x-show="currentStep === 1" x-transition>
+                <h3 class="text-lg font-semibold mb-4">Configuração do Módulo</h3>
+                <p class="text-sm text-base-content/70 mb-6">Defina as informações básicas do módulo/tabela que será
+                    criado.</p>
+
+                <div class="grid grid-cols-12 gap-4">
+
+                    <div class="col-span-12">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Categoria *</span>
+                            </div>
+                            <select x-model="moduleData.category_id"
+                                    @change="updateCategoryUrlPath()"
+                                    class="select select-bordered w-full">
+                                <option value="">Selecione uma categoria</option>
+                                <template x-for="category in categories" :key="category.id">
+                                    <option :value="category.id" x-text="category.display_name"></option>
+                                </template>
+                            </select>
+                            <div class="label">
+                                <span class="label-text-alt">Categoria do menu onde o módulo aparecerá</span>
+                            </div>
+                        </label>
+                    </div>
+
+
+                    <div class="col-span-12">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">URL do Recurso *</span>
+                            </div>
+                            <label class="input input-bordered flex items-center gap-2">
+                                <span class="text-base-content/70 font-mono"
+                                      x-text="'/' + (selectedCategoryUrlPath || 'painel') + '/'"></span>
+                                <input type="text"
+                                       x-model="moduleData.url"
+                                       placeholder="produtos"
+                                       class="grow"
+                                       required/>
+                            </label>
+                            <div class="label">
+                                <span class="label-text-alt">
+                                    URL final: <code class="font-mono text-primary"
+                                                     x-text="'/' + (selectedCategoryUrlPath || 'painel') + '/' + (moduleData.url || 'seu-modulo')"></code>
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+
+
+                    <div class="col-span-12">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Nome do Módulo *</span>
+                            </div>
+                            <input type="text"
+                                   x-model="moduleData.name"
+                                   placeholder="Ex: Produtos"
+                                   class="input input-bordered w-full"
+                                   required/>
+                            <div class="label">
+                                <span class="label-text-alt">Nome de exibição do módulo (a tabela será gerada automaticamente)</span>
+                            </div>
+                        </label>
+                    </div>
+
+
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Ícone</span>
+                            </div>
+                            <input type="text"
+                                   x-model="moduleData.icon"
+                                   placeholder="Ex: inventory_2"
+                                   class="input input-bordered w-full"/>
+                            <div class="label">
+                                <span class="label-text-alt">Ícone Material Symbols</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="col-span-12">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">Descrição</span>
+                            </div>
+                            <textarea
+                                    x-model="moduleData.description"
+                                    placeholder="Descreva a finalidade deste módulo..."
+                                    class="textarea textarea-bordered w-full"
+                                    rows="3"></textarea>
+                            <div class="label">
+                                <span class="label-text-alt">Descrição opcional do módulo</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6">
+                    <button type="button"
+                            class="btn btn-primary"
+                            @click="nextStep()"
+                            :disabled="!isStep1Valid()">
+                        Continuar
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+
+            <div x-show="currentStep === 2" x-transition>
+                <div class="grid grid-rows-[auto_1fr_auto_auto] overflow-hidden h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold">Definir Campos do Formulário</h3>
+                            <p class="text-sm text-base-content/70">Arraste e solte os campos para construir o
+                                formulário. É necessário pelo menos 1 campo.</p>
+                        </div>
+                    </div>
+
+                    <div class="max-h-[600px] overflow-hidden">
+                        {include ../../../component/form-builder/index.latte}
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="button"
+                                class="btn btn-outline"
+                                @click="previousStep()">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            Voltar
+                        </button>
+                        <button type="button"
+                                class="btn btn-primary"
+                                @click="nextStep()"
+                                :disabled="!isStep2Valid()">
+                            Continuar
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div x-show="currentStep === 3" x-transition>
+                <h3 class="text-lg font-semibold mb-4">Preview do Formulário</h3>
+                <p class="text-sm text-base-content/70 mb-6">Visualize como o formulário será renderizado com os campos
+                    definidos.</p>
+
+                <div class="mockup-window border border-base-content/20 bg-base-200">
+                    <div class="bg-base-100 p-6">
+                        <h4 class="text-base font-semibold mb-4" x-text="moduleData.name || 'Seu Módulo'"></h4>
+
+                        <template x-if="items.length === 0">
+                            <div class="alert alert-warning">
+                                <span class="material-symbols-outlined">warning</span>
+                                <span>Nenhum campo foi adicionado ainda. Volte ao Step 2 para adicionar campos.</span>
+                            </div>
+                        </template>
+
+                        <template x-if="items.length > 0">
+                            <div class="space-y-4">
+                                <template x-for="item in items" :key="item.id">
+                                    <div>
+                                        <template x-if="item.itemType === 'field'">
+                                            <div x-html="getFieldPreviewHtml(item)"></div>
+                                        </template>
+
+                                        <template x-if="item.itemType === 'row'">
+                                            <div class="flex gap-4">
+                                                <template x-for="col in (item.columns || [])" :key="col.id">
+                                                    <div class="flex-1 space-y-4" x-bind:style="'flex: ' + col.width">
+                                                        <template x-for="field in (col.fields || [])" :key="field.id">
+                                                            <div x-html="getFieldPreviewHtml(field)"></div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-6">
+                    <button type="button"
+                            class="btn btn-outline"
+                            @click="previousStep()">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        Voltar
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            @click="nextStep()">
+                        Continuar
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+
+            <div x-show="currentStep === 4" x-transition>
+                <h3 class="text-lg font-semibold mb-4">Resumo e Confirmação</h3>
+                <p class="text-sm text-base-content/70 mb-6">Revise todas as informações antes de criar o módulo.</p>
+
+                <div class="space-y-4">
+
+                    <div class="card bg-base-200">
+                        <div class="card-body">
+                            <h4 class="card-title text-base flex items-center gap-2">
+                                <span class="badge badge-primary">1</span>
+                                Configuração do Módulo
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="col-span-2">
+                                    <span class="font-semibold">Categoria:</span>
+                                    <span x-text="getCategoryName(moduleData.category_id)"></span>
+                                </div>
+                                <div>
+                                    <span class="font-semibold">Nome:</span>
+                                    <span x-text="moduleData.name || '-'"></span>
+                                </div>
+                                <div>
+                                    <span class="font-semibold">URL:</span>
+                                    <span x-text="moduleData.url || '-'"></span>
+                                </div>
+                                <div>
+                                    <span class="font-semibold">Ícone:</span>
+                                    <span x-text="moduleData.icon || '-'"></span>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="font-semibold">Descrição:</span>
+                                    <span x-text="moduleData.description || '-'"></span>
+                                </div>
+                            </div>
+                            <div class="card-actions justify-end">
+                                <button type="button"
+                                        class="btn btn-ghost btn-sm"
+                                        @click="goToStep(1)">
+                                    <span class="material-symbols-outlined">edit</span>
+                                    Editar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card bg-base-200">
+                        <div class="card-body">
+                            <h4 class="card-title text-base flex items-center gap-2">
+                                <span class="badge badge-primary">2</span>
+                                Campos Definidos
+                            </h4>
+                            <div class="text-sm">
+                                <p class="mb-2">
+                                    <span class="font-semibold">Total de campos:</span>
+                                    <span x-text="getTotalFieldsCount()"></span>
+                                </p>
+                                <div class="space-y-2">
+                                    <template x-for="item in items" :key="item.id">
+                                        <div>
+                                            <template x-if="item.itemType === 'field'">
+                                                <div class="badge badge-sm badge-primary"
+                                                     x-text="item.display_name + ' (' + item.type + ')'"></div>
+                                            </template>
+                                            <template x-if="item.itemType === 'row'">
+                                                <div class="ml-2">
+                                                    <div class="text-xs opacity-70 mb-1">Layout Row:</div>
+                                                    <template x-for="col in (item.columns || [])" :key="col.id">
+                                                        <div class="ml-4">
+                                                            <template x-for="field in (col.fields || [])"
+                                                                      :key="field.id">
+                                                                <div class="badge badge-sm badge-primary mr-1"
+                                                                     x-text="field.display_name + ' (' + field.type + ')'"></div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="card-actions justify-end">
+                                <button type="button"
+                                        class="btn btn-ghost btn-sm"
+                                        @click="goToStep(2)">
+                                    <span class="material-symbols-outlined">edit</span>
+                                    Editar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-between mt-6">
+                    <button type="button"
+                            class="btn btn-outline"
+                            @click="previousStep()">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        Voltar
+                    </button>
+
+                    <div class="flex gap-3">
+                        <a href="/painel/module"
+                           class="btn btn-ghost">
+                            <span class="material-symbols-outlined">close</span>
+                            Cancelar
+                        </a>
+                        <button type="button"
+                                class="btn btn-success"
+                                @click="confirmCreate()">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Confirmar e Criar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <dialog x-ref="jsonModal" class="modal">
+                <div class="modal-box max-w-4xl">
+                    <h3 class="font-bold text-lg mb-4">JSON Gerado</h3>
+                    <textarea x-model="jsonOutput" class="textarea textarea-bordered w-full h-96 font-mono text-sm"
+                              readonly></textarea>
+                    <div class="modal-action">
+                        <button @click="copyJson()" class="btn btn-primary">Copiar</button>
+                        <button @click="$refs.jsonModal.close()" class="btn">Fechar</button>
+                    </div>
+                </div>
+            </dialog>
+        </div>
+    </div>
+
+
+    <script>
+        const phpCategories = {json_encode($categories)|noescape};
+        const phpModules = {json_encode($availableModules ?? [])|noescape};
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('formBuilder', () => ({
+                ...window.formBuilderMixin(),
+
+                categories: phpCategories,
+                selectedCategoryUrlPath: '',
+                availableModules: phpModules || [],
+
+                currentStep: 1,
+                moduleData: {
+                    category_id: '',
+                    name: '',
+                    url: '',
+                    icon: '',
+                    description: ''
+                },
+                jsonOutput: '',
+
+                init() {
+                    this.initFormBuilder();
+                },
+
+                generateJson() {
+                    this.jsonOutput = JSON.stringify(this.generateFieldsArray(), null, 2);
+                    this.$refs.jsonModal.showModal();
+                },
+
+                copyJson() {
+                    navigator.clipboard.writeText(this.jsonOutput);
+                    flash('JSON copiado!', 'success');
+                },
+
+
+                isStep1Valid() {
+                    return this.moduleData.category_id !== '' &&
+                        this.moduleData.name.trim() !== '' &&
+                        this.moduleData.url.trim() !== '';
+                },
+
+                updateCategoryUrlPath() {
+                    if (this.moduleData.category_id) {
+                        const selectedCategory = this.categories.find(cat => cat.id == this.moduleData.category_id);
+                        if (selectedCategory) {
+                            this.selectedCategoryUrlPath = selectedCategory.url_path;
+                        }
+                    } else {
+                        this.selectedCategoryUrlPath = 'painel';
+                    }
+                },
+
+                getCategoryName(categoryId) {
+                    if (!categoryId) return 'Nenhuma selecionada';
+                    const category = this.categories.find(cat => cat.id == categoryId);
+                    return category ? category.display_name : 'Desconhecida';
+                },
+
+                isStep2Valid() {
+                    // Validar se pelo menos 1 campo foi adicionado
+                    return this.getTotalFieldsCount() > 0;
+                },
+
+                canGoToStep(step) {
+                    if (step <= 1) return true;
+                    if (step === 2) return this.isStep1Valid();
+                    if (step === 3) return this.isStep1Valid() && this.isStep2Valid();
+                    if (step === 4) return this.isStep1Valid() && this.isStep2Valid();
+                    return false;
+                },
+
+                goToStep(step) {
+                    if (this.canGoToStep(step)) {
+                        this.currentStep = step;
+                    }
+                },
+
+                nextStep() {
+                    if (this.currentStep < 4 && this.canGoToStep(this.currentStep + 1)) {
+                        this.currentStep++;
+                    }
+                },
+
+                previousStep() {
+                    if (this.currentStep > 1) {
+                        this.currentStep--;
+                    }
+                },
+
+                getTotalFieldsCount() {
+                    let count = 0;
+                    this.items.forEach(item => {
+                        if (item.itemType === 'field') {
+                            count++;
+                        } else if (item.itemType === 'row' && item.columns) {
+                            item.columns.forEach(col => {
+                                count += (col.fields?.length || 0);
+                            });
+                        }
+                    });
+                    return count;
+                },
+
+                async confirmCreate() {
+                    // Preparar dados completos
+                    const modulePayload = {
+                        ...this.moduleData,
+                        fields: this.generateFieldsArray()
+                    };
+// Desabilitar botão durante envio
+                    const confirmBtn = document.querySelector('[x-on\\:click="confirmCreate()"]');
+                    if (confirmBtn) {
+                        confirmBtn.disabled = true;
+                        confirmBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Criando...';
+                    }
+
+                    try {
+                        const response = await fetch('/panel/module', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(modulePayload)
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.success) {
+                            // Sucesso - mostrar mensagem e redirecionar
+                            // Limpar localStorage
+                            localStorage.removeItem('formbuilder-items');
+                            localStorage.removeItem('formbuilder-field-counter');
+                            localStorage.removeItem('formbuilder-row-counter');
+
+                            flashAndRedirect(result.data.url, result.message, 'success');
+                        } else {
+                            // Erro da API - result.message já vem com prefixo do backend
+                            flash(result.message || 'Erro desconhecido ao criar módulo', 'error');
+
+                            // Re-habilitar botão
+                            if (confirmBtn) {
+                                confirmBtn.disabled = false;
+                                confirmBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
+                            }
+                        }
+                    } catch (error) {
+                        flash('Erro ao criar módulo: ' + (error.message || 'Erro de conexão'), 'error');
+
+                        if (confirmBtn) {
+                            confirmBtn.disabled = false;
+                            confirmBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
+                        }
+                    }
+                },
+
+                generateFieldsArray() {
+                    const output = [];
+
+                    // Mapear tipos especiais para tipos SQL válidos
+                    const sqlTypeMap = {
+                        'FILE': 'VARCHAR',
+                        'COLOR': 'VARCHAR',
+                        'TOGGLE': 'TINYINT',
+                        'SELECT': 'VARCHAR',
+                        'RADIO': 'VARCHAR',
+                        'WYSIWYG': 'TEXT',
+                        'MARKDOWN': 'TEXT',
+                        'CODE': 'TEXT',
+                        'REFERENCE_SELECT': 'INT',
+                        'REFERENCE_RADIO': 'INT'
+                    };
+
+                    this.items.forEach(item => {
+                        if (item.itemType === 'field') {
+                            const { id, itemType, ...fieldData } = item;
+
+                            // Preservar manual_options convertendo array para JSON normal
+                            if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
+                                fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
+                            }
+
+                            // Marcar como foreign key se for REFERENCE_*
+                            if (fieldData.type === 'REFERENCE_SELECT' || fieldData.type === 'REFERENCE_RADIO') {
+                                fieldData.is_foreign_key = true;
+                                fieldData.is_nullable = 1; // FK fields must be nullable for ON DELETE SET NULL
+                            }
+
+                            // Converter tipo especial para tipo SQL válido
+                            if (sqlTypeMap[fieldData.type]) {
+                                fieldData.type = sqlTypeMap[fieldData.type];
+                            }
+
+                            output.push(fieldData);
+                        } else if (item.itemType === 'row' && item.columns) {
+                            item.columns.forEach(col => {
+                                if (col.fields) {
+                                    col.fields.forEach(field => {
+                                        const { id, itemType, ...fieldData } = field;
+
+                                        // Preservar manual_options
+                                        if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
+                                            fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
+                                        }
+
+                                        // Marcar como foreign key se for REFERENCE_*
+                                        if (fieldData.type === 'REFERENCE_SELECT' || fieldData.type === 'REFERENCE_RADIO') {
+                                            fieldData.is_foreign_key = true;
+                                            fieldData.is_nullable = 1; // FK fields must be nullable for ON DELETE SET NULL
+                                        }
+
+                                        // Converter tipo especial para tipo SQL válido
+                                        if (sqlTypeMap[fieldData.type]) {
+                                            fieldData.type = sqlTypeMap[fieldData.type];
+                                        }
+                                        fieldData.column_width = col.width;
+                                        output.push(fieldData);
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    return output;
+                },
+
+                // Limpar tudo
+                clearAll() {
+                    showConfirmModal({
+                        title: 'Limpar Formulário',
+                        message: 'Tem certeza que deseja limpar todo o formulário?',
+                        confirmText: 'Sim, Limpar Tudo',
+                        cancelText: 'Cancelar',
+                        type: 'warning',
+                        onConfirm: () => {
+                            this.items = [];
+                            this.selectedItemId = null;
+                            this.selectedItemType = null;
+                        }
+                    });
+                },
+
+                // Adicionar opção manual
+                addOption(fieldId) {
+                    const field = this.findField(fieldId);
+                    if (!field) return;
+
+                    if (!field.manual_options) {
+                        field.manual_options = [];
+                    }
+
+                    field.manual_options.push({
+                        label: '',
+                        value: ''
+                    });
+                },
+
+                // Remover opção manual
+                removeOption(fieldId, index) {
+                    const field = this.findField(fieldId);
+                    if (!field || !field.manual_options) return;
+
+                    field.manual_options.splice(index, 1);
+                },
+
+                // Carregar colunas de um módulo
+                async loadModuleColumns(field) {
+                    if (!field || !field.foreign_table) {
+                        return;
+                    }
+
+                    // Se já carregamos as colunas deste módulo, não fazer novamente
+                    if (this.moduleColumns[field.foreign_table]) {
+                        return;
+                    }
+
+                    const url = `/panel/module/columns/${ field.foreign_table }`;
+
+                    try {
+                        const response = await fetch(url);
+
+                        if (response.ok) {
+                            const data = await response.json();
+
+                            // Forçar reatividade do Alpine
+                            this.moduleColumns = {
+                                ...this.moduleColumns,
+                                [field.foreign_table]: data.columns || []
+                            };
+                        }
+                    } catch (error) {
+                        this.moduleColumns = {
+                            ...this.moduleColumns,
+                            [field.foreign_table]: []
+                        };
+                    }
+                }
+            }));
+        });
+    </script>
+
+{/block}

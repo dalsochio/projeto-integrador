@@ -1,0 +1,228 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+
+<div class="flex flex-col gap-6 pb-16">
+    <!-- Saudação com horário -->
+    <div class="card bg-gradient-to-r from-primary to-secondary text-primary-content shadow-xl">
+        <div class="card-body">
+            <h1 class="text-3xl font-bold" id="greeting">Olá!</h1>
+            <p class="text-lg opacity-90">Seja bem-vindo(a) de volta ao painel administrativo</p>
+        </div>
+    </div>
+
+    <!-- Grid de estatísticas -->
+    {if count($stats) > 0}
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {if isset($stats['users'])}
+        <!-- Card: Total de Usuários -->
+        <div class="stat bg-base-200 rounded-box shadow">
+            <div class="stat-figure text-primary">
+                <i class="ti ti-users text-5xl"></i>
+            </div>
+            <div class="stat-title">Usuários</div>
+            <div class="stat-value text-primary">{$stats['users']}</div>
+            <div class="stat-desc">Total de usuários cadastrados</div>
+        </div>
+        {/if}
+
+        {if isset($stats['modules'])}
+        <!-- Card: Módulos Ativos -->
+        <div class="stat bg-base-200 rounded-box shadow">
+            <div class="stat-figure text-secondary">
+                <i class="ti ti-components text-5xl"></i>
+            </div>
+            <div class="stat-title">Módulos</div>
+            <div class="stat-value text-secondary">{$stats['modules']}</div>
+            <div class="stat-desc">Módulos ativos no sistema</div>
+        </div>
+        {/if}
+
+        {if isset($stats['uploads'])}
+        <!-- Card: Uploads -->
+        <div class="stat bg-base-200 rounded-box shadow">
+            <div class="stat-figure text-accent">
+                <i class="ti ti-cloud-upload text-5xl"></i>
+            </div>
+            <div class="stat-title">Arquivos</div>
+            <div class="stat-value text-accent">{$stats['uploads']}</div>
+            <div class="stat-desc">Arquivos enviados no sistema</div>
+        </div>
+        {/if}
+
+        {if isset($stats['todayActions'])}
+        <!-- Card: Atividade -->
+        <div class="stat bg-base-200 rounded-box shadow">
+            <div class="stat-figure text-success">
+                <i class="ti ti-chart-bar text-5xl"></i>
+            </div>
+            <div class="stat-title">Atividade Hoje</div>
+            <div class="stat-value text-success">{$stats['todayActions']}</div>
+            <div class="stat-desc">Alterações realizadas hoje</div>
+        </div>
+        {/if}
+    </div>
+    {/if}
+
+    <!-- Atalhos Rápidos -->
+    <div>
+        <h2 class="mb-4 text-2xl font-bold">Atalhos Rápidos</h2>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            <a href="/panel/user" class="btn btn-outline btn-primary flex-col gap-2 h-24">
+                <i class="ti ti-user text-2xl"></i>
+                <span class="text-xs">Usuários</span>
+            </a>
+
+            <a href="/panel/module" class="btn btn-outline btn-secondary flex-col gap-2 h-24">
+                <i class="ti ti-layout-grid text-2xl"></i>
+                <span class="text-xs">Módulos</span>
+            </a>
+
+            <a href="/panel/role" class="btn btn-outline btn-accent flex-col gap-2 h-24">
+                <i class="ti ti-shield-check text-2xl"></i>
+                <span class="text-xs">Permissões</span>
+            </a>
+
+            <a href="/panel/uploads" class="btn btn-outline btn-info flex-col gap-2 h-24">
+                <i class="ti ti-folder text-2xl"></i>
+                <span class="text-xs">Arquivos</span>
+            </a>
+
+            <a href="/panel/config" class="btn btn-outline btn-warning flex-col gap-2 h-24">
+                <i class="ti ti-settings text-2xl"></i>
+                <span class="text-xs">Configurações</span>
+            </a>
+
+            <a href="/panel/audit" class="btn btn-outline btn-error flex-col gap-2 h-24">
+                <i class="ti ti-file-text text-2xl"></i>
+                <span class="text-xs">Auditoria</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Seção com duas colunas -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <!-- Atividades Recentes -->
+        {if count($recentActivities) > 0}
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Atividades Recentes
+                </h2>
+                <div class="divider my-0"></div>
+                <ul class="space-y-3">
+                    {foreach $recentActivities as $index => $activity}
+                    <li class="flex items-start gap-3">
+                        {if $activity['action'] === 'create'}
+                            <div class="badge badge-success badge-sm mt-1"></div>
+                        {elseif $activity['action'] === 'update'}
+                            <div class="badge badge-info badge-sm mt-1"></div>
+                        {elseif $activity['action'] === 'delete'}
+                            <div class="badge badge-error badge-sm mt-1"></div>
+                        {else}
+                            <div class="badge badge-primary badge-sm mt-1"></div>
+                        {/if}
+                        <div class="flex-1">
+                            <p class="text-sm font-medium">
+                                {if $activity['action'] === 'create'}
+                                    <strong>{$activity['user_name']}</strong> criou um registro em <em>{$activity['table_name']}</em>
+                                {elseif $activity['action'] === 'update'}
+                                    <strong>{$activity['user_name']}</strong> atualizou um registro em <em>{$activity['table_name']}</em>
+                                {elseif $activity['action'] === 'delete'}
+                                    <strong>{$activity['user_name']}</strong> excluiu um registro de <em>{$activity['table_name']}</em>
+                                {else}
+                                    <strong>{$activity['user_name']}</strong> realizou ação em <em>{$activity['table_name']}</em>
+                                {/if}
+                            </p>
+                            <p class="text-xs opacity-60">
+                                <span id="time-{$index}" data-created="{$activity['created_at']}"></span>
+                            </p>
+                        </div>
+                    </li>
+                    {/foreach}
+                </ul>
+                <div class="card-actions justify-end mt-4">
+                    <a href="/panel/audit" class="btn btn-ghost btn-sm">Ver todas →</a>
+                </div>
+            </div>
+        </div>
+        {/if}
+
+        <!-- Dicas Rápidas -->
+        <div class="card bg-base-200 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    Dicas e Recursos
+                </h2>
+                <div class="divider my-0"></div>
+                <div class="space-y-4">
+                    <div class="alert alert-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <h3 class="font-bold text-sm">API Documentada</h3>
+                            <div class="text-xs">Acesse a <a href="/developer/swagger" class="link">documentação Swagger</a> para integrar com a API</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <h3 class="font-bold text-sm">Controle Total</h3>
+                            <div class="text-xs">Configure permissões granulares para cada módulo e usuário</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <h3 class="font-bold text-sm">Auditoria Ativa</h3>
+                            <div class="text-xs">Todas as ações são registradas para segurança e conformidade</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Saudação baseada no horário
+    const hour = new Date().getHours();
+    const greetingEl = document.getElementById('greeting');
+    
+    if (hour >= 5 && hour < 12) {
+        greetingEl.textContent = 'Bom dia! ☀️';
+    } else if (hour >= 12 && hour < 18) {
+        greetingEl.textContent = 'Boa tarde! 🌤️';
+    } else {
+        greetingEl.textContent = 'Boa noite! 🌙';
+    }
+    
+    // Tempo relativo para atividades
+    document.querySelectorAll('[data-created]').forEach(function(el) {
+        const created = new Date(el.getAttribute('data-created'));
+        const now = new Date();
+        const diff = Math.floor((now - created) / 1000);
+        
+        let timeStr = '';
+        if (diff < 60) timeStr = 'há poucos segundos';
+        else if (diff < 3600) timeStr = 'há ' + Math.floor(diff / 60) + ' minuto' + (Math.floor(diff / 60) > 1 ? 's' : '');
+        else if (diff < 86400) timeStr = 'há ' + Math.floor(diff / 3600) + ' hora' + (Math.floor(diff / 3600) > 1 ? 's' : '');
+        else timeStr = 'há ' + Math.floor(diff / 86400) + ' dia' + (Math.floor(diff / 86400) > 1 ? 's' : '');
+        
+        el.textContent = timeStr;
+    });
+</script>
+

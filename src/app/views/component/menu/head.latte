@@ -1,0 +1,70 @@
+<div class="flex flex-row gap-2 p-2 rounded-box relative">
+    <div class="avatar">
+        <div class="rounded-xl w-10 h-10">
+            <img
+                    src="{$env['config']['logo_url'] ?? '/public/assets/img/methone.png'}"
+                    alt="logo panel" />
+        </div>
+    </div>
+    <div class="leading-4 my-auto">
+        <h1 class="font-semibold">{$env['config']['system_name'] ?? 'Painel Administrativo'}</h1>
+        <h2 class="hidden lg:block text-xs text-base-content/70">{$env['config']['system_short_name'] ?? 'Painel'}</h2>
+    </div>
+    <div class="tooltip tooltip-left absolute top-4 right-0" data-tip="Tema: Claro" id="theme-tooltip">
+        <button class="btn btn-ghost btn-xs" id="theme-toggle">
+            <span class="material-symbols-outlined" id="theme-icon">light_mode</span>
+        </button>
+    </div>
+</div>
+
+<script>
+(function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeTooltip = document.getElementById('theme-tooltip');
+    if (!themeToggle || !themeIcon || !themeTooltip) return;
+
+    function updateThemeIcon(theme) {
+        const icons = {
+            'light': 'light_mode',
+            'dark': 'dark_mode',
+            'system': 'computer'
+        };
+        const tooltips = {
+            'light': 'Tema: Claro',
+            'dark': 'Tema: Escuro',
+            'system': 'Tema: Sistema'
+        };
+        themeIcon.textContent = icons[theme] || 'computer';
+        themeTooltip.setAttribute('data-tip', tooltips[theme] || 'Tema: Sistema');
+    }
+
+    updateThemeIcon(window.global?.theme || 'system');
+
+    themeToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        const currentTheme = window.global?.theme || 'system';
+        let newTheme;
+
+        if (currentTheme === 'light') {
+            newTheme = 'dark';
+        } else if (currentTheme === 'dark') {
+            newTheme = 'system';
+        } else {
+            newTheme = 'light';
+        }
+
+        updateThemeIcon(newTheme);
+
+        document.dispatchEvent(new CustomEvent('themeChange', {
+            detail: { value: newTheme }
+        }));
+    });
+
+    document.addEventListener('themeChange', function(e) {
+        if (e.detail?.value) {
+            updateThemeIcon(e.detail.value);
+        }
+    });
+})();
+</script>

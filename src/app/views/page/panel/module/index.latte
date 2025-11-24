@@ -1,0 +1,245 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <p class="text-xl font-semibold">Módulos</p>
+            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                <p class="hidden lg:inline-block uppercase">Novo módulo</p>
+            </a>
+        </div>
+        <span class="text-base-content/70">Gerencie os módulos e tabelas do sistema</span>
+
+        
+        {if count($modules) > 0}
+            <div class="stats stats-vertical lg:stats-horizontal shadow">
+                <div class="stat">
+                    <div class="stat-figure text-primary">
+                        <span class="material-symbols-outlined text-4xl">table_chart</span>
+                    </div>
+                    <div class="stat-title">Total de Módulos</div>
+                    <div class="stat-value text-primary">{count($modules)}</div>
+                    <div class="stat-desc">Registrados no sistema</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-success">
+                        <span class="material-symbols-outlined text-4xl">check_circle</span>
+                    </div>
+                    <div class="stat-title">Módulos Ativos</div>
+                    <div class="stat-value text-success">
+                        {count(array_filter($modules, fn($m) => $m['is_active']))}
+                    </div>
+                    <div class="stat-desc">Em uso atualmente</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <span class="material-symbols-outlined text-4xl">category</span>
+                    </div>
+                    <div class="stat-title">Módulos Internos</div>
+                    <div class="stat-value text-secondary">
+                        {count(array_filter($modules, fn($m) => $m['internal']))}
+                    </div>
+                    <div class="stat-desc">Sistema core</div>
+                </div>
+            </div>
+        {/if}
+
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+            {if count($modules) === 0}
+                <div class="flex flex-col items-center justify-center p-12 text-center">
+                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
+                    <p class="text-lg font-semibold mb-2">Nenhum módulo criado</p>
+                    <p class="text-sm text-base-content/70 mb-4">Crie seu primeiro módulo para começar</p>
+                    <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined">add</span>
+                        Criar primeiro módulo
+                    </a>
+                </div>
+            {else}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">table_chart</span>
+                                    Nome do Módulo
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">category</span>
+                                    Categoria
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">database</span>
+                                    Tabela
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">link</span>
+                                    URL
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">toggle_on</span>
+                                    Status
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">calendar_today</span>
+                                    Criado em
+                                </span>
+                            </th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {foreach $modules as $module}
+                            <tr class="hover">
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        {if $module['icon']}
+                                            <div class="avatar placeholder">
+                                                <div class="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center">
+                                                    <span class="material-symbols-outlined text-xl">{$module['icon']}</span>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        <div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-semibold">{$module['display_name']}</span>
+                                                {if $module['internal']}
+                                                    <span class="badge badge-secondary badge-xs">INTERNO</span>
+                                                {/if}
+                                            </div>
+                                            {if $module['description']}
+                                                <div class="text-sm opacity-70 max-w-md truncate">{$module['description']}</div>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {if $module['category_display_name']}
+                                        <div class="badge badge-outline badge-sm">
+                                            {$module['category_display_name']}
+                                        </div>
+                                    {else}
+                                        <span class="text-sm opacity-40">Sem categoria</span>
+                                    {/if}
+                                </td>
+                                <td>
+                                    <code class="badge badge-ghost badge-sm font-mono">{$module['name']}</code>
+                                </td>
+                                <td>
+                                    <code class="text-sm font-mono text-base-content/70">
+                                        {if $module['category_url_path']}
+                                            /{$module['category_url_path']}/{$module['url_path']}
+                                        {else}
+                                            {if !str_starts_with($module['url_path'], '/')}/{/if}{$module['url_path']}
+                                        {/if}
+                                    </code>
+                                </td>
+                                <td>
+                                    {if $module['is_active']}
+                                        <div class="badge badge-success gap-2">
+                                            <span class="material-symbols-outlined text-xs">check_circle</span>
+                                            Ativo
+                                        </div>
+                                    {else}
+                                        <div class="badge badge-ghost gap-2">
+                                            <span class="material-symbols-outlined text-xs">cancel</span>
+                                            Inativo
+                                        </div>
+                                    {/if}
+                                </td>
+                                <td>
+                                    <div class="text-sm">
+                                        {$module['created_at']|date:'d/m/Y'}
+                                    </div>
+                                    <div class="text-xs opacity-60">
+                                        {$module['created_at']|date:'H:i'}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex justify-end gap-2">
+                                        <a href="{if $module['category_url_path']}
+                                                    /{$module['category_url_path']}/{$module['url_path']}
+                                                {else}
+                                                    {if str_starts_with($module['url_path'], '/')}{$module['url_path']}{else}/{$module['url_path']}{/if}
+                                                {/if}"
+                                           class="btn btn-ghost btn-xs"
+                                           title="Ir para o módulo">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </a>
+                                        <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$module['id']}/edit"
+                                           class="btn btn-ghost btn-xs"
+                                           title="Editar">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </a>
+
+                                        {if $module['can_delete']}
+                                            <button class="btn btn-ghost btn-xs text-error"
+                                                    onclick="confirmDelete({$module['id']}, '{$module['display_name']}')"
+                                                    title="Deletar">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        {else}
+                                            <div class="tooltip tooltip-left" data-tip="{$module['delete_reason']}">
+                                                <button class="btn btn-ghost btn-xs btn-disabled opacity-30"
+                                                        disabled
+                                                        title="{$module['delete_reason']}">
+                                                    <span class="material-symbols-outlined">delete</span>
+                                                </button>
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </td>
+                            </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+            {/if}
+        </div>
+    </div>
+
+    <script>
+        async function confirmDelete(id, name) {
+            showConfirmModal({
+                title: 'Confirmar Exclusão',
+                message: `Tem certeza que deseja deletar o módulo "${ name }"?\n\nEsta ação não pode ser desfeita e a tabela do banco de dados será removida permanentemente.`,
+                confirmText: 'Confirmar Exclusão',
+                cancelText: 'Cancelar',
+                type: 'error',
+                onConfirm: async () => {
+                    try {
+                        const response = await fetch(`/panel/module/${ id }`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            flashAndReload(data.message || 'Módulo deletado com sucesso!', 'success');
+                        } else {
+                            flash(data.message || 'Erro ao deletar módulo', 'error');
+                        }
+                    } catch (error) {
+flash('Erro ao deletar módulo. Verifique o console para mais detalhes.', 'error');
+                    }
+                }
+            });
+        }
+    </script>
+
+{/block}

@@ -1,0 +1,63 @@
+
+
+{default $id = $name}
+{default $value = null}
+{default $attributes = []}
+
+
+{var $inputType = $field['input_type'] ?? 'text'}
+
+
+{if !isset($field['input_type']) || !$field['input_type']}
+    {if in_array($field['type'] ?? '', ['INT', 'DECIMAL', 'TINYINT'])}
+        {var $inputType = 'number'}
+    {elseif ($field['type'] ?? '') === 'BOOLEAN'}
+        {var $inputType = 'checkbox'}
+    {elseif ($field['type'] ?? '') === 'TEXT'}
+        {var $inputType = 'textarea'}
+    {elseif ($field['type'] ?? '') === 'DATE'}
+        {var $inputType = 'date'}
+    {elseif ($field['type'] ?? '') === 'DATETIME'}
+        {var $inputType = 'datetime'}
+    {elseif ($field['type'] ?? '') === 'JSON'}
+        {var $inputType = 'code'}
+    {elseif ($field['type'] ?? '') === 'ENUM'}
+        {var $inputType = 'select'}
+    {else}
+        {var $inputType = 'text'}
+    {/if}
+{/if}
+
+
+{if $inputType === 'text'}
+    {include '../input/text.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'number'}
+    {include '../input/number.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'textarea'}
+    {include '../input/textarea.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'select'}
+    {include '../input/select.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'radio'}
+    {include '../input/radio.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'checkbox'}
+    {include '../input/checkbox.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'toggle'}
+    {include '../input/toggle.latte', field: $field, name: $name, value: 1, checked: (bool)$value, id: $id, attributes: $attributes}
+{elseif $inputType === 'date'}
+    {include '../input/date.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'datetime'}
+    {include '../input/datetime.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'file'}
+    {include '../input/file.latte', field: $field, name: $name, id: $id, attributes: $attributes}
+{elseif $inputType === 'color'}
+    {include '../input/color.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'wysiwyg'}
+    {include '../input/wysiwyg.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'markdown'}
+    {include '../input/markdown.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{elseif $inputType === 'code'}
+    {include '../input/code.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{else}
+    
+    {include '../input/text.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
+{/if}

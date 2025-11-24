@@ -1,0 +1,161 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Novo Usuário</p>
+                <p class="text-sm text-base-content/70">Crie um novo usuário e atribua suas roles</p>
+            </div>
+            <a href="/administration/user" class="btn btn-ghost btn-sm">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Voltar
+            </a>
+        </div>
+
+        <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card-body">
+                <form method="POST" action="/administration/user">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Username <span class="text-error">*</span></span>
+                            </label>
+                            <input type="text"
+                                   name="username"
+                                   placeholder="Ex: joao.silva"
+                                   class="input input-bordered w-full"
+                                   required />
+                            <label class="label">
+                                <span class="label-text-alt">Nome de usuário para login</span>
+                            </label>
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Email <span class="text-error">*</span></span>
+                            </label>
+                            <input type="email"
+                                   name="email"
+                                   placeholder="joao.silva@exemplo.com"
+                                   class="input input-bordered w-full"
+                                   required />
+                            <label class="label">
+                                <span class="label-text-alt">Email do usuário</span>
+                            </label>
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Senha <span class="text-error">*</span></span>
+                            </label>
+                            <input type="password"
+                                   name="password"
+                                   id="password"
+                                   placeholder="••••••••"
+                                   class="input input-bordered w-full"
+                                   required
+                                   minlength="6" />
+                            <label class="label">
+                                <span class="label-text-alt">Mínimo 6 caracteres</span>
+                            </label>
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Confirmar Senha <span class="text-error">*</span></span>
+                            </label>
+                            <input type="password"
+                                   name="password_confirm"
+                                   id="password_confirm"
+                                   placeholder="••••••••"
+                                   class="input input-bordered w-full"
+                                   required
+                                   minlength="6"
+                                   oninput="validatePasswords()" />
+                            <label class="label">
+                                <span class="label-text-alt">Repita a senha</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    
+                    <div class="divider">Roles e Permissões</div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Selecione as roles deste usuário</span>
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {foreach $roles as $role}
+                                <label class="label cursor-pointer justify-start gap-3 p-3 border border-base-content/10 rounded-lg hover:bg-base-200">
+                                    <input type="checkbox"
+                                           name="roles[]"
+                                           value="{$role['role_name']}"
+                                           class="checkbox checkbox-primary" />
+                                    <div class="flex-1">
+                                        <span class="label-text font-semibold">{$role['display_name']}</span>
+                                        <p class="text-xs text-base-content/60">{$role['description']}</p>
+                                    </div>
+                                    {if $role['is_system']}
+                                        <span class="badge badge-info badge-xs">Sistema</span>
+                                    {/if}
+                                </label>
+                            {/foreach}
+                        </div>
+
+                    </div>
+
+                    
+                    <div class="divider">Status</div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox"
+                                   name="is_active"
+                                   value="1"
+                                   checked
+                                   class="toggle toggle-success" />
+                            <span class="label-text">Usuário ativo</span>
+                        </label>
+                        <label class="label">
+                            <span class="label-text-alt">Se desativado, o usuário não poderá fazer login</span>
+                        </label>
+                    </div>
+
+                    
+                    <div class="card-actions justify-end mt-6">
+                        <a href="/administration/user" class="btn btn-ghost">
+                            Cancelar
+                        </a>
+                        <button type="submit"
+                                class="btn btn-primary">
+                            <span class="material-symbols-outlined">save</span>
+                            <span>Criar Usuário</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validatePasswords() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('password_confirm').value;
+
+            if (confirmPassword && password !== confirmPassword) {
+                document.getElementById('password_confirm').setCustomValidity('As senhas não coincidem');
+            } else {
+                document.getElementById('password_confirm').setCustomValidity('');
+            }
+        }
+
+        document.getElementById('password').addEventListener('input', validatePasswords);
+    </script>
+
+{/block}

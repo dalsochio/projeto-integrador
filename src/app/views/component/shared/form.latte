@@ -1,0 +1,291 @@
+
+
+{default $data = []}
+{default $method = 'POST'}
+{default $action = ''}
+{default $layout = $resource['form_layout'] ?? 'single'}
+{default $submitLabel = 'Salvar'}
+{default $submitIcon = 'save'}
+{default $cancelUrl = null}
+{default $showCancelButton = true}
+{default $formClass = ''}
+{default $attributes = []}
+{default $errors = []}
+
+
+{var $visibleFields = array_filter($fields, fn($field) => ($field['is_visible_form'] ?? true))}
+
+
+{var $fieldsByTab = []}
+{foreach $visibleFields as $field}
+    {var $tabName = $field['tab_group'] ?? 'default'}
+    {if !isset($fieldsByTab[$tabName])}
+        {var $fieldsByTab[$tabName] = []}
+    {/if}
+    {var $fieldsByTab[$tabName][] = $field}
+{/foreach}
+
+<form method="{$method}"
+      action="{$action}"
+      class="space-y-6 {$formClass}"
+        n:attr="$attributes"
+      enctype="multipart/form-data">
+
+    
+    
+
+    
+    {if $layout === 'single' || count($fieldsByTab) === 1}
+        <div class="grid grid-cols-12 gap-4">
+            {foreach $visibleFields as $field}
+                {var $colWidth = $field['column_width'] ?? 12}
+                <div class="col-span-12 md:col-span-{$colWidth}">
+                    
+                    {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
+                        {var $filePath = $data[$field['name']]}
+                        {var $fileUrl = '/upload/' . $filePath}
+                        <div class="mb-3 p-3 bg-base-200 rounded">
+                            <p class="text-xs font-medium mb-2">Arquivo atual:</p>
+                            {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+                            {if file_exists($absolutePath)}
+                                {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+                                {if $isImage}
+                                    {var $pathInfo = pathinfo($filePath)}
+                                    {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                    {var $thumbUrl = '/upload/' . $thumbPath}
+                                    <a href="{$fileUrl}" target="_blank">
+                                        <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
+                                    </a>
+                                {else}
+                                    <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
+                                        <span class="material-symbols-outlined text-sm align-middle">download</span>
+                                        {basename($filePath)}
+                                    </a>
+                                {/if}
+                            {/if}
+                            <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+                        </div>
+                    {/if}
+
+                    {include '../input/field.latte',
+                    field: $field,
+                    name: $field['name'],
+                    value: $data[$field['name']] ?? null
+                    }
+                </div>
+                {if !empty($errors[$field['name']]) > 0}
+                    <span class="text-error text-sm">Erro: {$errors[$field['name']]}</span>
+                {/if}
+            {/foreach}
+        </div>
+
+        
+    {elseif $layout === 'tabs'}
+        <div role="tablist" class="tabs tabs-lifted">
+            {var $tabIndex = 0}
+            {foreach $fieldsByTab as $tabName => $tabFields}
+                <input type="radio"
+                       name="form_tabs"
+                       role="tab"
+                       class="tab"
+                       aria-label="{$tabName}"
+                       {if $tabIndex === 0}checked{/if} />
+
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                    <div class="grid grid-cols-12 gap-4">
+                        {foreach $tabFields as $field}
+                            {var $colWidth = $field['column_width'] ?? 12}
+                            <div class="col-span-12 md:col-span-{$colWidth}">
+                                {include '../input/field.latte',
+                                field: $field,
+                                name: $field['name'],
+                                value: $data[$field['name']] ?? null
+                                }
+                            </div>
+                        {/foreach}
+                    </div>
+                </div>
+                {var $tabIndex = $tabIndex + 1}
+            {/foreach}
+        </div>
+
+        
+    {elseif $layout === 'accordion'}
+        {foreach $fieldsByTab as $tabName => $tabFields}
+            <div class="collapse collapse-arrow bg-base-200">
+                <input type="radio" name="form_accordion" {if $tabName === array_key_first($fieldsByTab)}checked{/if} />
+                <div class="collapse-title text-xl font-medium">
+                    {$tabName}
+                </div>
+                <div class="collapse-content">
+                    <div class="grid grid-cols-12 gap-4 pt-4">
+                        {foreach $tabFields as $field}
+                            {var $colWidth = $field['column_width'] ?? 12}
+                            <div class="col-span-12 md:col-span-{$colWidth}">
+                                {include '../input/field.latte',
+                                field: $field,
+                                name: $field['name'],
+                                value: $data[$field['name']] ?? null
+                                }
+                            </div>
+                        {/foreach}
+                    </div>
+                </div>
+            </div>
+        {/foreach}
+
+        
+    {elseif $layout === 'wizard'}
+        <ul class="steps steps-vertical lg:steps-horizontal w-full mb-6">
+            {foreach $fieldsByTab as $tabName => $tabFields}
+                <li class="step step-primary">{$tabName}</li>
+            {/foreach}
+        </ul>
+
+    {var $stepIndex = 0}
+        {foreach $fieldsByTab as $tabName => $tabFields}
+            <div class="wizard-step" data-step="{$stepIndex}" {if $stepIndex !== 0}style="display:none"{/if}>
+                <h3 class="text-2xl font-bold mb-4">{$tabName}</h3>
+                <div class="grid grid-cols-12 gap-4">
+                    {foreach $tabFields as $field}
+                        {var $colWidth = $field['column_width'] ?? 12}
+                        <div class="col-span-12 md:col-span-{$colWidth}">
+                            {include '../input/field.latte',
+                            field: $field,
+                            name: $field['name'],
+                            value: $data[$field['name']] ?? null
+                            }
+                        </div>
+                    {/foreach}
+                </div>
+
+                <div class="flex justify-between mt-6">
+                    {if $stepIndex > 0}
+                        <button type="button" class="btn btn-outline" onclick="previousStep()">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            Anterior
+                        </button>
+                    {else}
+                        <div></div>
+                    {/if}
+
+                    {if $stepIndex < count($fieldsByTab) - 1}
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                            Próximo
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    {/if}
+                </div>
+            </div>
+            {var $stepIndex = $stepIndex + 1}
+        {/foreach}
+    {/if}
+
+    
+    <div class="divider"></div>
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-end">
+        {if $showCancelButton}
+            <a href="{$cancelUrl}" class="btn btn-outline btn-ghost">
+                <span class="material-symbols-outlined">close</span>
+                <span class="hidden sm:inline">Cancelar</span>
+            </a>
+        {/if}
+
+        <button type="button" class="btn btn-primary" onclick='
+            const form = this.form;
+// Sincronizar Quill editors
+            form.querySelectorAll("[x-ref=editor]").forEach(editorDiv => {
+                const parent = editorDiv.closest("[x-data]");
+                if (parent && parent.__x) {
+                    const data = parent.__x.$data;
+                    if (data.quillEditor) {
+                        const textarea = parent.querySelector("[x-ref=textarea]");
+                        if (textarea) {
+                            textarea.value = data.quillEditor.root.innerHTML;
+}
+                    }
+                }
+            });
+
+            // Sincronizar CodeMirror editors
+            form.querySelectorAll(".CodeMirror").forEach(cm => {
+                if (cm.CodeMirror) {
+                    cm.CodeMirror.save();
+}
+            });
+
+            // Sincronizar SimpleMDE editors
+            form.querySelectorAll("[x-data]").forEach(el => {
+                if (el.__x && el.__x.$data.simplemde) {
+                    const textarea = el.querySelector("textarea");
+                    if (textarea) {
+                        textarea.value = el.__x.$data.simplemde.value();
+}
+                }
+            });
+
+            // Remover hidden inputs de checkboxes/toggles marcados
+            form.querySelectorAll("input[type=checkbox]:checked").forEach(checkbox => {
+                const allInputs = form.querySelectorAll("input[name=\"" + checkbox.name + "\"]");
+                allInputs.forEach(input => {
+                    if (input.type === "hidden") {
+                        input.remove();
+}
+                });
+            });
+// Disparar evento submit para acionar listeners do Alpine.js (Quill)
+            const submitEvent = new Event("submit", { bubbles: true, cancelable: true });
+            form.dispatchEvent(submitEvent);
+
+            // Aguardar um tick e então submeter o formulário
+            setTimeout(() => {
+                form.submit();
+            }, 10);
+        '>
+            {if $submitIcon}
+                <span class="material-symbols-outlined">{$submitIcon}</span>
+            {/if}
+            <span>{$submitLabel}</span>
+        </button>
+    </div>
+</form>
+
+
+{if $layout === 'wizard'}
+    <script>
+        let currentStep = 0;
+        const totalSteps = {count($fieldsByTab)};
+
+        function showStep(stepIndex) {
+            document.querySelectorAll('.wizard-step').forEach((step, index) => {
+                step.style.display = index === stepIndex ? 'block' : 'none';
+            });
+
+            // Atualiza steps indicator
+            document.querySelectorAll('.steps .step').forEach((step, index) => {
+                if (index < stepIndex) {
+                    step.classList.add('step-primary');
+                } else if (index === stepIndex) {
+                    step.classList.add('step-primary');
+                } else {
+                    step.classList.remove('step-primary');
+                }
+            });
+
+            currentStep = stepIndex;
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                showStep(currentStep + 1);
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                showStep(currentStep - 1);
+            }
+        }
+    </script>
+{/if}

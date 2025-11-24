@@ -1,0 +1,258 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4 pb-16">
+        <div class="flex flex-row justify-between">
+            <p class="text-xl font-semibold">Swagger</p>
+        </div>
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+            <div id="swagger-ui"></div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui.css">
+    <style>
+        /* Ocultar select de servers */
+        .swagger-ui .servers,
+        .swagger-ui .information-container,
+        .swagger-ui .scheme-container {
+            display: none;
+        }
+        
+        /* Tema usando variáveis DaisyUI */
+        .swagger-ui {
+            background: oklch(var(--b1)) !important;
+            color: oklch(var(--bc)) !important;
+        }
+        
+        .swagger-ui .information-container .info {
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .opblock-tag {
+            background: oklch(var(--b2));
+            border-color: oklch(var(--bc) / 0.2);
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .opblock {
+            background: oklch(var(--b1));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui .opblock .opblock-summary {
+            border-color: oklch(var(--bc) / 0.2);
+            background: oklch(var(--b2));
+        }
+        
+        .swagger-ui .opblock .opblock-summary-path,
+        .swagger-ui .opblock .opblock-summary-description {
+            color: oklch(var(--bc));
+        }
+        
+        /* Manter cores originais dos métodos HTTP */
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+            background: #49cc90;
+        }
+        
+        .swagger-ui .opblock.opblock-get .opblock-summary-method {
+            background: #61affe;
+        }
+        
+        .swagger-ui .opblock.opblock-put .opblock-summary-method {
+            background: #fca130;
+        }
+        
+        .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+            background: #f93e3e;
+        }
+        
+        .swagger-ui .opblock.opblock-patch .opblock-summary-method {
+            background: #50e3c2;
+        }
+        
+        .swagger-ui .opblock-description-wrapper,
+        .swagger-ui .opblock-body,
+        .swagger-ui .responses-wrapper {
+            background: oklch(var(--b1));
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .parameter__name,
+        .swagger-ui .parameter__type,
+        .swagger-ui .response-col_status,
+        .swagger-ui .response-col_description {
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .model-box,
+        .swagger-ui .model {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .model-title,
+        .swagger-ui .prop-name {
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .prop-type {
+            color: oklch(var(--p));
+        }
+        
+        .swagger-ui table thead tr th,
+        .swagger-ui table thead tr td {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui table tbody tr td {
+            background: oklch(var(--b1));
+            color: oklch(var(--bc));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui .btn {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui .btn:hover {
+            background: oklch(var(--b3));
+        }
+        
+        .swagger-ui .btn.execute {
+            background: oklch(var(--p));
+            color: oklch(var(--pc));
+            border-color: oklch(var(--p));
+        }
+        
+        .swagger-ui .btn.cancel {
+            background: oklch(var(--er));
+            color: oklch(var(--erc));
+        }
+        
+        .swagger-ui input[type=text],
+        .swagger-ui input[type=email],
+        .swagger-ui input[type=password],
+        .swagger-ui textarea,
+        .swagger-ui select {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui input[type=text]:focus,
+        .swagger-ui textarea:focus,
+        .swagger-ui select:focus {
+            border-color: oklch(var(--p));
+            background: oklch(var(--b1));
+        }
+        
+        .swagger-ui .response,
+        .swagger-ui .responses-inner {
+            background: oklch(var(--b1));
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .highlight-code {
+            background: oklch(var(--b2));
+        }
+        
+        .swagger-ui .highlight-code pre {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .opblock-section-header {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .tab li {
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .tab li.active {
+            background: oklch(var(--b2));
+        }
+        
+        .swagger-ui .dialog-ux .modal-ux {
+            background: oklch(var(--b1));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui .dialog-ux .modal-ux-header {
+            background: oklch(var(--b2));
+            color: oklch(var(--bc));
+            border-color: oklch(var(--bc) / 0.2);
+        }
+        
+        .swagger-ui .markdown code,
+        .swagger-ui code {
+            background: oklch(var(--b2));
+            color: oklch(var(--p));
+        }
+        
+        .swagger-ui .copy-to-clipboard {
+            background: oklch(var(--b2));
+        }
+        
+        .swagger-ui .copy-to-clipboard button {
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .opblock-control-arrow {
+            fill: oklch(var(--bc));
+        }
+        
+        .swagger-ui svg {
+            fill: oklch(var(--bc));
+        }
+        
+        .swagger-ui .response-control-media-type__accept-message {
+            color: oklch(var(--bc));
+        }
+        
+        .swagger-ui .loading-container .loading:after {
+            border-color: oklch(var(--p)) transparent transparent;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui-bundle.js"></script>
+    <script>
+        const ui = SwaggerUIBundle({
+            url: '/api/openapi',
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            presets: [
+                SwaggerUIBundle.presets.apis
+            ],
+            layout: "BaseLayout",
+            defaultModelsExpandDepth: -1,
+            // Função personalizada para ordenar tags
+            tagsSorter: function(a, b) {
+                // Ordem desejada: authentication, user, depois alfabética
+                const order = ['authentication', 'user'];
+                const indexA = order.indexOf(a);
+                const indexB = order.indexOf(b);
+                
+                // Se ambas estão na lista prioritária, usar ordem da lista
+                if (indexA !== -1 && indexB !== -1) {
+                    return indexA - indexB;
+                }
+                
+                // Se apenas 'a' está na lista, vem primeiro
+                if (indexA !== -1) return -1;
+                
+                // Se apenas 'b' está na lista, vem primeiro
+                if (indexB !== -1) return 1;
+                
+                // Ambas não estão na lista prioritária, ordem alfabética
+                return a.localeCompare(b);
+            }
+        })
+    </script>
+
+{/block}

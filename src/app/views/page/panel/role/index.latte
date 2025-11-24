@@ -1,0 +1,209 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <div>
+                <p class="text-xl font-semibold">Roles e Permissões</p>
+                <p class="text-sm text-base-content/70">Gerencie roles e permissões do sistema usando Casbin</p>
+            </div>
+            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                <p class="hidden lg:inline-block uppercase">Nova Role</p>
+            </a>
+        </div>
+
+        
+        {if count($roles) > 0}
+            <div class="stats stats-vertical lg:stats-horizontal shadow">
+                <div class="stat">
+                    <div class="stat-figure text-primary">
+                        <span class="material-symbols-outlined text-4xl">group</span>
+                    </div>
+                    <div class="stat-title">Total de Roles</div>
+                    <div class="stat-value text-primary">{count($roles)}</div>
+                    <div class="stat-desc">Registradas no sistema</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-success">
+                        <span class="material-symbols-outlined text-4xl">verified_user</span>
+                    </div>
+                    <div class="stat-title">Roles de Sistema</div>
+                    <div class="stat-value text-success">
+                        {count(array_filter($roles, fn($r) => $r['is_system']))}
+                    </div>
+                    <div class="stat-desc">Roles protegidas</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <span class="material-symbols-outlined text-4xl">lock</span>
+                    </div>
+                    <div class="stat-title">Permissões Totais</div>
+                    <div class="stat-value text-secondary">
+                        {array_sum(array_column($roles, 'permissions_count'))}
+                    </div>
+                    <div class="stat-desc">Em todas as roles</div>
+                </div>
+            </div>
+        {/if}
+
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+            {if count($roles) === 0}
+                <div class="flex flex-col items-center justify-center p-12 text-center">
+                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">group_off</span>
+                    <p class="text-lg font-semibold mb-2">Nenhuma role criada</p>
+                    <p class="text-sm text-base-content/70 mb-4">Crie sua primeira role para começar</p>
+                    <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined">add</span>
+                        Criar primeira role
+                    </a>
+                </div>
+            {else}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">badge</span>
+                                    Role
+                                </span>
+                        </th>
+                        <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">description</span>
+                                    Descrição
+                                </span>
+                        </th>
+                        <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">key</span>
+                                    Permissões
+                                </span>
+                        </th>
+                        <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">shield</span>
+                                    Tipo
+                                </span>
+                        </th>
+                        <th class="text-right">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $roles as $role}
+                        <tr class="hover">
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <div class="avatar placeholder">
+                                        <div class="bg-{$role['is_system'] ? 'primary' : 'secondary'}/10 text-{$role['is_system'] ? 'primary' : 'secondary'} rounded-lg w-10 h-10 flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-xl">
+                                                    {if $role['is_locked']}shield_lock{elseif $role['is_system']}verified_user{else}person{/if}
+                                                </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold">{$role['display_name']}</div>
+                                        <code class="text-xs text-base-content/60">{$role['role_name']}</code>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {if $role['description']}
+                                    <div class="text-sm max-w-md">{$role['description']}</div>
+                                {else}
+                                    <span class="text-base-content/40 text-sm italic">Sem descrição</span>
+                                {/if}
+                            </td>
+                            <td>
+                                <div class="badge badge-ghost gap-2">
+                                    <span class="material-symbols-outlined text-xs">vpn_key</span>
+                                    {$role['permissions_count']}
+                                    permiss{if $role['permissions_count'] != 1}ões{else}ão{/if}
+                                </div>
+                            </td>
+                            <td>
+                                {if $role['is_locked']}
+                                    <div class="badge badge-warning gap-2">
+                                        <span class="material-symbols-outlined text-xs">lock</span>
+                                        Bloqueada
+                                    </div>
+                                {elseif $role['is_system']}
+                                    <div class="badge badge-info gap-2">
+                                        <span class="material-symbols-outlined text-xs">verified</span>
+                                        Sistema
+                                    </div>
+                                {else}
+                                    <div class="badge badge-ghost gap-2">
+                                        <span class="material-symbols-outlined text-xs">person</span>
+                                        Custom
+                                    </div>
+                                {/if}
+                            </td>
+                            <td>
+                                <div class="flex justify-end gap-2">
+                                    <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$role['id']}/edit"
+                                       class="btn btn-ghost btn-xs"
+                                       title="Editar">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
+                                    {if !$role['is_system']}
+                                        <button class="btn btn-ghost btn-xs text-error"
+                                                onclick="confirmDelete({$role['id']}, '{$role['display_name']}')"
+                                                title="Deletar">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    {else}
+                                        <div class="tooltip tooltip-left"
+                                             data-tip="Roles de sistema não podem ser deletadas">
+                                            <button class="btn btn-ghost btn-xs btn-disabled opacity-30"
+                                                    disabled
+                                                    title="Não é possível deletar">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
+                                    {/if}
+                                </div>
+                            </td>
+                        </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            {/if}
+        </div>
+    </div>
+
+    <script>
+        async function confirmDelete(id, name) {
+            showConfirmModal({
+                title: 'Confirmar Exclusão',
+                message: `Tem certeza que deseja deletar a role "${ name }"?\n\nTodas as permissões associadas serão removidas.\n\nEsta ação não pode ser desfeita.`,
+                confirmText: 'Confirmar Exclusão',
+                cancelText: 'Cancelar',
+                type: 'error',
+                onConfirm: async () => {
+                    try {
+                        const response = await fetch(`/panel/role/${ id }`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            flashAndReload(data.message || 'Role deletada com sucesso!', 'success');
+                        } else {
+                            flash(data.message || 'Erro ao deletar role', 'error');
+                        }
+                    } catch (error) {
+flash('Erro ao deletar role. Verifique o console para mais detalhes.', 'error');
+                    }
+                }
+            });
+        }
+    </script>
+
+{/block}

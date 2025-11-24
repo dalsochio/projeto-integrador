@@ -1,0 +1,234 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+<div class="audit-container">
+    
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold flex items-center gap-2">
+                <span class="material-symbols-outlined">shield</span>
+                Auditoria
+            </h1>
+            <p class="text-sm text-base-content/70 mt-1">
+                Visualize todas as ações realizadas no sistema
+            </p>
+        </div>
+    </div>
+
+    
+    <div class="card bg-base-100 shadow-xl mb-6">
+        <div class="card-body">
+            <h2 class="card-title text-lg mb-4">
+                <span class="material-symbols-outlined">filter_list</span>
+                Filtros
+            </h2>
+            
+            <form method="get" action="/panel/audit" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Módulo</span>
+                    </label>
+                    <select name="table_name" class="select select-bordered w-full">
+                        <option value="">Todos os módulos</option>
+                        {foreach $tables as $tableItem}
+                            <option value="{$tableItem['name']}" {if $filters['table_name'] == $tableItem['name']}selected{/if}>
+                                {$tableItem['display_name']}
+                            </option>
+                        {/foreach}
+                    </select>
+                </div>
+
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Ação</span>
+                    </label>
+                    <select name="action" class="select select-bordered w-full">
+                        <option value="">Todas as ações</option>
+                        <option value="POST" {if $filters['action'] == 'POST'}selected{/if}>Criar</option>
+                        <option value="PUT" {if $filters['action'] == 'PUT'}selected{/if}>Atualizar</option>
+                        <option value="DELETE" {if $filters['action'] == 'DELETE'}selected{/if}>Deletar</option>
+                    </select>
+                </div>
+
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Origem</span>
+                    </label>
+                    <select name="route_type" class="select select-bordered w-full">
+                        <option value="">Todas as origens</option>
+                        <option value="panel" {if $filters['route_type'] == 'panel'}selected{/if}>Painel</option>
+                        <option value="api" {if $filters['route_type'] == 'api'}selected{/if}>API</option>
+                    </select>
+                </div>
+
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Usuário</span>
+                    </label>
+                    <select name="user_id" class="select select-bordered w-full">
+                        <option value="">Todos os usuários</option>
+                        {foreach $users as $userItem}
+                            <option value="{$userItem['id']}" {if $filters['user_id'] == $userItem['id']}selected{/if}>
+                                {$userItem['username']}
+                            </option>
+                        {/foreach}
+                    </select>
+                </div>
+
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Data inicial</span>
+                    </label>
+                    <input type="date" name="date_from" value="{$filters['date_from']}" class="input input-bordered w-full">
+                </div>
+
+                
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Data final</span>
+                    </label>
+                    <input type="date" name="date_to" value="{$filters['date_to']}" class="input input-bordered w-full">
+                </div>
+
+                
+                <div class="col-span-1 md:col-span-2 lg:col-span-3 flex gap-2 justify-end">
+                    <a href="/panel/audit" class="btn btn-ghost">
+                        <span class="material-symbols-outlined">clear</span>
+                        Limpar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-outlined">search</span>
+                        Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="card-title">
+                    Registros ({$pagination['total']})
+                </h2>
+            </div>
+
+            {if empty($logs)}
+                <div class="alert alert-info">
+                    <span class="material-symbols-outlined">info</span>
+                    <span>Nenhum log encontrado com os filtros aplicados.</span>
+                </div>
+            {else}
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Usuário</th>
+                                <th>Ação</th>
+                                <th>Módulo</th>
+                                <th>Registro</th>
+                                <th>Origem</th>
+                                <th>IP</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {foreach $logs as $logItem}
+                                <tr class="hover">
+                                    <td class="font-mono text-xs">
+                                        {$logItem['created_at']|date:'d/m/Y H:i:s'}
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-sm">person</span>
+                                            <span class="font-medium">{$logItem['username']}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {if $logItem['action'] == 'POST'}
+                                            <div class="badge badge-success gap-1">
+                                                <span class="material-symbols-outlined text-xs">add</span>
+                                                Criar
+                                            </div>
+                                        {elseif $logItem['action'] == 'PUT'}
+                                            <div class="badge badge-warning gap-1">
+                                                <span class="material-symbols-outlined text-xs">edit</span>
+                                                Atualizar
+                                            </div>
+                                        {elseif $logItem['action'] == 'DELETE'}
+                                            <div class="badge badge-error gap-1">
+                                                <span class="material-symbols-outlined text-xs">delete</span>
+                                                Deletar
+                                            </div>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        <span class="font-medium">{$logItem['table_name']}</span>
+                                    </td>
+                                    <td>
+                                        <span class="font-mono text-sm">#{$logItem['record_id'] ?? '-'}</span>
+                                    </td>
+                                    <td>
+                                        {if $logItem['route_type'] == 'api'}
+                                            <div class="badge badge-info gap-1">
+                                                <span class="material-symbols-outlined text-xs">api</span>
+                                                API
+                                            </div>
+                                        {else}
+                                            <div class="badge badge-primary gap-1">
+                                                <span class="material-symbols-outlined text-xs">dashboard</span>
+                                                Painel
+                                            </div>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        <span class="font-mono text-xs text-base-content/60">
+                                            {$logItem['ip_address'] ?? '-'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/panel/audit/{$logItem['id']}" class="btn btn-ghost btn-sm">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+
+                
+                {if $pagination['totalPages'] > 1}
+                    <div class="flex justify-center mt-6">
+                        <div class="join">
+                            {if $pagination['currentPage'] > 1}
+                                <a href="?page={$pagination['currentPage'] - 1}{if $filters['table_name']}&table_name={$filters['table_name']}{/if}{if $filters['action']}&action={$filters['action']}{/if}{if $filters['route_type']}&route_type={$filters['route_type']}{/if}{if $filters['user_id']}&user_id={$filters['user_id']}{/if}{if $filters['date_from']}&date_from={$filters['date_from']}{/if}{if $filters['date_to']}&date_to={$filters['date_to']}{/if}" 
+                                   class="join-item btn">«</a>
+                            {/if}
+                            
+                            {for $i = max(1, $pagination['currentPage'] - 2); $i <= min($pagination['totalPages'], $pagination['currentPage'] + 2); $i++}
+                                <a href="?page={$i}{if $filters['table_name']}&table_name={$filters['table_name']}{/if}{if $filters['action']}&action={$filters['action']}{/if}{if $filters['route_type']}&route_type={$filters['route_type']}{/if}{if $filters['user_id']}&user_id={$filters['user_id']}{/if}{if $filters['date_from']}&date_from={$filters['date_from']}{/if}{if $filters['date_to']}&date_to={$filters['date_to']}{/if}" 
+                                   class="join-item btn {if $i == $pagination['currentPage']}btn-active{/if}">
+                                    {$i}
+                                </a>
+                            {/for}
+                            
+                            {if $pagination['currentPage'] < $pagination['totalPages']}
+                                <a href="?page={$pagination['currentPage'] + 1}{if $filters['table_name']}&table_name={$filters['table_name']}{/if}{if $filters['action']}&action={$filters['action']}{/if}{if $filters['route_type']}&route_type={$filters['route_type']}{/if}{if $filters['user_id']}&user_id={$filters['user_id']}{/if}{if $filters['date_from']}&date_from={$filters['date_from']}{/if}{if $filters['date_to']}&date_to={$filters['date_to']}{/if}" 
+                                   class="join-item btn">»</a>
+                            {/if}
+                        </div>
+                    </div>
+                {/if}
+            {/if}
+        </div>
+    </div>
+</div>
+{/block}

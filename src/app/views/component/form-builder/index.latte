@@ -1,0 +1,438 @@
+<div class="grid grid-cols-12 gap-4 h-screen h-full overflow-y-scroll">
+
+    <div class="col-span-3 flex flex-col h-full">
+        <h3 class="font-semibold mb-4">Componentes</h3>
+        <div class="flex-1 overflow-y-auto border-2 border-base-300 rounded p-4 bg-base-100">
+            <div class="flex flex-col gap-3">
+            
+            <div class="border border-secondary rounded cursor-move hover:bg-base-200 overflow-hidden"
+                 draggable="true"
+                 @dragstart="handlePaletteDragStart($event, 'ROW')">
+                <div class="p-2 bg-secondary/10 border-b border-secondary/20">
+                    <div class="font-medium text-sm">Layout Row</div>
+                    <div class="text-xs opacity-60">Linha com Colunas</div>
+                </div>
+                <div class="p-2 pointer-events-none">
+                    <div class="flex gap-1">
+                        <div class="flex-1 h-8 bg-base-300/50 border border-dashed border-base-content/20 rounded"></div>
+                        <div class="flex-1 h-8 bg-base-300/50 border border-dashed border-base-content/20 rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider my-1 text-xs">CAMPOS</div>
+
+            
+            <template x-for="type in fieldTypes" :key="type.name">
+                <div class="border border-primary rounded cursor-move hover:bg-base-200 overflow-hidden"
+                     draggable="true"
+                     @dragstart="handlePaletteDragStart($event, type.name)">
+                    <div class="p-2 bg-primary/10 border-b border-primary/20">
+                        <div class="font-medium text-sm" x-text="type.label"></div>
+                        <div class="text-xs opacity-60" x-text="type.name"></div>
+                    </div>
+                    <div class="p-2 pointer-events-none scale-90 origin-top-left" x-html="type.preview"></div>
+                </div>
+            </template>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-span-6 flex flex-col h-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-semibold">Canvas do Formulário</h3>
+            <button @click="clearAll()" class="btn btn-ghost btn-sm" x-show="items.length > 0">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Limpar Tudo
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto border-2 border-dashed border-base-300 rounded p-4 bg-base-50"
+             @dragover.prevent
+             @drop="handleCanvasDrop($event)"
+             x-sort="items"
+             x-sort:config="canvasSortConfig">
+
+            <p x-show="items.length === 0" class="text-center text-base-content/50 py-8 pointer-events-none">
+                Arraste componentes aqui
+            </p>
+
+            <template x-for="(item, index) in items" :key="item.id">
+                <div x-sort:item="item" class="mb-3" :data-item-id="item.id">
+                    
+                    <template x-if="item.itemType === 'field'">
+                        <div class="border-2 rounded-lg bg-base-100 cursor-pointer hover:border-primary transition-all"
+                             x-bind:class="selectedItemId === item.id ? 'border-primary bg-primary/10' : ''"
+                             @click="selectItem(item.id, 'field')"
+                             draggable="true"
+                             @dragstart="handleFieldDragStart($event, item.id, true)">
+
+                            <div class="flex justify-between items-start p-2 bg-base-200/50 border-b border-base-300">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <svg class="h-4 w-4 drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                    </svg>
+                                    <div>
+                                        <div class="font-medium text-sm" x-text="item.display_name"></div>
+                                        <div class="text-xs opacity-60" x-text="'(' + item.type + ')'"></div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button @click.stop="moveItemUp(index)" class="btn btn-xs btn-ghost btn-square" x-show="index > 0" title="Mover para cima">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop="moveItemDown(index)" class="btn btn-xs btn-ghost btn-square" x-show="index < items.length - 1" title="Mover para baixo">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop="deleteItem(index)" class="btn btn-xs btn-ghost btn-square">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="p-3 pointer-events-none" x-html="getFieldPreviewHtml(item)"></div>
+                        </div>
+                    </template>
+
+                    
+                    <template x-if="item.itemType === 'row'">
+                        <div class="border-2 rounded-lg bg-base-100 cursor-pointer hover:border-secondary transition-all"
+                             x-bind:class="selectedItemId === item.id ? 'border-secondary bg-secondary/10' : ''"
+                             @click="selectItem(item.id, 'row')">
+
+                            <div class="flex justify-between items-start p-2 bg-secondary/10 border-b border-secondary/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="h-4 w-4 drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                    </svg>
+                                    <div class="font-medium text-sm" x-text="'Layout Row (' + (item.columns?.length || 0) + ' colunas)'"></div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button @click.stop="moveItemUp(index)" class="btn btn-xs btn-ghost btn-square" x-show="index > 0">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop="moveItemDown(index)" class="btn btn-xs btn-ghost btn-square" x-show="index < items.length - 1">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop="deleteItem(index)" class="btn btn-xs btn-ghost btn-square">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            
+                            <div class="p-3 flex gap-2"
+                                 x-sort="item.columns || []"
+                                 x-sort:config="columnSortConfig">
+                                <template x-for="(col, colIndex) in (item.columns || [])" :key="col.id">
+                                    <div x-sort:item="col"
+                                         class="border-2 border-dashed border-base-300 rounded-lg p-3 min-h-[150px] flex-1 flex flex-col transition-colors"
+                                         x-bind:style="'flex: ' + col.width"
+                                         @dragover="$el.classList.add('bg-primary/5', 'border-primary/30')"
+                                         @dragleave="$el.classList.remove('bg-primary/5', 'border-primary/30')"
+                                         @drop="$el.classList.remove('bg-primary/5', 'border-primary/30')">
+
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="text-xs text-center opacity-50" x-text="'Coluna (' + col.width + '/12)'"></div>
+                                            <svg class="h-3 w-3 column-drag-handle cursor-move opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                            </svg>
+                                        </div>
+
+                                        
+                                        <div class="flex-1 flex flex-col gap-2 min-h-[120px]"
+                                             @dragover.prevent
+                                             @drop="handleColumnDrop($event, item.id, col.id)"
+                                             x-sort="col.fields || []"
+                                             x-sort:config="fieldSortConfig">
+
+                                            <template x-for="(field, fieldIndex) in (col.fields || [])" :key="field.id">
+                                                <div x-sort:item="field" :data-item-id="field.id">
+                                                    <div class="border-2 rounded-lg bg-base-100 cursor-pointer hover:border-primary transition-all"
+                                                         x-bind:class="selectedItemId === field.id ? 'border-primary bg-primary/10' : ''"
+                                                         @click="selectItem(field.id, 'field')"
+                                                         draggable="true"
+                                                         @dragstart="handleFieldDragStart($event, field.id, false)">
+
+                                                        <div class="flex justify-between items-start p-2 bg-base-200/50 border-b border-base-300">
+                                                            <div class="flex items-center gap-2 flex-1">
+                                                                <svg class="h-4 w-4 field-drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                                                </svg>
+                                                                <div>
+                                                                    <div class="font-medium text-sm" x-text="field.display_name"></div>
+                                                                    <div class="text-xs opacity-60" x-text="'(' + field.type + ')'"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex gap-1">
+                                                                <button @click.stop="moveFieldInColumn(item.id, col.id, fieldIndex, 'up')" class="btn btn-xs btn-ghost btn-square" x-show="fieldIndex > 0" title="Mover para cima">
+                                                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                                                    </svg>
+                                                                </button>
+                                                                <button @click.stop="moveFieldInColumn(item.id, col.id, fieldIndex, 'down')" class="btn btn-xs btn-ghost btn-square" x-show="fieldIndex < (col.fields?.length || 0) - 1" title="Mover para baixo">
+                                                                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                                    </svg>
+                                                                </button>
+                                                                <button @click.stop="deleteFieldFromColumn(item.id, col.id, fieldIndex)" class="btn btn-xs btn-ghost btn-square">
+                                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="p-3 pointer-events-none" x-html="getFieldPreviewHtml(field)"></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <div x-show="(col.fields?.length || 0) === 0"
+                                                 class="text-xs text-center opacity-30 py-4 flex-1 flex items-center justify-center border-2 border-dashed border-base-200 rounded pointer-events-none">
+                                                Arraste campos aqui
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    
+    <div class="col-span-3 flex flex-col h-full">
+        <h3 class="font-semibold mb-4">Propriedades</h3>
+        <div class="border border-base-300 rounded p-4 bg-base-100 flex-1 overflow-y-auto">
+            
+            <div x-show="!selectedItemId" class="text-center text-base-content/50">
+                Selecione um campo
+            </div>
+
+            
+            <template x-if="selectedItemId && selectedItemType === 'field'">
+                <div class="flex flex-col gap-3">
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Nome de Exibição</span></label>
+                        <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).display_name">
+                        <label class="label"><span class="label-text-alt">O nome técnico será gerado automaticamente</span></label>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Placeholder</span></label>
+                        <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).input_placeholder">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-medium">Prefixo</span></label>
+                            <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).input_prefix" placeholder="R$, @">
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label"><span class="label-text font-medium">Sufixo</span></label>
+                            <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).input_suffix" placeholder="kg, %">
+                        </div>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-medium">Texto de Ajuda</span></label>
+                        <textarea class="textarea textarea-sm textarea-bordered" x-model="findField(selectedItemId).help_text" rows="2"></textarea>
+                    </div>
+
+
+                    <template x-if="['SELECT', 'RADIO', 'CHECKBOX'].includes(findField(selectedItemId).type)">
+                        <div>
+                            <div class="divider text-xs">Opções do Campo</div>
+
+                            <div class="form-control mb-3">
+                                <label class="label cursor-pointer justify-start gap-2">
+                                    <input type="checkbox"
+                                           class="checkbox checkbox-sm"
+                                           x-model="findField(selectedItemId).use_separate_value">
+                                    <span class="label-text">Usar valor diferente da label</span>
+                                </label>
+                                <label class="label">
+                                    <span class="label-text-alt">Se marcado, você pode definir um valor interno diferente do texto exibido</span>
+                                </label>
+                            </div>
+
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text font-medium">Opções</span>
+                                </label>
+
+                                <template x-for="(option, idx) in (findField(selectedItemId).manual_options || [])" :key="idx">
+                                    <div class="flex gap-2 mb-2">
+                                        <input type="text"
+                                               placeholder="Label (ex: Brasil)"
+                                               class="input input-sm input-bordered flex-1"
+                                               x-model="option.label">
+
+                                        <input x-show="findField(selectedItemId).use_separate_value"
+                                               type="text"
+                                               placeholder="Valor (ex: BR)"
+                                               class="input input-sm input-bordered flex-1"
+                                               x-model="option.value">
+
+                                        <button class="btn btn-sm btn-ghost btn-square"
+                                                @click="removeOption(selectedItemId, idx)"
+                                                title="Remover opção">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <button class="btn btn-sm btn-outline mt-2"
+                                        @click="addOption(selectedItemId)">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Adicionar Opção
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+
+
+                    <template x-if="['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(findField(selectedItemId).type)">
+                        <div>
+                            <div class="divider text-xs">Configuração de Referência</div>
+
+                            <div class="form-control">
+                                <label class="label"><span class="label-text font-medium">Módulo de Referência</span></label>
+                                <select class="select select-sm select-bordered"
+                                        x-model="findField(selectedItemId).foreign_table"
+                                        @change="loadModuleColumns(findField(selectedItemId))">
+                                    <option value="">Selecione um módulo...</option>
+                                    <template x-for="module in availableModules" :key="module.name">
+                                        <option :value="module.name" x-text="module.display_name"></option>
+                                    </template>
+                                </select>
+                                <label class="label"><span class="label-text-alt">Módulo que será referenciado</span></label>
+                            </div>
+
+                            <div class="form-control" x-show="findField(selectedItemId).foreign_table">
+                                <label class="label"><span class="label-text font-medium">Coluna para Exibição</span></label>
+                                <select class="select select-sm select-bordered"
+                                        x-model="findField(selectedItemId).foreign_column">
+                                    <option value="">Selecione uma coluna...</option>
+                                    <template x-for="column in moduleColumns[findField(selectedItemId).foreign_table] || []" :key="column.name">
+                                        <option :value="column.name" x-text="column.display_name || column.name"></option>
+                                    </template>
+                                </select>
+                                <label class="label"><span class="label-text-alt">Coluna que será mostrada no select/radio</span></label>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div class="divider text-xs">Tabela</div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_visible_list">
+                            <span class="label-text">Mostrar na tabela</span>
+                        </label>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_searchable">
+                            <span class="label-text">Incluir na busca</span>
+                        </label>
+                    </div>
+
+                    <div class="divider text-xs">Configurações</div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_nullable">
+                            <span class="label-text">Campo opcional</span>
+                        </label>
+                    </div>
+
+                    <div class="form-control" x-show="!['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(findField(selectedItemId).type)">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_unique">
+                            <span class="label-text">Não permitir valores repetidos</span>
+                        </label>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_editable">
+                            <span class="label-text">Pode ser editado</span>
+                        </label>
+                    </div>
+                </div>
+            </template>
+
+            
+            <template x-if="selectedItemId && selectedItemType === 'row'">
+                <div class="flex flex-col gap-3">
+                    <h3 class="font-semibold">Layout Row</h3>
+
+                    <template x-for="item in items" :key="item.id">
+                        <div x-show="item.id === selectedItemId && item.itemType === 'row'">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Número de Colunas: <span x-text="item.columns?.length || 0"></span></span>
+                                </label>
+
+                                <button @click="changeColumns(item.id, Math.max(1, (item.columns?.length || 1) - 1))"
+                                        class="btn btn-sm btn-outline"
+                                        x-bind:disabled="(item.columns?.length || 0) <= 1">
+                                    - Remover Coluna
+                                </button>
+
+                                <button @click="changeColumns(item.id, Math.min(3, (item.columns?.length || 0) + 1))"
+                                        class="btn btn-sm btn-outline mt-2"
+                                        x-bind:disabled="(item.columns?.length || 0) >= 3">
+                                    + Adicionar Coluna
+                                </button>
+                            </div>
+
+                            <div class="divider text-xs">Colunas</div>
+
+                            <template x-for="(col, colIndex) in (item.columns || [])" :key="col.id">
+                                <div class="p-2 bg-base-200 rounded mb-2">
+                                    <div class="font-medium text-sm mb-1">
+                                        Coluna <span x-text="colIndex + 1"></span>
+                                    </div>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text-alt">Largura: <span x-text="col.width"></span>/12</span>
+                                        </label>
+                                    </div>
+                                    <div class="text-xs opacity-60 mt-1">
+                                        <span x-text="col.fields?.length || 0"></span> campo(s)
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>

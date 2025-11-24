@@ -1,0 +1,177 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+<div class="upload-form-container max-w-2xl mx-auto">
+    <div class="flex items-center gap-4 mb-6">
+        <a href="/panel/uploads" class="btn btn-ghost btn-circle">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="text-3xl font-bold">Novo Upload</h1>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <form id="upload-form" enctype="multipart/form-data" class="space-y-6">
+                
+                <div
+                    class="upload-dropzone border-2 border-dashed border-base-300 rounded-box p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                    id="dropzone"
+                    ondrop="handleDrop(event)"
+                    ondragover="handleDragOver(event)"
+                    ondragleave="handleDragLeave(event)">
+
+                    <input
+                        type="file"
+                        name="file"
+                        id="file-input"
+                        class="hidden"
+                        required
+                        onchange="handleFileSelect(event)"/>
+
+                    <label for="file-input" class="cursor-pointer">
+                        <span class="material-symbols-outlined text-6xl text-base-content/50 mb-4 block">
+                            upload_file
+                        </span>
+                        <p class="text-lg mb-2">
+                            Clique para selecionar ou arraste um arquivo
+                        </p>
+                        <p class="text-sm text-base-content/70">
+                            Imagens (JPG, PNG, GIF, WebP, SVG), Documentos (PDF, DOC, DOCX), Planilhas (XLS, XLSX), Áudio (MP3, WAV, OGG), Vídeo (MP4, WebM)
+                        </p>
+                        <p class="text-sm text-base-content/70">
+                            Tamanho máximo: 5 MB
+                        </p>
+                    </label>
+                </div>
+
+                
+                <div id="preview-container" class="hidden">
+                    <div class="alert">
+                        <span class="material-symbols-outlined">description</span>
+                        <div>
+                            <h3 class="font-bold" id="preview-filename"></h3>
+                            <p class="text-sm" id="preview-size"></p>
+                        </div>
+                    </div>
+                    <img id="preview-image" class="hidden mt-4 rounded-box max-h-64 mx-auto" alt="Preview"/>
+                </div>
+
+                
+                <div class="flex gap-4 justify-end">
+                    <a href="/panel/uploads" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span class="material-symbols-outlined">upload</span>
+                        Fazer Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedFile = null;
+
+    // Drag & Drop
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.add('border-primary', 'bg-primary/10');
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('border-primary', 'bg-primary/10');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.classList.remove('border-primary', 'bg-primary/10');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            document.getElementById('file-input').files = files;
+            handleFileSelect({ target: { files: files } });
+        }
+    }
+
+    // Seleção de arquivo
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        selectedFile = file;
+
+        // Mostrar preview
+        const previewContainer = document.getElementById('preview-container');
+        const previewFilename = document.getElementById('preview-filename');
+        const previewSize = document.getElementById('preview-size');
+        const previewImage = document.getElementById('preview-image');
+
+        previewFilename.textContent = file.name;
+        previewSize.textContent = formatBytes(file.size);
+        previewContainer.classList.remove('hidden');
+
+        // Preview de imagem
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewImage.classList.add('hidden');
+        }
+    }
+
+    // Submit do formulário
+    document.getElementById('upload-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (!selectedFile) {
+            window.flash('Selecione um arquivo', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading loading-spinner"></span> Enviando...';
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await fetch('/panel/uploads', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.flashAndRedirect('/panel/uploads', 'Upload realizado com sucesso!', 'success');
+            } else {
+                window.flash(data.message || 'Erro ao fazer upload', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span class="material-symbols-outlined">upload</span> Fazer Upload';
+            }
+        } catch (err) {
+            window.flash('Erro ao fazer upload', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined">upload</span> Fazer Upload';
+        }
+    });
+
+    // Formatar bytes
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+</script>
+{/block}

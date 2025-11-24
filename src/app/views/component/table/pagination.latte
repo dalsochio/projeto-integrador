@@ -1,0 +1,63 @@
+{varType array $pagination}
+{var $lastPage = ceil($pagination['total'] / $pagination['perPage'])}
+
+<div class="join">
+    {if $pagination['currentPage'] === 1}
+        <button class="join-item btn" disabled>
+            <i class="ti ti-chevron-left text-xl"></i>
+            <span class="sr-only">Previous</span>
+        </button>
+    {else}
+        <a href="?page={max(1, $pagination['currentPage'] - 1)}" class="join-item btn">
+            <i class="ti ti-chevron-left text-xl"></i>
+            <span class="sr-only">Previous</span>
+        </a>
+    {/if}
+
+    {if $pagination['currentPage'] > 3}
+        <a href="?page=1" class="join-item btn">
+            1
+        </a>
+        {if $pagination['currentPage'] > 4}
+            <button class="join-item btn" disabled>
+                ...
+            </button>
+        {/if}
+    {/if}
+
+    {foreach range(max(1, $pagination['currentPage'] - 1), min($lastPage, $pagination['currentPage'] + 1)) as $page}
+        {if $page === $pagination['currentPage']}
+            <button class="join-item btn !btn-active" disabled>
+                {$page}
+            </button>
+        {else}
+            <a href="?page={$page}" class="join-item btn">
+                {$page}
+            </a>
+        {/if}
+    {/foreach}
+
+    {if $pagination['currentPage'] < $lastPage - 2}
+        {if $pagination['currentPage'] < $lastPage - 3}
+            <button class="join-item btn" disabled>
+                ...
+            </button>
+        {/if}
+        <a href="?page={$lastPage}" class="join-item btn">
+            {$lastPage}
+        </a>
+    {/if}
+
+    {if $pagination['currentPage'] === $lastPage}
+        <button class="join-item btn" disabled>
+            <span class="sr-only">Next</span>
+            <i class="ti ti-chevron-right text-xl"></i>
+        </button>
+    {else}
+        <a href="?page={min($lastPage, $pagination['currentPage'] + 1)}" class="join-item btn">
+            <span class="sr-only">Next</span>
+            <i class="ti ti-chevron-right text-xl"></i>
+        </a>
+    {/if}
+
+</div>

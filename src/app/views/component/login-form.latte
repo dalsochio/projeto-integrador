@@ -1,0 +1,32 @@
+<form method="post"
+      hx-post="/login"
+      hx-target="this"
+      hx-swap="outerHTML"
+      class="align-center w-xs h-fit bg-base-200 p-4 rounded-box flex flex-col gap-2 justify-center">
+
+    {if isset($error)}
+        <div role="alert" class="alert alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{$error}</span>
+        </div>
+    {/if}
+
+    <fieldset class="fieldset">
+        <legend class="fieldset-legend">Usuário</legend>
+        <input type="text" name="login" class="input" required minlength="3"
+               autocomplete="login" value="{$login ?? ''}"/>
+    </fieldset>
+    <fieldset class="fieldset">
+        <legend class="fieldset-legend">Senha</legend>
+        <input type="password" name="password" class="input" placeholder="********" required minlength="3" autocomplete="current-password"/>
+    </fieldset>
+    <button class="btn btn-active" type="submit">
+        ENTRAR
+    </button>
+
+    <div class="text-center mt-2">
+        <a href="/register" class="link link-hover text-sm">Não tem conta? Registre-se</a>
+    </div>
+</form>

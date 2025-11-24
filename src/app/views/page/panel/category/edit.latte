@@ -1,0 +1,313 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Editar categoria</p>
+                <p class="text-sm text-base-content/70">Categoria: {$category['display_name']}</p>
+            </div>
+            <a href="/panel/category" class="btn btn-ghost btn-sm">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Voltar
+            </a>
+        </div>
+
+        {if $category['internal']}
+            <div class="alert alert-warning">
+                <span class="material-symbols-outlined">lock</span>
+                <div>
+                    <h3 class="font-bold">Categoria Interna do Sistema</h3>
+                    <div class="text-sm">Esta categoria contém módulos internos com rotas hardcoded. O nome técnico e URL não podem ser alterados.</div>
+                </div>
+            </div>
+        {/if}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <div class="lg:col-span-2">
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <h2 class="card-title text-base">Informações da categoria</h2>
+
+                        <form method="POST" action="/panel/category/{$category['id']}">
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Nome técnico <span class="text-error">*</span></span>
+                                </label>
+                                <input type="text"
+                                       name="name"
+                                       value="{$category['name']}"
+                                       placeholder="Ex: administration"
+                                       class="input input-bordered w-full"
+                                       {if $category['internal']}disabled{/if}
+                                       required />
+                                <label class="label">
+                                    <span class="label-text-alt">{if $category['internal']}Campo bloqueado em categorias internas{else}Nome usado internamente no sistema{/if}</span>
+                                </label>
+                            </div>
+
+
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Nome de exibição <span class="text-error">*</span></span>
+                                </label>
+                                <input type="text"
+                                       name="display_name"
+                                       value="{$category['display_name']}"
+                                       placeholder="Ex: Administração"
+                                       class="input input-bordered w-full"
+                                       required />
+                            </div>
+
+
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">URL <span class="text-error">*</span></span>
+                                </label>
+                                <label class="input input-bordered flex items-center gap-2">
+                                    <span class="text-base-content/70 font-mono text-sm">/</span>
+                                    <input type="text"
+                                           name="url_path"
+                                           value="{$category['url_path']}"
+                                           placeholder="administration"
+                                           class="grow"
+                                           {if $category['internal']}disabled{/if}
+                                           required />
+                                </label>
+                                <label class="label">
+                                    <span class="label-text-alt text-warning">
+                                        {if $category['internal']}Campo bloqueado em categorias internas{else}Atenção: Alterar a URL pode quebrar links existentes{/if}
+                                    </span>
+                                </label>
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Ícone (Material Symbols)</span>
+                                    <a href="https://fonts.google.com/icons"
+                                       target="_blank"
+                                       class="label-text-alt link link-primary">
+                                        Ver ícones disponíveis
+                                    </a>
+                                </label>
+                                <input type="text"
+                                       name="icon"
+                                       value="{$category['icon']}"
+                                       placeholder="category"
+                                       class="input input-bordered w-full" />
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Descrição</span>
+                                </label>
+                                <textarea name="description"
+                                          placeholder="Descrição da categoria"
+                                          class="textarea textarea-bordered w-full"
+                                          rows="3">{$category['description']}</textarea>
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Ordem no menu</span>
+                                </label>
+                                <input type="number"
+                                       name="menu_order"
+                                       value="{$category['menu_order']}"
+                                       placeholder="0"
+                                       class="input input-bordered w-full"
+                                       min="0" />
+                                <label class="label">
+                                    <span class="label-text-alt">Menor número aparece primeiro</span>
+                                </label>
+                            </div>
+
+                            
+                            <div class="divider">Status</div>
+
+                            <div class="form-control">
+                                <label class="label cursor-pointer justify-start gap-2">
+                                    <input type="checkbox"
+                                           name="is_active"
+                                           value="1"
+                                           {if $category['is_active']}checked{/if}
+                                           class="toggle toggle-success" />
+                                    <span class="label-text">Categoria ativa</span>
+                                </label>
+                            </div>
+
+                            
+                            <div class="card-actions justify-end mt-6">
+                                <a href="/panel/category" class="btn btn-ghost">
+                                    Cancelar
+                                </a>
+                                <button type="submit"
+                                        class="btn btn-primary">
+                                    <span class="material-symbols-outlined">save</span>
+                                    <span>Salvar alterações</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="lg:col-span-1">
+                
+                <div class="card bg-base-100 shadow-sm border border-base-content/5 mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title text-base">Informações</h2>
+
+                        <div class="space-y-2 text-sm">
+                            <div>
+                                <span class="font-semibold">ID:</span>
+                                <span class="ml-2">#{$category['id']}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">Criado em:</span>
+                                <span class="ml-2">{$category['created_at']|date:'d/m/Y H:i'}</span>
+                            </div>
+                            {if $category['updated_at']}
+                                <div>
+                                    <span class="font-semibold">Atualizado em:</span>
+                                    <span class="ml-2">{$category['updated_at']|date:'d/m/Y H:i'}</span>
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="card-title text-base">
+                                Módulos ({count($modules)})
+                            </h2>
+                        </div>
+
+                        {if count($modules) === 0}
+                            <div class="text-center py-8 text-base-content/50">
+                                <span class="material-symbols-outlined text-4xl mb-2">inbox</span>
+                                <p class="text-sm">Nenhum módulo nesta categoria</p>
+                            </div>
+                        {else}
+                            <div class="alert alert-info mb-4">
+                                <span class="material-symbols-outlined">info</span>
+                                <span class="text-sm">Arraste para reordenar os módulos no menu</span>
+                            </div>
+
+                            <div id="modules-list" class="space-y-2">
+                                {foreach $modules as $index => $module}
+                                    <div class="module-item flex items-center gap-2 p-3 rounded border border-base-content/10 bg-base-200 cursor-move hover:bg-base-300 transition-colors" data-module-id="{$module['id']}">
+                                        <span class="material-symbols-outlined text-base-content/40 drag-handle">drag_indicator</span>
+                                        <div class="flex-1">
+                                            <div class="font-semibold text-sm">{$module['display_name']}</div>
+                                            <div class="text-xs text-base-content/60">/{$module['url_path']}</div>
+                                        </div>
+                                        <div class="badge badge-sm badge-ghost">#{$index + 1}</div>
+                                    </div>
+                                {/foreach}
+                            </div>
+
+                            <div class="card-actions justify-end mt-4">
+                                <button type="button"
+                                        id="save-modules-order"
+                                        class="btn btn-primary btn-sm"
+                                        disabled>
+                                    <span class="material-symbols-outlined">save</span>
+                                    <span>Salvar ordem</span>
+                                </button>
+                            </div>
+
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modulesList = document.getElementById('modules-list');
+            const saveButton = document.getElementById('save-modules-order');
+
+            if (!modulesList) return;
+
+            let hasChanges = false;
+            let originalOrder = [];
+
+            const items = modulesList.querySelectorAll('.module-item');
+            for (const item of items) {
+                originalOrder.push(item.dataset.moduleId);
+            }
+
+            const sortable = Sortable.create(modulesList, {
+                animation: 150,
+                handle: '.drag-handle',
+                ghostClass: 'opacity-50',
+                onEnd: function() {
+                    const newOrder = [];
+                    const items = modulesList.querySelectorAll('.module-item');
+                    for (const item of items) {
+                        newOrder.push(item.dataset.moduleId);
+                    }
+
+                    let changed = false;
+                    if (originalOrder.length !== newOrder.length) {
+                        changed = true;
+                    } else {
+                        for (let i = 0; i < originalOrder.length; i++) {
+                            if (originalOrder[i] !== newOrder[i]) {
+                                changed = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    hasChanges = changed;
+                    saveButton.disabled = !changed;
+
+                    const badges = modulesList.querySelectorAll('.badge');
+                    for (let i = 0; i < badges.length; i++) {
+                        badges[i].textContent = '#' + (i + 1);
+                    }
+                }
+            });
+
+            saveButton.addEventListener('click', function() {
+                const items = modulesList.querySelectorAll('.module-item');
+                const modulesOrder = [];
+                for (const item of items) {
+                    modulesOrder.push(item.dataset.moduleId);
+                }
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                const categoryId = window.location.pathname.split('/')[3];
+                form.action = '/panel/category/' + categoryId + '/modules-order';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'modules_order';
+                input.value = JSON.stringify(modulesOrder);
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+
+                saveButton.disabled = true;
+                saveButton.innerHTML = '<span class="loading loading-spinner loading-sm"></span><span>Salvando...</span>';
+
+                form.submit();
+            });
+        });
+    </script>
+
+{/block}

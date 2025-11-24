@@ -1,0 +1,167 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Nova categoria</p>
+                <p class="text-sm text-base-content/70">Crie uma nova categoria para organizar os módulos</p>
+            </div>
+            <a href="/panel/category" class="btn btn-ghost btn-sm">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Voltar
+            </a>
+        </div>
+
+        <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card-body">
+                <h2 class="card-title text-base">Informações da categoria</h2>
+
+                <form method="POST" action="/panel/category">
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Nome técnico <span class="text-error">*</span></span>
+                        </label>
+                        <input type="text"
+                               name="name"
+                               id="category-name"
+                               placeholder="Ex: administration"
+                               class="input input-bordered w-full"
+                               oninput="updateUrlPath(this.value)"
+                               required />
+                        <label class="label">
+                            <span class="label-text-alt">Nome usado internamente no sistema</span>
+                        </label>
+                    </div>
+
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Nome de exibição <span class="text-error">*</span></span>
+                        </label>
+                        <input type="text"
+                               name="display_name"
+                               id="display-name"
+                               placeholder="Ex: Administração"
+                               class="input input-bordered w-full"
+                               required />
+                    </div>
+
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">URL <span class="text-error">*</span></span>
+                        </label>
+                        <label class="input input-bordered flex items-center gap-2">
+                            <span class="text-base-content/70 font-mono text-sm">/</span>
+                            <input type="text"
+                                   name="url_path"
+                                   id="url-path"
+                                   placeholder="administration"
+                                   class="grow"
+                                   required />
+                        </label>
+                        <label class="label">
+                            <span class="label-text-alt">URL da categoria no menu</span>
+                        </label>
+                    </div>
+
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Ícone (Material Symbols)</span>
+                            <a href="https://fonts.google.com/icons"
+                               target="_blank"
+                               class="label-text-alt link link-primary">
+                                Ver ícones disponíveis
+                            </a>
+                        </label>
+                        <input type="text"
+                               name="icon"
+                               placeholder="category"
+                               class="input input-bordered w-full" />
+                    </div>
+
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Descrição</span>
+                        </label>
+                        <textarea name="description"
+                                  placeholder="Descrição da categoria"
+                                  class="textarea textarea-bordered w-full"
+                                  rows="3"></textarea>
+                    </div>
+
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Ordem no menu</span>
+                        </label>
+                        <input type="number"
+                               name="menu_order"
+                               value="0"
+                               placeholder="0"
+                               class="input input-bordered w-full"
+                               min="0" />
+                        <label class="label">
+                            <span class="label-text-alt">Menor número aparece primeiro</span>
+                        </label>
+                    </div>
+
+                    
+                    <div class="divider">Status</div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input type="checkbox"
+                                   name="is_active"
+                                   value="1"
+                                   checked
+                                   class="toggle toggle-success" />
+                            <span class="label-text">Categoria ativa</span>
+                        </label>
+                    </div>
+
+                    
+                    <div class="card-actions justify-end mt-6">
+                        <a href="/panel/category" class="btn btn-ghost">
+                            Cancelar
+                        </a>
+                        <button type="submit"
+                                class="btn btn-primary">
+                            <span class="material-symbols-outlined">save</span>
+                            <span>Salvar categoria</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateUrlPath(name) {
+            const urlInput = document.getElementById('url-path');
+            const displayNameInput = document.getElementById('display-name');
+
+            if (!urlInput.value || urlInput.dataset.generated === 'true') {
+                const urlPath = name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                urlInput.value = urlPath;
+                urlInput.dataset.generated = 'true';
+            }
+
+            if (!displayNameInput.value) {
+                displayNameInput.value = name;
+            }
+        }
+
+        document.getElementById('url-path').addEventListener('input', function() {
+            this.dataset.generated = 'false';
+        });
+    </script>
+
+{/block}

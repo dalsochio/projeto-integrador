@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="pt_BR" data-theme="{$user['theme'] ?? 'system'}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{!empty($title) ? $title . ' - ' : ''}{$env['config']['system_name'] ?? 'Painel Administrativo'}</title>
+
+    {block assets}
+
+    {if $env['APP_ENV'] === 'development'}
+        <script type="module" src="http://localhost:5173/@vite/client"></script>
+        <script type="module" src="http://localhost:5173/app/views/assets/js/app.js"></script>
+    <link rel="stylesheet" href="http://localhost:5173/app/views/assets/css/app.css"/>
+    {else}
+    <link rel="stylesheet" href="/public/assets/css/app.css">
+        <script type="module" src="/public/assets/js/app.js"></script>
+    {/if}
+
+        <link rel="icon" href="{$env['config']['favicon_url'] ?? '/public/assets/img/methone.png'}"/>
+
+    {block global-vars}
+        {var $theme = $user['theme'] ?? $_COOKIE['theme'] ?? 'system'}
+        {var $isLoggedIn = $user ? 'true' : 'false'}
+        {var $themeLightConfig = $env['config']['theme_light'] ?? 'light'}
+        {var $themeDarkConfig = $env['config']['theme_dark'] ?? 'dark'}
+        <script id="global-vars"{if $htmx['oob'] ?? false} hx-swap-oob="true" {/if} type="text/global-vars">
+            { "theme": "{$theme}", "isLoggedIn": {$isLoggedIn}, "themeLightConfig": "{$themeLightConfig}", "themeDarkConfig": "{$themeDarkConfig}" }
+        </script>
+    {/block}
+
+    
+    
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+    {/block}
+
+</head>
+<body hx-ext="alpine-morph" hx-swap="morph">
+<div id="oob-anchor" hx-swap-oob="true" hidden></div>
+{block main}
+    <main id="main" class="scroll-smooth bg-base-200 min-h-screen h-screen max-h-screen overflow-hidden flex flex-col">
+        {block content}{/block}
+    </main>
+{/block}
+
+<script>
+    // Listener para eventos HTMX flash/flash
+    document.body.addEventListener('flash', function(evt) {
+        const detail = evt.detail;
+        if (detail && detail.message) {
+            window.flash(detail.message, detail.type || 'success');
+        }
+    });
+    
+    // Sincronizar editores ricos antes do submit
+    document.addEventListener('submit', function(e) {
+        const form = e.target;
+        
+        // Sincronizar Quill editors
+        form.querySelectorAll('[x-ref="editor"]').forEach(editorDiv => {
+            const parent = editorDiv.closest('[x-data]');
+            if (parent && parent.__x) {
+                const data = parent.__x.$data;
+                if (data.quillEditor) {
+                    const textarea = parent.querySelector('[x-ref="textarea"]');
+                    if (textarea) {
+                        textarea.value = data.quillEditor.root.innerHTML;
+                    }
+                }
+            }
+        });
+        
+        // Sincronizar CodeMirror editors
+        document.querySelectorAll('.CodeMirror').forEach(cm => {
+            if (cm.CodeMirror) {
+                cm.CodeMirror.save();
+            }
+        });
+    }, true);
+</script>
+
+{php $flashMessages = Flight::flash()->all()}
+{if count($flashMessages) > 0}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {foreach $flashMessages as $flash}
+            window.flash({json_encode($flash['message'])|noescape}, {json_encode($flash['type'])|noescape});
+        {/foreach}
+    });
+</script>
+{/if}
+
+{block scripts}{/block}
+</body>
+</html>

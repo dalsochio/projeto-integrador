@@ -1,0 +1,18 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <p class="text-xl font-semibold">{$resource['display_name']}</p>
+            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                <p class="hidden lg:inline-block uppercase">Novo registro</p>
+            </a>
+        </div>
+        <span>{$resource['description'] ?? ''}</span>
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+            {include ../../component/table/index.latte}
+        </div>
+    </div>
+
+{/block}

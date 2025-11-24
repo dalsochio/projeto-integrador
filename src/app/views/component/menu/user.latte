@@ -1,0 +1,29 @@
+<div class="dropdown dropdown-top dropdown-end !w-full">
+    <div tabindex="0" role="button" class="btn h-fit !w-full p-0 text-left">
+        <div class="flex flex-row gap-2 p-2 rounded-box !w-full relative">
+            <div class="avatar">
+                <div class="rounded-xl w-10 h-10">
+                    <img src="https://openclipart.org/download/247319/abstract-user-flat-3.svg" alt="user avatar"/>
+                </div>
+            </div>
+            <div class="leading-4 my-auto">
+                <h1 class="font-semibold">{$_SESSION['user']['username']}</h1>
+                <h2 class="font-normal text-xs">{$_SESSION['user']['email']}</h2>
+            </div>
+            <span class="material-symbols-outlined absolute top-4 right-2">unfold_more</span>
+        </div>
+    </div>
+    <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 shadow-sm">
+        <a href="/account" class="btn btn-ghost justify-start">
+            <span class="material-symbols-outlined">person</span>
+            Minha Conta
+        </a>
+        <div class="divider"></div>
+        {include ../language-selector.latte}
+        <div class="divider"></div>
+        <a href="/logout" hx-disable class="btn btn-ghost justify-start">
+            <span class="material-symbols-outlined">logout</span>
+            Logout
+        </a>
+    </ul>
+</div>

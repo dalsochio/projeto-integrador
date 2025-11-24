@@ -1,0 +1,69 @@
+
+
+{default $id = $name}
+{default $value = $value ?? $field['default_value'] ?? ''}
+{default $attributes = []}
+
+{var $isRequired = !$field['is_nullable']}
+{var $isReadonly = !$field['is_editable']}
+
+<div class="form-control w-full" 
+     x-data="{ 
+         quillEditor: null,
+         init() {
+             this.$nextTick(() => {
+                 const editorDiv = this.$refs.editor;
+                 this.quillEditor = new Quill(editorDiv, {
+                     theme: 'snow',
+                     readOnly: {if $isReadonly}true{else}false{/if},
+                     placeholder: '{$field['input_placeholder'] ?? 'Digite o conteúdo...'}',
+                     modules: {
+                         toolbar: [
+                             ['bold', 'italic', 'underline', 'strike'],
+                             ['blockquote', 'code-block'],
+                             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                             [{ 'header': [1, 2, 3, false] }],
+                             ['link'],
+                             ['clean']
+                         ]
+                     }
+                 });
+                 
+                 // Sincronizar com textarea hidden em tempo real
+                 this.quillEditor.on('text-change', () => {
+                     this.$refs.textarea.value = this.quillEditor.root.innerHTML;
+                 });
+                 
+                 // Garantir sincronização antes do submit
+                 const form = this.$el.closest('form');
+                 if (form) {
+                     form.addEventListener('submit', () => {
+                         this.$refs.textarea.value = this.quillEditor.root.innerHTML;
+                     });
+                 }
+             });
+         }
+     }">
+    <label for="{$id}" class="label">
+        <span class="label-text">
+            {$field['display_name'] ?? $field['name']}
+            {if $isRequired}<span class="text-error ml-1">*</span>{/if}
+        </span>
+        {if $field['tooltip']}
+            <span class="label-text-alt tooltip tooltip-left" data-tip="{$field['tooltip']}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </span>
+        {/if}
+    </label>
+
+    <div x-ref="editor" class="bg-white border border-base-300 rounded-lg min-h-[200px]">{$value}</div>
+    <textarea x-ref="textarea" id="{$id}" name="{$name}" class="hidden" {if $isRequired}required{/if}>{$value}</textarea>
+
+    {if $field['help_text']}
+        <label class="label">
+            <span class="label-text-alt">{$field['help_text']}</span>
+        </label>
+    {/if}
+</div>

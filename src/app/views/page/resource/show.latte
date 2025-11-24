@@ -1,0 +1,255 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <p class="text-xl font-semibold">{$resource['display_name']} - Visualizar</p>
+            <div class="flex gap-2">
+                <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/edit" class="btn btn-primary btn-sm">
+                    <span class="material-symbols-outlined">edit</span>
+                    Editar
+                </a>
+                <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/../" class="btn btn-ghost btn-sm">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Voltar
+                </a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {* Mostrar ID primeiro *}
+                {foreach $fields as $field}
+                    {if $field['name'] === 'id'}
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">ID</span>
+                            </label>
+                            <div class="p-3 bg-base-200 rounded-lg">
+                                <span class="font-mono text-lg">{$data['id']}</span>
+                            </div>
+                        </div>
+                    {/if}
+                {/foreach}
+                
+                {* Mostrar campos normais *}
+                {foreach $fields as $field}
+                    {if in_array($field['name'], ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'])}
+                        {* Pular - já foram ou serão mostrados separadamente *}
+                    {elseif $field['is_visible_detail'] ?? true}
+                        {var $inputType = $field['input_type'] ?? 'text'}
+                        {var $fieldValue = $data[$field['name']] ?? null}
+                        {var $colWidth = $field['column_width'] ?? 6}
+                        
+                        {* Campos de texto rico sempre ocupam largura total *}
+                        {if in_array($inputType, ['wysiwyg', 'markdown', 'code'])}
+                            {var $colWidth = 12}
+                        {/if}
+                        
+                        <div class="form-control col-span-{$colWidth > 6 ? '2' : '1'}">
+                            <label class="label">
+                                <span class="label-text font-semibold">{$field['display_name'] ?? $field['name']}</span>
+                                {if $field['tooltip']}
+                                    <span class="label-text-alt tooltip tooltip-left" data-tip="{$field['tooltip']}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </span>
+                                {/if}
+                            </label>
+                            
+                            <div class="p-3 bg-base-200 rounded-lg min-h-[3rem] flex items-center">
+                                
+                                
+                                
+                                {if $inputType === 'file' && !empty($fieldValue)}
+                                    {var $filePath = $fieldValue}
+                                    {var $fileUrl = '/upload/' . $filePath}
+                                    {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+
+                                    {if file_exists($absolutePath)}
+                                        {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+
+                                        {if $isImage}
+                                            <div class="w-full">
+                                                {var $pathInfo = pathinfo($filePath)}
+                                                {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                                {var $thumbUrl = '/upload/' . $thumbPath}
+                                                <a href="{$fileUrl}" target="_blank" class="block">
+                                                    <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-xs hover:opacity-80 transition" />
+                                                </a>
+                                                <a href="{$fileUrl}" target="_blank" class="link link-primary text-xs mt-2 inline-flex items-center gap-1">
+                                                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                                    Ver imagem original
+                                                </a>
+                                            </div>
+                                        {else}
+                                            <a href="{$fileUrl}" target="_blank" class="link link-primary inline-flex items-center gap-2">
+                                                <span class="material-symbols-outlined text-sm">download</span>
+                                                Baixar arquivo ({basename($filePath)})
+                                            </a>
+                                        {/if}
+                                    {else}
+                                        <span class="text-error text-sm">Arquivo não encontrado</span>
+                                    {/if}
+                                
+                                
+                                {elseif $inputType === 'wysiwyg' && !empty($fieldValue)}
+                                    <div class="prose prose-sm max-w-none w-full overflow-auto">
+                                        {$fieldValue|noescape}
+                                    </div>
+                                
+                                
+                                {elseif $inputType === 'markdown' && !empty($fieldValue)}
+                                    <div class="prose prose-sm max-w-none w-full markdown-content" data-markdown="{$fieldValue|json}">
+                                        <script>
+                                            (function() {
+                                                const container = document.currentScript.parentElement;
+                                                const markdown = container.getAttribute('data-markdown');
+                                                if (markdown && typeof marked !== 'undefined') {
+                                                    try {
+                                                        const parsed = JSON.parse(markdown);
+                                                        container.innerHTML = marked.parse(parsed);
+                                                    } catch (e) {
+                                                        container.innerHTML = '<span class="text-error">Erro ao renderizar markdown</span>';
+                                                    }
+                                                } else {
+                                                    container.innerHTML = '<span class="text-warning">Biblioteca marked.js não carregada</span>';
+                                                }
+                                            })();
+                                        </script>
+                                    </div>
+                                
+                                
+                                {elseif $inputType === 'code' && !empty($fieldValue)}
+                                    <div class="w-full">
+                                        <pre class="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm w-full whitespace-pre-wrap break-words"><code>{$fieldValue}</code></pre>
+                                    </div>
+                                
+                                
+                                {elseif $inputType === 'color' && !empty($fieldValue)}
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded border-2 border-base-300" style="background-color: {$fieldValue};"></div>
+                                        <span class="font-mono text-sm">{$fieldValue}</span>
+                                    </div>
+                                
+                                
+                                {elseif ($inputType === 'checkbox' || $inputType === 'toggle')}
+                                    {if $fieldValue}
+                                        <span class="badge badge-success gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Sim
+                                        </span>
+                                    {else}
+                                        <span class="badge badge-ghost gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            Não
+                                        </span>
+                                    {/if}
+                                
+                                
+                                {elseif ($inputType === 'date' || $inputType === 'datetime') && !empty($fieldValue)}
+                                    <span class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base-content/60">calendar_today</span>
+                                        {if $inputType === 'date'}
+                                            {$fieldValue|date:'d/m/Y'}
+                                        {else}
+                                            {$fieldValue|date:'d/m/Y H:i:s'}
+                                        {/if}
+                                    </span>
+                                
+                                
+                                {elseif ($inputType === 'select' || $inputType === 'radio') && !empty($fieldValue)}
+                                    {if !empty($field['input_options'])}
+                                        {var $options = json_decode($field['input_options'], true)}
+                                        {var $selectedOption = null}
+                                        {foreach $options as $option}
+                                            {if ($option['value'] ?? '') == $fieldValue}
+                                                {var $selectedOption = $option['label'] ?? $option['value']}
+                                            {/if}
+                                        {/foreach}
+                                        <span class="badge badge-outline badge-lg">{$selectedOption ?? $fieldValue}</span>
+                                    {else}
+                                        <span>{$fieldValue}</span>
+                                    {/if}
+                                
+                                
+                                {elseif $inputType === 'number' && !empty($fieldValue)}
+                                    <span class="font-mono">
+                                        {if $field['input_prefix']}<span class="text-base-content/60">{$field['input_prefix']} </span>{/if}
+                                        {$fieldValue}
+                                        {if $field['input_suffix']}<span class="text-base-content/60"> {$field['input_suffix']}</span>{/if}
+                                    </span>
+                                
+                                
+                                {elseif $inputType === 'textarea' && !empty($fieldValue)}
+                                    <div class="whitespace-pre-wrap w-full">{$fieldValue}</div>
+                                
+                                
+                                {elseif !empty($fieldValue)}
+                                    <span>
+                                        {if $field['input_prefix']}<span class="text-base-content/60">{$field['input_prefix']} </span>{/if}
+                                        {$fieldValue}
+                                        {if $field['input_suffix']}<span class="text-base-content/60"> {$field['input_suffix']}</span>{/if}
+                                    </span>
+                                
+                                
+                                {else}
+                                    <span class="text-base-content/50 italic">Não informado</span>
+                                {/if}
+                            </div>
+                            
+                            {if $field['help_text']}
+                                <label class="label">
+                                    <span class="label-text-alt text-base-content/60">{$field['help_text']}</span>
+                                </label>
+                            {/if}
+                        </div>
+                    {/if}
+                {/foreach}
+                
+                {* Campos do sistema - sempre por último *}
+                {php $systemFields = []}
+                {foreach $fields as $field}
+                    {if in_array($field['name'], ['created_at', 'updated_at', 'created_by', 'updated_by'])}
+                        {php $systemFields[] = $field}
+                    {/if}
+                {/foreach}
+                
+                {if count($systemFields) > 0}
+                    <div class="col-span-2">
+                        <div class="divider text-sm text-base-content/60">Informações do Sistema</div>
+                    </div>
+                    
+                    {foreach $systemFields as $field}
+                        {var $fieldValue = $data[$field['name']] ?? null}
+                        {var $inputType = $field['input_type'] ?? 'text'}
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold text-sm">{$field['display_name'] ?? $field['name']}</span>
+                            </label>
+                            <div class="p-2 bg-base-200 rounded text-sm">
+                                {if ($inputType === 'datetime' || $field['name'] === 'created_at' || $field['name'] === 'updated_at') && !empty($fieldValue)}
+                                    <span class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base-content/60 text-sm">calendar_today</span>
+                                        {$fieldValue|date:'d/m/Y H:i:s'}
+                                    </span>
+                                {elseif !empty($fieldValue)}
+                                    <span>{$fieldValue}</span>
+                                {else}
+                                    <span class="text-base-content/50 italic">Não informado</span>
+                                {/if}
+                            </div>
+                        </div>
+                    {/foreach}
+                {/if}
+            </div>
+        </div>
+    </div>
+
+{/block}

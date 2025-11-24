@@ -1,0 +1,275 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Minha Conta</p>
+                <p class="text-sm text-base-content/70">Gerencie suas informações pessoais e preferências</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <div class="lg:col-span-2">
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <h2 class="card-title text-base flex items-center gap-2">
+                            <span class="material-symbols-outlined">person</span>
+                            Informações Pessoais
+                        </h2>
+
+                        <form id="formAccount" method="POST">
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Username</span>
+                                </label>
+                                <input type="text"
+                                       name="username"
+                                       value="{$user['username']}"
+                                       placeholder="Ex: joao.silva"
+                                       class="input input-bordered w-full" />
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Email</span>
+                                </label>
+                                <input type="email"
+                                       name="email"
+                                       value="{$user['email']}"
+                                       placeholder="joao.silva@exemplo.com"
+                                       class="input input-bordered w-full" />
+                            </div>
+
+                            
+                            <div class="form-control opacity-50">
+                                <label class="label">
+                                    <span class="label-text">Tema</span>
+                                    <span class="label-text-alt badge badge-sm">Em breve</span>
+                                </label>
+
+                                <div class="flex flex-col gap-2 pointer-events-none">
+                                    <label class="label cursor-not-allowed justify-start gap-3 border border-base-content/10 rounded-lg p-3 bg-base-200/30">
+                                        <input type="radio"
+                                               name="theme"
+                                               value="light"
+                                               disabled
+                                               class="radio radio-primary" />
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined">light_mode</span>
+                                            <span class="label-text">Claro</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="label cursor-not-allowed justify-start gap-3 border border-base-content/10 rounded-lg p-3 bg-base-200/30">
+                                        <input type="radio"
+                                               name="theme"
+                                               value="dark"
+                                               disabled
+                                               class="radio radio-primary" />
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined">dark_mode</span>
+                                            <span class="label-text">Escuro</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="label cursor-not-allowed justify-start gap-3 border border-base-content/10 rounded-lg p-3 bg-base-200/30">
+                                        <input type="radio"
+                                               name="theme"
+                                               value="system"
+                                               checked
+                                               disabled
+                                               class="radio radio-primary" />
+                                        <div class="flex items-center gap-2">
+                                            <span class="material-symbols-outlined">computer</span>
+                                            <span class="label-text">Sistema (Padrão)</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex justify-end gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="material-symbols-outlined">save</span>
+                                    <span>Salvar Alterações</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                
+                <div class="card bg-base-100 shadow-sm border border-base-content/5 mt-4">
+                    <div class="card-body">
+                        <h2 class="card-title text-base flex items-center gap-2">
+                            <span class="material-symbols-outlined">lock</span>
+                            Alterar Senha
+                        </h2>
+
+                        <form id="formPassword" method="POST">
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Senha Atual</span>
+                                </label>
+                                <input type="password"
+                                       name="current_password"
+                                       placeholder="Digite sua senha atual"
+                                       class="input input-bordered w-full" />
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Nova Senha</span>
+                                </label>
+                                <input type="password"
+                                       name="new_password"
+                                       placeholder="Digite a nova senha"
+                                       class="input input-bordered w-full" />
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Confirmar Nova Senha</span>
+                                </label>
+                                <input type="password"
+                                       name="confirm_password"
+                                       placeholder="Confirme a nova senha"
+                                       class="input input-bordered w-full" />
+                            </div>
+
+                            
+                            <div class="flex justify-end gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="material-symbols-outlined">lock_reset</span>
+                                    <span>Alterar Senha</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="lg:col-span-1">
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <h2 class="card-title text-base flex items-center gap-2">
+                            <span class="material-symbols-outlined">info</span>
+                            Informações da Conta
+                        </h2>
+
+                        <div class="text-sm space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-base-content/60">ID:</span>
+                                <span class="font-medium">{$user['id']}</span>
+                            </div>
+                            {if isset($user['created_at'])}
+                            <div class="flex justify-between">
+                                <span class="text-base-content/60">Criado em:</span>
+                                <span class="font-medium">{$user['created_at']|date:'d/m/Y'}</span>
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const formAccount = document.getElementById('formAccount');
+            const formPassword = document.getElementById('formPassword');
+
+            formAccount.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = formAccount.querySelector('button[type="submit"]');
+                const btnText = btn.querySelector('span:last-child');
+                const originalText = btnText.textContent;
+
+                btn.disabled = true;
+                btnText.textContent = 'Salvando...';
+
+                const formData = new FormData(formAccount);
+                const data = Object.fromEntries(formData);
+
+                try {
+                    const res = await fetch('/account', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await res.json();
+
+                    if (res.ok) {
+                        window.flashAndReload(result.message, 'success');
+                    } else {
+                        window.flash(result.message || 'Erro ao salvar', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    window.flash('Erro ao salvar', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btnText.textContent = originalText;
+                }
+            });
+
+            formPassword.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = formPassword.querySelector('button[type="submit"]');
+                const btnText = btn.querySelector('span:last-child');
+                const originalText = btnText.textContent;
+
+                const formData = new FormData(formPassword);
+                const data = Object.fromEntries(formData);
+
+                if (data.new_password !== data.confirm_password) {
+                    window.flash('As senhas não coincidem', 'error');
+                    return;
+                }
+
+                if (data.new_password.length < 6) {
+                    window.flash('A senha deve ter no mínimo 6 caracteres', 'error');
+                    return;
+                }
+
+                btn.disabled = true;
+                btnText.textContent = 'Alterando...';
+
+                try {
+                    const res = await fetch('/account', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            current_password: data.current_password,
+                            new_password: data.new_password
+                        })
+                    });
+
+                    const result = await res.json();
+
+                    if (res.ok) {
+                        window.flashAndReload(result.message, 'success');
+                    } else {
+                        window.flash(result.message || 'Erro ao alterar senha', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    window.flash('Erro ao alterar senha', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btnText.textContent = originalText;
+                }
+            });
+        })();
+    </script>
+{/block}

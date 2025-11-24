@@ -1,0 +1,37 @@
+{var $menu = generateMenu()}
+
+<ul class="bg-base-200 rounded-box w-56">
+    {foreach $menu as $category}
+        <li>
+            <details open="">
+                <summary>
+                    {if $category['icon_type'] === 'text'}
+                        <span class="material-symbols-outlined">{$category['icon']}</span>
+                    {else}
+                        <img src="{$category['icon']}" alt="{$category['name']} icon"/>
+                    {/if}
+                    {$category['display_name']}
+                </summary>
+                <ul>
+                    {foreach $category['items'] as $item}
+                        <li>
+                            
+                            {if $category['url_path']}
+                                <a href="/{$category['url_path']}/{$item['url_path']}">
+                            {else}
+                                <a href="/{$item['url_path']}">
+                            {/if}
+                                {if $item['icon_type'] === 'text'}
+                                    <span class="material-symbols-outlined">{$item['icon']}</span>
+                                {else}
+                                    <img src="{$item['icon']}" alt="{$item['name']} icon"/>
+                                {/if}
+                                {$item['display_name']}
+                            </a>
+                        </li>
+                    {/foreach}
+                </ul>
+            </details>
+        </li>
+    {/foreach}
+</ul>

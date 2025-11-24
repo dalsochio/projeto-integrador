@@ -1,0 +1,23 @@
+{layout ./app.latte}
+
+{block content}
+    <div id="panel" class="drawer lg:drawer-open bg-base-200">
+        <input id="my-drawer-2" type="checkbox" class="drawer-toggle"/>
+        <div class="drawer-content flex flex-col items-center justify-center p-2 h-screen overflow-hidden">
+            <div class="relative bg-base-100 shadow-main border border-base-200 w-full h-full rounded-selector p-4 flex flex-col gap-4">
+                <div class="flex flex-row md:gap-4 items-center">
+                    <label for="my-drawer-2" class="btn btn-ghost p-2 drawer-button lg:hidden">
+                        <span class="material-symbols-outlined">space_dashboard</span>
+                    </label>
+                    
+                </div>
+                {include ../component/loading.latte}
+                <main class="max-h-full h-full min-h-full overflow-x-hidden scrollbar-thumb-rounded-box scrollbar-track-rounded-box scrollbar scrollbar-thumb-slate-500 scrollbar-hover:scrollbar-thumb-slate-700 scrollbar-track-base-100 overflow-y-auto">
+                    
+                    {block panel}{/block}
+                </main>
+            </div>
+        </div>
+        {include ../component/menu/index.latte}
+    </div>
+{/block}

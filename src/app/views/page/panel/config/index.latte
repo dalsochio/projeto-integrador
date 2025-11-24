@@ -1,0 +1,385 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Configurações do Sistema</p>
+                <p class="text-sm text-base-content/70">Personalize o painel administrativo</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
+            
+            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                <div class="card-body">
+                    <h2 class="card-title text-base flex items-center gap-2">
+                        <span class="material-symbols-outlined">badge</span>
+                        Identidade visual
+                    </h2>
+
+                    <form id="formIdentity" class="space-y-4">
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Nome do sistema</span>
+                                <span class="label-text-alt text-base-content/50">Aparece no topo da página e no menu lateral</span>
+                            </label>
+                            <input type="text"
+                                   name="system_name"
+                                   value="{$configs['system_name'] ?? 'Painel Administrativo'}"
+                                   placeholder="Ex: Meu Sistema"
+                                   class="input input-bordered w-full" />
+                        </div>
+
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Nome Abreviado</span>
+                                <span class="label-text-alt text-base-content/50">Versão curta para mobile</span>
+                            </label>
+                            <input type="text"
+                                   name="system_short_name"
+                                   value="{$configs['system_short_name'] ?? 'Painel'}"
+                                   placeholder="Ex: Sistema"
+                                   class="input input-bordered w-full" />
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Logo do sistema</span>
+                                <span class="label-text-alt text-base-content/50">Imagem exibida no menu lateral</span>
+                            </label>
+                            <input type="file"
+                                   name="logo"
+                                   id="logo-input"
+                                   accept="image/*"
+                                   class="file-input file-input-bordered w-full"
+                                   onchange="previewLogo(event)" />
+                            <div id="logo-preview" class="mt-2 flex items-center gap-2">
+                                <img src="{$configs['logo_url'] ?? '/assets/img/methone.png'}" alt="Logo atual" class="w-12 h-12 object-contain border border-base-content/10 rounded">
+                                <span class="text-xs text-base-content/50">Logo atual</span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Favicon</span>
+                                <span class="label-text-alt text-base-content/50">Ícone exibido na aba do navegador</span>
+                            </label>
+                            <input type="file"
+                                   name="favicon"
+                                   id="favicon-input"
+                                   accept="image/x-icon,image/png,image/svg+xml"
+                                   class="file-input file-input-bordered w-full"
+                                   onchange="previewFavicon(event)" />
+                            <div id="favicon-preview" class="mt-2 flex items-center gap-2">
+                                <img src="{$configs['favicon_url'] ?? '/assets/img/methone.png'}" alt="Favicon atual" class="w-8 h-8 object-contain border border-base-content/10 rounded">
+                                <span class="text-xs text-base-content/50">Favicon atual</span>
+                            </div>
+                        </div>
+
+                        
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="material-symbols-outlined">save</span>
+                                <span>Salvar Alterações</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            
+            <div class="card bg-base-100 shadow-sm border border-base-content/5 opacity-60">
+                <div class="card-body">
+                    <h2 class="card-title text-base flex items-center gap-2">
+                        <span class="material-symbols-outlined">palette</span>
+                        Temas
+                        <span class="badge badge-sm ml-auto">Em breve</span>
+                    </h2>
+
+                    <form id="formThemes" class="space-y-4 pointer-events-none">
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Tema claro</span>
+                            </label>
+                            <select name="theme_light" class="select select-bordered w-full" disabled>
+                                <option value="light" {if ($configs['theme_light'] ?? 'light') === 'light'}selected{/if}>Light (Padrão)</option>
+                                <option value="cupcake" {if ($configs['theme_light'] ?? '') === 'cupcake'}selected{/if}>Cupcake</option>
+                                <option value="bumblebee" {if ($configs['theme_light'] ?? '') === 'bumblebee'}selected{/if}>Bumblebee</option>
+                                <option value="emerald" {if ($configs['theme_light'] ?? '') === 'emerald'}selected{/if}>Emerald</option>
+                                <option value="corporate" {if ($configs['theme_light'] ?? '') === 'corporate'}selected{/if}>Corporate</option>
+                                <option value="retro" {if ($configs['theme_light'] ?? '') === 'retro'}selected{/if}>Retro</option>
+                                <option value="cyberpunk" {if ($configs['theme_light'] ?? '') === 'cyberpunk'}selected{/if}>Cyberpunk</option>
+                                <option value="valentine" {if ($configs['theme_light'] ?? '') === 'valentine'}selected{/if}>Valentine</option>
+                                <option value="garden" {if ($configs['theme_light'] ?? '') === 'garden'}selected{/if}>Garden</option>
+                                <option value="lofi" {if ($configs['theme_light'] ?? '') === 'lofi'}selected{/if}>Lo-Fi</option>
+                                <option value="pastel" {if ($configs['theme_light'] ?? '') === 'pastel'}selected{/if}>Pastel</option>
+                                <option value="fantasy" {if ($configs['theme_light'] ?? '') === 'fantasy'}selected{/if}>Fantasy</option>
+                                <option value="wireframe" {if ($configs['theme_light'] ?? '') === 'wireframe'}selected{/if}>Wireframe</option>
+                                <option value="cmyk" {if ($configs['theme_light'] ?? '') === 'cmyk'}selected{/if}>CMYK</option>
+                                <option value="autumn" {if ($configs['theme_light'] ?? '') === 'autumn'}selected{/if}>Autumn</option>
+                                <option value="acid" {if ($configs['theme_light'] ?? '') === 'acid'}selected{/if}>Acid</option>
+                                <option value="lemonade" {if ($configs['theme_light'] ?? '') === 'lemonade'}selected{/if}>Lemonade</option>
+                                <option value="winter" {if ($configs['theme_light'] ?? '') === 'winter'}selected{/if}>Winter</option>
+                            </select>
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Tema escuro</span>
+                            </label>
+                            <select name="theme_dark" class="select select-bordered w-full" disabled>
+                                <option value="dark" {if ($configs['theme_dark'] ?? 'dark') === 'dark'}selected{/if}>Dark (Padrão)</option>
+                                <option value="synthwave" {if ($configs['theme_dark'] ?? '') === 'synthwave'}selected{/if}>Synthwave</option>
+                                <option value="halloween" {if ($configs['theme_dark'] ?? '') === 'halloween'}selected{/if}>Halloween</option>
+                                <option value="forest" {if ($configs['theme_dark'] ?? '') === 'forest'}selected{/if}>Forest</option>
+                                <option value="black" {if ($configs['theme_dark'] ?? '') === 'black'}selected{/if}>Black</option>
+                                <option value="luxury" {if ($configs['theme_dark'] ?? '') === 'luxury'}selected{/if}>Luxury</option>
+                                <option value="dracula" {if ($configs['theme_dark'] ?? '') === 'dracula'}selected{/if}>Dracula</option>
+                                <option value="business" {if ($configs['theme_dark'] ?? '') === 'business'}selected{/if}>Business</option>
+                                <option value="night" {if ($configs['theme_dark'] ?? '') === 'night'}selected{/if}>Night</option>
+                                <option value="coffee" {if ($configs['theme_dark'] ?? '') === 'coffee'}selected{/if}>Coffee</option>
+                                <option value="dim" {if ($configs['theme_dark'] ?? '') === 'dim'}selected{/if}>Dim</option>
+                                <option value="sunset" {if ($configs['theme_dark'] ?? '') === 'sunset'}selected{/if}>Sunset</option>
+                            </select>
+                        </div>
+
+                        
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary" disabled>
+                                <span class="material-symbols-outlined">save</span>
+                                <span>Salvar Alterações</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            
+            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                <div class="card-body">
+                    <h2 class="card-title text-base flex items-center gap-2">
+                        <span class="material-symbols-outlined">login</span>
+                        Autenticação
+                    </h2>
+
+                    <form id="formAuth" class="space-y-4">
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Como os usuários fazem login?</span>
+                                <span class="label-text-alt text-base-content/50">Escolha qual informação será usada para entrar no sistema</span>
+                            </label>
+                            <select name="login_column" class="select select-bordered w-full">
+                                <option value="username" {if ($configs['login_column'] ?? 'username') === 'username'}selected{/if}>Nome de usuário</option>
+                                <option value="email" {if ($configs['login_column'] ?? '') === 'email'}selected{/if}>E-mail</option>
+                            </select>
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-3">
+                                <input type="checkbox" name="allow_registration" {if ($configs['allow_registration'] ?? '1') === '1'}checked{/if} class="checkbox checkbox-primary" />
+                                <div>
+                                    <span class="label-text font-medium">Permitir novos cadastros</span>
+                                    <p class="text-xs text-base-content/50">Habilita a página de registro e a API de criação de usuários</p>
+                                </div>
+                            </label>
+                        </div>
+
+
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-3">
+                                <input type="checkbox" name="allow_user_role_panel_access" id="allow-user-panel" {if ($configs['allow_user_role_panel_access'] ?? '1') === '1'}checked{/if} class="checkbox checkbox-primary" />
+                                <div>
+                                    <span class="label-text font-medium">Usuários comuns podem acessar o painel</span>
+                                    <p class="text-xs text-base-content/50">Permite que usuários com role "user" acessem o painel administrativo</p>
+                                </div>
+                            </label>
+                        </div>
+
+
+                        <div class="form-control" id="redirect-url-container" style="display: none;">
+                            <label class="label">
+                                <span class="label-text">URL de redirecionamento para usuários comuns</span>
+                                <span class="label-text-alt text-base-content/50">Para onde redirecionar após login (ex: https://seusite.com)</span>
+                            </label>
+                            <input type="url"
+                                   name="user_role_redirect_url"
+                                   value="{$configs['user_role_redirect_url'] ?? ''}"
+                                   placeholder="https://exemplo.com/dashboard"
+                                   class="input input-bordered w-full" />
+                        </div>
+
+
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary" disabled>
+                                <span class="material-symbols-outlined">save</span>
+                                <span>Salvar Alterações</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            
+            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                <div class="card-body">
+                    <h2 class="card-title text-base flex items-center gap-2">
+                        <span class="material-symbols-outlined">settings</span>
+                        Outras configurações
+                    </h2>
+
+                    <form id="formOther" class="space-y-4">
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Itens por página</span>
+                                <span class="label-text-alt text-base-content/50">Quantos itens mostrar por vez nas listas</span>
+                            </label>
+                            <input type="number"
+                                   name="items_per_page"
+                                   value="{$configs['items_per_page'] ?? '10'}"
+                                   min="5"
+                                   max="100"
+                                   class="input input-bordered w-full" />
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Fuso horário</span>
+                                <span class="label-text-alt text-base-content/50">Região para exibição de datas e horários</span>
+                            </label>
+                            <select name="timezone" class="select select-bordered w-full">
+                                <option value="America/Sao_Paulo" {if ($configs['timezone'] ?? 'America/Sao_Paulo') === 'America/Sao_Paulo'}selected{/if}>America/São Paulo (BRT)</option>
+                                <option value="America/New_York" {if ($configs['timezone'] ?? '') === 'America/New_York'}selected{/if}>America/New York (EST)</option>
+                                <option value="Europe/London" {if ($configs['timezone'] ?? '') === 'Europe/London'}selected{/if}>Europe/London (GMT)</option>
+                                <option value="UTC" {if ($configs['timezone'] ?? '') === 'UTC'}selected{/if}>UTC</option>
+                            </select>
+                        </div>
+
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Formato de data</span>
+                                <span class="label-text-alt text-base-content/50">Como as datas serão exibidas no sistema</span>
+                            </label>
+                            <select name="date_format" class="select select-bordered w-full">
+                                <option value="d/m/Y" {if ($configs['date_format'] ?? 'd/m/Y') === 'd/m/Y'}selected{/if}>DD/MM/AAAA</option>
+                                <option value="Y-m-d" {if ($configs['date_format'] ?? '') === 'Y-m-d'}selected{/if}>AAAA-MM-DD</option>
+                                <option value="m/d/Y" {if ($configs['date_format'] ?? '') === 'm/d/Y'}selected{/if}>MM/DD/AAAA</option>
+                            </select>
+                        </div>
+
+
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="material-symbols-outlined">save</span>
+                                <span>Salvar Alterações</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const allowUserPanelCheckbox = document.getElementById('allow-user-panel');
+            const redirectUrlContainer = document.getElementById('redirect-url-container');
+
+            if (allowUserPanelCheckbox && redirectUrlContainer) {
+                function toggleRedirectUrl() {
+                    if (allowUserPanelCheckbox.checked) {
+                        redirectUrlContainer.style.display = 'none';
+                    } else {
+                        redirectUrlContainer.style.display = 'block';
+                    }
+                }
+
+                toggleRedirectUrl();
+                allowUserPanelCheckbox.addEventListener('change', toggleRedirectUrl);
+            }
+        })();
+
+        function previewLogo(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const preview = document.getElementById('logo-preview');
+                preview.innerHTML = `
+                    <img src="${ ev.target.result }" alt="Preview" class="w-12 h-12 object-contain border border-base-content/10 rounded">
+                    <span class="text-xs text-base-content/50">Novo logo (preview)</span>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewFavicon(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const preview = document.getElementById('favicon-preview');
+                preview.innerHTML = `
+                    <img src="${ ev.target.result }" alt="Preview" class="w-8 h-8 object-contain border border-base-content/10 rounded">
+                    <span class="text-xs text-base-content/50">Novo favicon (preview)</span>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        (function() {
+            const forms = ['formIdentity', 'formThemes', 'formAuth', 'formOther'];
+
+            forms.forEach(formId => {
+                const form = document.getElementById(formId);
+                if (!form) return;
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = form.querySelector('button[type="submit"]');
+                    const btnText = btn.querySelector('span:last-child');
+                    const originalText = btnText.textContent;
+
+                    btn.disabled = true;
+                    btnText.textContent = 'Salvando...';
+
+                    const formData = new FormData(form);
+
+                    try {
+                        const res = await fetch('/panel/config', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await res.json();
+
+                        if (res.ok) {
+                            window.flashAndReload(result.message || 'Configuração salva com sucesso', 'success');
+                        } else {
+                            window.flash(result.message || 'Erro ao salvar', 'error');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        window.flash('Erro ao salvar configuração', 'error');
+                    } finally {
+                        btn.disabled = false;
+                        btnText.textContent = originalText;
+                    }
+                });
+            });
+        })();
+    </script>
+{/block}

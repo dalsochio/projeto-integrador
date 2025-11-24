@@ -1,0 +1,269 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+<div class="uploads-general-container">
+    
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Uploads Gerais</h1>
+        {if $canCreate}
+            <a href="/panel/uploads/create" class="btn btn-primary">
+                <span class="material-symbols-outlined">add</span>
+                Novo Upload
+            </a>
+        {/if}
+    </div>
+
+    
+    <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">Recentes</h2>
+
+        {if empty($recentFiles)}
+            <div class="alert alert-info">
+                <span class="material-symbols-outlined">info</span>
+                <span>Nenhum arquivo encontrado. {if $canCreate}Faça o primeiro upload!{/if}</span>
+            </div>
+        {else}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {foreach $recentFiles as $file}
+                    <div class="card bg-base-100 shadow-xl">
+                        <figure class="h-48 bg-base-300">
+                            {if $file['isImage']}
+                                <img src="{$file['url']}" alt="{$file['filename']}" class="object-contain w-full h-full"/>
+                            {else}
+                                <div class="flex items-center justify-center h-full">
+                                    <span class="text-4xl text-base-content/50">.{$file['extension']}</span>
+                                </div>
+                            {/if}
+                        </figure>
+                        <div class="card-body p-4">
+                            <h3 class="card-title text-sm truncate" title="{$file['filename']}">
+                                {$file['filename']}
+                            </h3>
+                            <div class="text-xs text-base-content/70">
+                                <p>{$file['dateFormatted']}</p>
+                                <p>{$file['sizeFormatted']}</p>
+                            </div>
+                            <div class="card-actions justify-end mt-2">
+                                <button
+                                    class="btn btn-sm btn-ghost"
+                                    onclick="copyToClipboard('{$file['url']}')"
+                                    title="Copiar URL">
+                                    <span class="material-symbols-outlined text-sm">content_copy</span>
+                                </button>
+                                {if $canDelete}
+                                    <button
+                                        class="btn btn-sm btn-error btn-ghost"
+                                        onclick="confirmDelete('{$file['relativePath']}', '{$file['filename']}')"
+                                        title="Deletar arquivo">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+                {/foreach}
+            </div>
+        {/if}
+    </section>
+
+    
+    <section>
+        <h2 class="text-xl font-semibold mb-4">Navegar por Data</h2>
+        <div id="folder-browser" class="bg-base-100 rounded-box p-4 shadow-xl">
+            <p class="text-base-content/50">Carregando estrutura de pastas...</p>
+        </div>
+    </section>
+</div>
+
+<script>
+    // Copiar URL para clipboard
+    function copyToClipboard(url) {
+        const fullUrl = window.location.origin + url;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            window.flash('URL copiada para área de transferência!', 'success');
+        }).catch(err => {
+            window.flash('Erro ao copiar URL', 'error');
+        });
+    }
+
+    // Confirmar deleção
+    function confirmDelete(relativePath, filename) {
+        showConfirmModal({
+            title: 'Confirmar Exclusão',
+            message: `Tem certeza que deseja deletar o arquivo "${ filename }"?`,
+            confirmText: 'Confirmar Exclusão',
+            cancelText: 'Cancelar',
+            type: 'error',
+            onConfirm: async () => {
+                try {
+                    const response = await fetch('/panel/uploads/' + encodeURIComponent(relativePath), {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        window.flashAndReload('Arquivo deletado com sucesso!', 'success');
+                    } else {
+                        window.flash(data.message || 'Erro ao deletar arquivo', 'error');
+                    }
+                } catch (err) {
+                    window.flash('Erro ao deletar arquivo', 'error');
+                }
+            }
+        });
+    }
+
+    // Carregar estrutura de pastas
+    async function loadFolderStructure() {
+        const browserEl = document.getElementById('folder-browser');
+try {
+const response = await fetch('/panel/uploads/browse');
+const result = await response.json();
+if (!result.success || result.data.length === 0) {
+browserEl.innerHTML = '<p class="text-base-content/50">Nenhuma pasta encontrada.</p>';
+                return;
+            }
+browserEl.innerHTML = renderFolderStructure(result.data);
+} catch (err) {
+browserEl.innerHTML = '<p class="text-error">Erro ao carregar estrutura de pastas.</p>';
+        }
+    }
+
+    // Renderizar estrutura hierárquica
+    function renderFolderStructure(structure) {
+        let html = '<div class="space-y-4">';
+        
+        structure.forEach(yearData => {
+            html += '<div class="collapse collapse-arrow bg-base-200">';
+            html += '<input type="checkbox" />';
+            html += '<div class="collapse-title text-lg font-medium">';
+            html += '<span class="material-symbols-outlined align-middle">calendar_today</span> ';
+            html += yearData.year;
+            html += '</div>';
+            html += '<div class="collapse-content">';
+            html += '<div class="space-y-2 mt-2">';
+            
+            Object.values(yearData.months).forEach(monthData => {
+                html += '<div class="collapse collapse-arrow bg-base-300">';
+                html += '<input type="checkbox" />';
+                html += '<div class="collapse-title font-medium">';
+                html += '<span class="material-symbols-outlined align-middle text-sm">event</span> ';
+                html += monthData.monthName;
+                html += '</div>';
+                html += '<div class="collapse-content">';
+                html += '<div class="grid grid-cols-7 gap-2 mt-2">';
+                
+                monthData.days.forEach(dayData => {
+                    html += '<button onclick="loadDayFiles(\'' + dayData.path + '\')" ';
+                    html += 'class="btn btn-sm btn-outline" ';
+                    html += 'title="' + dayData.fileCount + ' arquivo(s)">';
+                    html += dayData.day;
+                    html += '<span class="badge badge-xs">' + dayData.fileCount + '</span>';
+                    html += '</button>';
+                });
+                
+                html += '</div></div></div>';
+            });
+            
+            html += '</div></div></div>';
+        });
+        
+        html += '</div>';
+        html += '<div id="day-files" class="mt-6"></div>';
+        
+        return html;
+    }
+
+    // Carregar arquivos de um dia específico
+    async function loadDayFiles(path) {
+        const dayFilesEl = document.getElementById('day-files');
+        dayFilesEl.innerHTML = '<p class="text-base-content/50">Carregando arquivos...</p>';
+        
+        try {
+            const response = await fetch('/panel/uploads/browse/' + path);
+            const result = await response.json();
+            
+            if (!result.success) {
+                dayFilesEl.innerHTML = '<p class="text-error">Erro ao carregar arquivos.</p>';
+                return;
+            }
+            
+            if (result.data.length === 0) {
+                dayFilesEl.innerHTML = '<p class="text-base-content/50">Nenhum arquivo nesta data.</p>';
+                return;
+            }
+            
+            dayFilesEl.innerHTML = renderDayFiles(result.data, path);
+            
+            // Scroll suave até os arquivos
+            dayFilesEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (err) {
+dayFilesEl.innerHTML = '<p class="text-error">Erro ao carregar arquivos.</p>';
+        }
+    }
+
+    // Renderizar arquivos do dia
+    function renderDayFiles(files, path) {
+        const canDelete = {$canDelete ? 'true' : 'false'};
+        
+        let html = '<div class="bg-base-200 rounded-box p-4">';
+        html += '<h3 class="text-lg font-semibold mb-4">';
+        html += '<span class="material-symbols-outlined align-middle">folder_open</span> ';
+        html += 'Arquivos de ' + path;
+        html += '</h3>';
+        html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
+        
+        files.forEach(file => {
+            html += '<div class="card bg-base-100 shadow-xl">';
+            html += '<figure class="h-48 bg-base-300">';
+            
+            if (file.isImage) {
+                html += '<img src="' + file.url + '" alt="' + file.filename + '" class="object-contain w-full h-full"/>';
+            } else {
+                html += '<div class="flex items-center justify-center h-full">';
+                html += '<span class="text-4xl text-base-content/50">.' + file.extension + '</span>';
+                html += '</div>';
+            }
+            
+            html += '</figure>';
+            html += '<div class="card-body p-4">';
+            html += '<h3 class="card-title text-sm truncate" title="' + file.filename + '">';
+            html += file.filename;
+            html += '</h3>';
+            html += '<div class="text-xs text-base-content/70">';
+            html += '<p>' + file.dateFormatted + '</p>';
+            html += '<p>' + file.sizeFormatted + '</p>';
+            html += '</div>';
+            html += '<div class="card-actions justify-end mt-2">';
+            html += '<button class="btn btn-sm btn-ghost" ';
+            html += 'onclick="copyToClipboard(\'' + file.url + '\')" ';
+            html += 'title="Copiar URL">';
+            html += '<span class="material-symbols-outlined text-sm">content_copy</span>';
+            html += '</button>';
+            
+            if (canDelete) {
+                html += '<button class="btn btn-sm btn-error btn-ghost" ';
+                html += 'onclick="confirmDelete(\'' + file.relativePath + '\', \'' + file.filename + '\')" ';
+                html += 'title="Deletar arquivo">';
+                html += '<span class="material-symbols-outlined text-sm">delete</span>';
+                html += '</button>';
+            }
+            
+            html += '</div></div></div>';
+        });
+        
+        html += '</div></div>';
+        
+        return html;
+    }
+
+    // Carregar estrutura ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFolderStructure();
+    });
+</script>
+{/block}

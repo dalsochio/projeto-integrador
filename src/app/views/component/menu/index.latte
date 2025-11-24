@@ -1,0 +1,28 @@
+<div class="drawer-side z-20">
+    <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+    <div class="menu bg-base-200 text-base-content min-h-full w-62 p-4 pt-3 pr-0 grid grid-rows-[auto_1fr_auto] gap-4">
+        <div class="mr-2">
+            {include ./head.latte}
+        </div>
+        <div class="overflow-y-auto overflow-x-hidden max-h-[81.5vh] py-4 pr-8">
+            {include ./items.latte}
+            <li>
+                <details open="">
+                    <summary>
+                        Developer
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="/developer/swagger">
+                                Swagger
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        </div>
+        <div class="mr-2">
+            {include ./user.latte}
+        </div>
+    </div>
+</div>

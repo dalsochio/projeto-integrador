@@ -1,0 +1,14 @@
+{layout ../layout/app.latte}
+
+{block content}
+
+<section class="h-screen grid grid-rows-[1fr_auto] gap-8 pt-8">
+    <div class="container mx-auto h-full flex flex-col gap-8 justify-center items-center">
+        <div>
+            <img src="/public/assets/img/methone.png"
+                 alt="logo panel" class="max-h-44 max-w-xs rounded-box"/>
+        </div>
+        {include ../component/login-form.latte}
+    </div>
+    <Footer/>
+</section>

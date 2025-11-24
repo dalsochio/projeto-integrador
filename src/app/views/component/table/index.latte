@@ -1,0 +1,105 @@
+{default array $table = [
+'columns' => [],
+'records' => [],
+'results' => []
+]}
+
+<div id="table" class="container py-4">
+    {if count($table['records']) === 0}
+        
+        <div class="flex flex-col items-center justify-center p-12 text-center rounded-box border border-base-content/5 bg-base-100">
+            <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
+            <p class="text-lg font-semibold mb-2">Nenhum registro encontrado</p>
+            <p class="text-sm text-base-content/70 mb-4">Não há registros cadastrados até o momento</p>
+            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
+                <span class="material-symbols-outlined">add</span>
+                Criar primeiro registro
+            </a>
+        </div>
+    {else}
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+            <table class="table">
+                <thead>
+                <tr>
+                    {foreach $table['columns'] as $column}
+                        {if $column['is_visible_list']}
+                            <th>{$column['display_name']}</th>
+                        {/if}
+                    {/foreach}
+                    <th class="text-right sticky right-0 bg-base-100 z-10">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $table['records'] as $row}
+                    <tr id="row-id-{$row['id']}" class="hover">
+                        {foreach $table['columns'] as $column}
+                            {if $column['is_visible_list']}
+                                {php $value = $row[$column['name']] ?? ''}
+                                {php $displayValue = $value}
+                                {php $inputType = $column['input_type'] ?? 'text'}
+                                
+                                {* Se for uma coluna de referência, usar o valor de exibição *}
+                                {if !empty($column['foreign_table']) && !empty($column['foreign_column'])}
+                                    {php $displayValue = $row[$column['name'] . '_display'] ?? $value}
+                                {/if}
+                                
+                                {* Se for checkbox com JSON, decodificar e mostrar separado por vírgula *}
+                                {if $inputType === 'checkbox' && is_string($value) && !empty($value)}
+                                    {php $decoded = json_decode($value, true)}
+                                    {php if (is_array($decoded)) { $displayValue = implode(', ', $decoded); }}
+                                {/if}
+                                
+                                {* Tipo de campo para texto rico *}
+                                {if in_array($inputType, ['wysiwyg', 'markdown', 'code'])}
+                                    <td>
+                                        <span class="text-base-content/60 text-xs">
+                                            {if $inputType === 'wysiwyg'}Rich Text{/if}
+                                            {if $inputType === 'markdown'}Markdown{/if}
+                                            {if $inputType === 'code'}Code{/if}
+                                        </span>
+                                    </td>
+                                {else}
+                                    <td class="max-w-xs truncate" title="{$displayValue}">{$displayValue}</td>
+                                {/if}
+                            {/if}
+                        {/foreach}
+                        <td class="sticky right-0 bg-base-100">
+                            <div class="flex flex-row justify-end items-center gap-2">
+                                <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}"
+                                   class="btn btn-ghost btn-xs"
+                                   title="Visualizar">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </a>
+                                <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}/edit"
+                                   class="btn btn-ghost btn-xs"
+                                   title="Editar">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </a>
+                                <button type="button"
+                                        class="btn btn-ghost btn-xs text-error"
+                                        title="Deletar"
+                                        hx-delete="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}"
+                                        hx-confirm="Tem certeza que deseja deletar este registro? Esta ação não pode ser desfeita."
+                                        hx-on::after-request="if(event.detail.successful) window.location.reload()">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {/foreach}
+                </tbody>
+                {if $table['pagination']['perPage'] < $table['pagination']['total']}
+                    <tfoot>
+                    <tr>
+                        <th colspan="100" scope="row" class="flex flex-row justify-end">
+                            {include 'pagination.latte', pagination: $table['pagination']}
+                        </th>
+                    </tr>
+                    </tfoot>
+                {/if}
+            </table>
+        </div>
+
+
+    {/if}
+</div>

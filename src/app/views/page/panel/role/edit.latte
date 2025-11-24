@@ -1,0 +1,408 @@
+{layout ../../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4" x-data="roleEdit()">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Editar Role</p>
+                <p class="text-sm text-base-content/70">Role: {$role['display_name']}</p>
+            </div>
+            <a href="/panel/role" class="btn btn-ghost btn-sm">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Voltar
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <div class="lg:col-span-2">
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <h2 class="card-title text-base">Informações Básicas</h2>
+
+                        {if $role['is_system']}
+                            <div class="alert alert-info mb-4">
+                                <span class="material-symbols-outlined">info</span>
+                                <div>
+                                    <h3 class="font-bold">Role de Sistema</h3>
+                                    <div class="text-sm">Esta é uma role de sistema. Algumas informações não podem ser alteradas.</div>
+                                </div>
+                            </div>
+                        {/if}
+
+                        {if $role['is_locked']}
+                            <div class="alert alert-warning mb-4">
+                                <span class="material-symbols-outlined">lock</span>
+                                <div>
+                                    <h3 class="font-bold">Permissões Bloqueadas</h3>
+                                    <div class="text-sm">As permissões desta role não podem ser alteradas por segurança do sistema.</div>
+                                </div>
+                            </div>
+                        {/if}
+
+                        <form @submit.prevent="saveRole">
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Nome da Role</span>
+                                </label>
+                                <input type="text"
+                                       value="{$role['role_name']}"
+                                       class="input input-bordered w-full"
+                                       disabled />
+                                <label class="label">
+                                    <span class="label-text-alt text-warning">O nome da role não pode ser alterado</span>
+                                </label>
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Nome de Exibição <span class="text-error">*</span></span>
+                                </label>
+                                <input type="text"
+                                       x-model="formData.display_name"
+                                       placeholder="Ex: Gerente"
+                                       class="input input-bordered w-full"
+                                       required />
+                            </div>
+
+                            
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Descrição</span>
+                                </label>
+                                <textarea x-model="formData.description"
+                                          placeholder="Descrição da role"
+                                          class="textarea textarea-bordered w-full"
+                                          rows="3"></textarea>
+                            </div>
+
+                            
+                            <div class="card-actions justify-end mt-6">
+                                <a href="/panel/role" class="btn btn-ghost">
+                                    Cancelar
+                                </a>
+                                <button type="submit"
+                                        class="btn btn-primary"
+                                        :disabled="saving">
+                                    <span class="material-symbols-outlined" x-show="!saving">save</span>
+                                    <span class="loading loading-spinner loading-sm" x-show="saving"></span>
+                                    <span x-text="saving ? 'Salvando...' : 'Salvar alterações'"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="lg:col-span-1">
+                
+                <div class="card bg-base-100 shadow-sm border border-base-content/5 mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title text-base">Informações</h2>
+
+                        <div class="space-y-2 text-sm">
+                            <div>
+                                <span class="font-semibold">ID:</span>
+                                <span class="ml-2">#{$role['id']}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold">Tipo:</span>
+                                {if $role['is_locked']}
+                                    <div class="badge badge-warning badge-sm ml-2">Bloqueada</div>
+                                {elseif $role['is_system']}
+                                    <div class="badge badge-info badge-sm ml-2">Sistema</div>
+                                {else}
+                                    <div class="badge badge-ghost badge-sm ml-2">Custom</div>
+                                {/if}
+                            </div>
+                            <div>
+                                <span class="font-semibold">Criado em:</span>
+                                <span class="ml-2">{$role['created_at']|date:'d/m/Y H:i'}</span>
+                            </div>
+                            {if $role['updated_at']}
+                                <div>
+                                    <span class="font-semibold">Atualizado em:</span>
+                                    <span class="ml-2">{$role['updated_at']|date:'d/m/Y H:i'}</span>
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="card-title text-base">Permissões</h2>
+                            <div class="badge badge-primary" x-text="getTotalPermissions()"></div>
+                        </div>
+
+                        <p class="text-sm text-base-content/70 mb-4">
+                            Gerencie as permissões desta role para cada recurso do sistema.
+                        </p>
+
+                        <div :class="role.is_locked ? 'tooltip tooltip-left' : ''" :data-tip="role.is_locked ? 'Esta role tem permissões bloqueadas por segurança' : ''">
+                            <button type="button"
+                                    @click="openPermissionsModal()"
+                                    class="btn btn-secondary btn-block"
+                                    :disabled="role.is_locked">
+                                <span class="material-symbols-outlined">vpn_key</span>
+                                <span x-text="role.is_locked ? 'Permissões Bloqueadas' : 'Editar Permissões'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <dialog id="permissions_modal" class="modal">
+            <div class="modal-box max-w-4xl">
+                <form method="dialog">
+                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                <h3 class="font-bold text-lg mb-4">Editar Permissões: <span x-text="role.display_name"></span></h3>
+
+                <p class="text-sm text-base-content/70 mb-4">
+                    Defina quais ações esta role pode executar em cada recurso.
+                    <span class="text-warning">Ative apenas as permissões necessárias.</span>
+                </p>
+
+                <div x-show="role.role_name === 'guest'" class="alert alert-warning mb-4">
+                    <span class="material-symbols-outlined">info</span>
+                    <div>
+                        <h3 class="font-bold">Limitações de Guest</h3>
+                        <div class="text-sm">Guests (visitantes não autenticados) só podem ter permissões de leitura. Não é possível conceder permissões de criar, editar ou deletar.</div>
+                    </div>
+                </div>
+
+                <div x-show="role.role_name === 'user'" class="alert alert-info mb-4">
+                    <span class="material-symbols-outlined">info</span>
+                    <div>
+                        <h3 class="font-bold">Permissões de Usuário</h3>
+                        <div class="text-sm">Usuários com role 'user' podem <strong>listar e visualizar todos os registros</strong>, assim como guests. Porém, ao habilitar <strong>criar, editar ou deletar</strong>, o usuário só poderá executar essas ações em registros que ele mesmo criou, não em registros de outros usuários.</div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto max-h-96">
+                    <table class="table table-zebra table-pin-rows">
+                        <thead>
+                            <tr>
+                                <th>Recurso</th>
+                                <th class="text-center">Listar</th>
+                                <th class="text-center">Visualizar</th>
+                                <th class="text-center">Criar</th>
+                                <th class="text-center">Editar</th>
+                                <th class="text-center">Deletar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="table in tables" :key="table.name">
+                                <tr>
+                                    <td>
+                                        <div class="font-semibold text-sm" x-text="table.display_name"></div>
+                                        <code class="text-xs text-base-content/60" x-text="table.name"></code>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               class="toggle toggle-info toggle-sm"
+                                               x-model="tempPermissions[table.name].list" />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               class="toggle toggle-success toggle-sm"
+                                               x-model="tempPermissions[table.name].read" />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               class="toggle toggle-primary toggle-sm"
+                                               x-model="tempPermissions[table.name].create"
+                                               :disabled="role.role_name === 'guest'" />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               class="toggle toggle-warning toggle-sm"
+                                               x-model="tempPermissions[table.name].update"
+                                               :disabled="role.role_name === 'guest'" />
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               class="toggle toggle-error toggle-sm"
+                                               x-model="tempPermissions[table.name].delete"
+                                               :disabled="role.role_name === 'guest'" />
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-action">
+                    <form method="dialog">
+                        <button class="btn btn-ghost">Cancelar</button>
+                    </form>
+                    <button type="button" @click="savePermissions()" class="btn btn-primary" :disabled="savingPermissions">
+                        <span class="material-symbols-outlined" x-show="!savingPermissions">save</span>
+                        <span class="loading loading-spinner loading-sm" x-show="savingPermissions"></span>
+                        <span x-text="savingPermissions ? 'Salvando...' : 'Salvar Permissões'"></span>
+                    </button>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('roleEdit', () => ({
+                role: {json_encode($role)|noescape},
+                tables: {json_encode($tables)|noescape},
+                permissions: {json_encode($permissions)|noescape},
+                tempPermissions: {},
+                saving: false,
+                savingPermissions: false,
+                formData: {
+                    display_name: '',
+                    description: ''
+                },
+
+                init() {
+                    // Preencher formulário
+                    this.formData.display_name = this.role.display_name || '';
+                    this.formData.description = this.role.description || '';
+
+                    // Garantir que permissions seja um objeto, não um array
+                    if (Array.isArray(this.permissions)) {
+                        this.permissions = {};
+                    }
+
+                    // Inicializar permissions para todas as tabelas que não têm permissões definidas
+                    this.tables.forEach(table => {
+                        if (!this.permissions[table.name]) {
+                            this.permissions[table.name] = {
+                                list: false,
+                                read: false,
+                                create: false,
+                                update: false,
+                                delete: false
+                            };
+                        } else {
+                            // Garantir que 'list' existe mesmo em permissões existentes
+                            if (!this.permissions[table.name].hasOwnProperty('list')) {
+                                this.permissions[table.name].list = false;
+                            }
+                        }
+                    });
+},
+
+                getTotalPermissions() {
+                    let total = 0;
+                    Object.values(this.permissions).forEach(actions => {
+                        Object.values(actions).forEach(enabled => {
+                            if (enabled) total++;
+                        });
+                    });
+                    return total;
+                },
+
+                openPermissionsModal() {
+                    // Copiar permissões atuais para tempPermissions
+                    this.tempPermissions = JSON.parse(JSON.stringify(this.permissions));
+
+                    // Garantir que todas as tabelas estejam no tempPermissions
+                    this.tables.forEach(table => {
+                        if (!this.tempPermissions[table.name]) {
+                            this.tempPermissions[table.name] = {
+                                list: false,
+                                read: false,
+                                create: false,
+                                update: false,
+                                delete: false
+                            };
+                        } else {
+                            // Garantir que 'list' existe
+                            if (!this.tempPermissions[table.name].hasOwnProperty('list')) {
+                                this.tempPermissions[table.name].list = false;
+                            }
+                        }
+
+                        // Se for guest, forçar desabilitar permissões de escrita
+                        if (this.role.role_name === 'guest') {
+                            this.tempPermissions[table.name].create = false;
+                            this.tempPermissions[table.name].update = false;
+                            this.tempPermissions[table.name].delete = false;
+                        }
+                    });
+
+                    document.getElementById('permissions_modal').showModal();
+                },
+
+                async saveRole() {
+                    this.saving = true;
+
+                    try {
+                        const response = await fetch('/panel/role/' + this.role.id, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(this.formData)
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            flashAndRedirect('/panel/role', result.message, 'success');
+                        } else {
+                            flash(result.message, 'error');
+                        }
+                    } catch (error) {
+flash('Erro ao atualizar role: ' + error.message, 'error');
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                async savePermissions() {
+                    this.savingPermissions = true;
+
+                    try {
+                        const response = await fetch('/panel/role/' + this.role.id + '/permissions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                permissions: this.tempPermissions
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Atualizar permissões locais
+                            this.permissions = JSON.parse(JSON.stringify(this.tempPermissions));
+
+                            flash(result.message, 'success');
+                            document.getElementById('permissions_modal').close();
+                        } else {
+                            flash(result.message, 'error');
+                        }
+                    } catch (error) {
+flash('Erro ao atualizar permissões: ' + error.message, 'error');
+                    } finally {
+                        this.savingPermissions = false;
+                    }
+                }
+            }));
+        });
+    </script>
+
+{/block}

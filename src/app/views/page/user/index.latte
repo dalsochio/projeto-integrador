@@ -1,0 +1,180 @@
+{layout ../../layout/panel.latte}
+
+{block panel}
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <div>
+                <p class="text-xl font-semibold">Usuários</p>
+                <p class="text-sm text-base-content/70">Gerencie usuários e suas permissões</p>
+            </div>
+            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
+                <span class="material-symbols-outlined">person_add</span>
+                <p class="hidden lg:inline-block uppercase">Novo Usuário</p>
+            </a>
+        </div>
+
+        
+        {if count($users) > 0}
+            <div class="stats stats-vertical lg:stats-horizontal shadow">
+                <div class="stat">
+                    <div class="stat-figure text-primary">
+                        <span class="material-symbols-outlined text-4xl">group</span>
+                    </div>
+                    <div class="stat-title">Total de Usuários</div>
+                    <div class="stat-value text-primary">{count($users)}</div>
+                    <div class="stat-desc">Registrados no sistema</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-success">
+                        <span class="material-symbols-outlined text-4xl">check_circle</span>
+                    </div>
+                    <div class="stat-title">Usuários Ativos</div>
+                    <div class="stat-value text-success">
+                        {count(array_filter($users, fn($u) => $u['is_active']))}
+                    </div>
+                    <div class="stat-desc">Com acesso ao sistema</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-warning">
+                        <span class="material-symbols-outlined text-4xl">block</span>
+                    </div>
+                    <div class="stat-title">Usuários Inativos</div>
+                    <div class="stat-value text-warning">
+                        {count(array_filter($users, fn($u) => !$u['is_active']))}
+                    </div>
+                    <div class="stat-desc">Acesso bloqueado</div>
+                </div>
+            </div>
+        {/if}
+
+        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+            {if count($users) === 0}
+                <div class="flex flex-col items-center justify-center p-12 text-center">
+                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">person_off</span>
+                    <p class="text-lg font-semibold mb-2">Nenhum usuário encontrado</p>
+                    <p class="text-sm text-base-content/70 mb-4">Crie o primeiro usuário para começar</p>
+                    <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined">person_add</span>
+                        Criar primeiro usuário
+                    </a>
+                </div>
+            {else}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">person</span>
+                                    Usuário
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">mail</span>
+                                    Email
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">badge</span>
+                                    Roles
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">toggle_on</span>
+                                    Status
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">calendar_today</span>
+                                    Criado em
+                                </span>
+                            </th>
+                            <th class="text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {foreach $users as $userItem}
+                            <tr class="hover">
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="avatar placeholder">
+                                            <div class="bg-{$userItem['is_active'] ? 'primary' : 'base-300'}/20 text-{$userItem['is_active'] ? 'primary' : 'base-content'} rounded-full w-10 h-10 flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-xl">person</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold">{$userItem['username']}</div>
+                                            <code class="text-xs text-base-content/60">ID: {$userItem['id']}</code>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-sm">{$userItem['email']}</div>
+                                </td>
+                                <td>
+                                    {if count($userItem['roles']) > 0}
+                                        <div class="flex flex-wrap gap-1">
+                                            {foreach $userItem['roles'] as $role}
+                                                <div class="badge badge-sm badge-ghost">{$role}</div>
+                                            {/foreach}
+                                        </div>
+                                    {else}
+                                        <span class="text-base-content/40 text-sm italic">Sem roles</span>
+                                    {/if}
+                                </td>
+                                <td>
+                                    {if $userItem['is_active']}
+                                        <div class="badge badge-success gap-2">
+                                            <span class="material-symbols-outlined text-xs">check_circle</span>
+                                            Ativo
+                                        </div>
+                                    {else}
+                                        <div class="badge badge-warning gap-2">
+                                            <span class="material-symbols-outlined text-xs">block</span>
+                                            Inativo
+                                        </div>
+                                    {/if}
+                                </td>
+                                <td>
+                                    <div class="text-sm">
+                                        {$userItem['created_at']|date:'d/m/Y'}
+                                    </div>
+                                    <div class="text-xs opacity-60">
+                                        {$userItem['created_at']|date:'H:i'}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex justify-end gap-2">
+                                        <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$userItem['id']}/edit"
+                                           class="btn btn-ghost btn-xs"
+                                           title="Editar">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </a>
+                                        <form method="POST" action="/administration/user/{$userItem['id']}/toggle-status" class="inline">
+                                    <button type="submit"
+                                            class="btn btn-ghost btn-xs {$userItem['is_active'] ? 'text-warning' : 'text-success'}"
+                                            title="{$user['is_active'] ? 'Inativar' : 'Ativar'}"
+                                            onclick="return confirm('Tem certeza que deseja {$user['is_active'] ? 'inativar' : 'ativar'} o usuário {$user['username']}?')">
+                                        <span class="material-symbols-outlined">
+                                            {$user['is_active'] ? 'block' : 'check_circle'}
+                                        </span>
+                                    </button>
+                                </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+            {/if}
+        </div>
+    </div>
+
+
+
+{/block}
