@@ -32,7 +32,7 @@
                         <div class="font-medium text-sm" x-text="type.label"></div>
                         <div class="text-xs opacity-60" x-text="type.description"></div>
                     </div>
-                    <div class="p-2 pointer-events-none scale-90 origin-top-left" x-html="type.preview"></div>
+                    <div class="p-2 pointer-events-none" x-html="type.preview"></div>
                 </div>
             </template>
                 </div>
@@ -151,7 +151,7 @@
                                          @drop="$el.classList.remove('bg-primary/5', 'border-primary/30')">
 
                                         <div class="flex items-center justify-between mb-2">
-                                            <div class="text-xs text-center opacity-50" x-text="'Coluna (' + col.width + '/12)'"></div>
+                                            <div class="text-xs text-center opacity-50" x-text="'Coluna (' + (colIndex + 1) + '/' + (item.columns?.length || 1) + ')'"></div>
                                             <svg class="h-3 w-3 column-drag-handle cursor-move opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
                                             </svg>
@@ -394,45 +394,47 @@
             
             <template x-if="selectedItemId && selectedItemType === 'row'">
                 <div class="flex flex-col gap-3">
-                    <h3 class="font-semibold">Configurar Colunas</h3>
-
                     <template x-for="item in items" :key="item.id">
-                        <div x-show="item.id === selectedItemId && item.itemType === 'row'">
+                        <div x-show="item.id === selectedItemId && item.itemType === 'row'" class="flex flex-col gap-3">
+                            
                             <div class="form-control">
+                                <label class="label"><span class="label-text font-medium">Número de Colunas</span></label>
+                                <div class="flex items-center gap-2">
+                                    <button @click="changeColumns(item.id, Math.max(2, (item.columns?.length || 2) - 1))"
+                                            class="btn btn-sm btn-outline btn-square"
+                                            x-bind:disabled="(item.columns?.length || 0) <= 2 || !canReduceColumns(item)">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                        </svg>
+                                    </button>
+                                    <span class="text-lg font-semibold w-8 text-center" x-text="item.columns?.length || 0"></span>
+                                    <button @click="changeColumns(item.id, Math.min(4, (item.columns?.length || 0) + 1))"
+                                            class="btn btn-sm btn-outline btn-square"
+                                            x-bind:disabled="(item.columns?.length || 0) >= 4">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <label class="label">
-                                    <span class="label-text">Número de Colunas: <span x-text="item.columns?.length || 0"></span></span>
+                                    <span class="label-text-alt" x-text="!canReduceColumns(item) && (item.columns?.length || 0) > 2 ? 'Remova os campos antes de reduzir colunas' : 'Mínimo 2, máximo 4 colunas'"></span>
                                 </label>
-
-                                <button @click="changeColumns(item.id, Math.max(1, (item.columns?.length || 1) - 1))"
-                                        class="btn btn-sm btn-outline"
-                                        x-bind:disabled="(item.columns?.length || 0) <= 1">
-                                    - Remover Coluna
-                                </button>
-
-                                <button @click="changeColumns(item.id, Math.min(3, (item.columns?.length || 0) + 1))"
-                                        class="btn btn-sm btn-outline mt-2"
-                                        x-bind:disabled="(item.columns?.length || 0) >= 3">
-                                    + Adicionar Coluna
-                                </button>
                             </div>
 
-                            <div class="divider text-xs">Colunas</div>
+                            <div class="divider text-xs">Detalhes das Colunas</div>
 
                             <template x-for="(col, colIndex) in (item.columns || [])" :key="col.id">
-                                <div class="p-2 bg-base-200 rounded mb-2">
-                                    <div class="font-medium text-sm mb-1">
-                                        Coluna <span x-text="colIndex + 1"></span>
+                                <div class="card card-border bg-base-200/50 p-3">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-medium text-sm">Coluna <span x-text="colIndex + 1"></span></span>
+                                        <span class="badge badge-sm" x-text="(colIndex + 1) + '/' + (item.columns?.length || 1)"></span>
                                     </div>
-                                    <div class="form-control">
-                                        <label class="label">
-                                            <span class="label-text-alt">Largura: <span x-text="col.width"></span>/12</span>
-                                        </label>
-                                    </div>
-                                    <div class="text-xs opacity-60 mt-1">
-                                        <span x-text="col.fields?.length || 0"></span> campo(s)
+                                    <div class="text-xs opacity-60">
+                                        <span x-text="(col.fields?.length || 0) === 0 ? 'Nenhum campo' : (col.fields?.length || 0) + ' campo(s)'"></span>
                                     </div>
                                 </div>
                             </template>
+
                         </div>
                     </template>
                 </div>

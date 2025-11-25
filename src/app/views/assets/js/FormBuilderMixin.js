@@ -66,7 +66,7 @@ export default function formBuilderMixin() {
                 name: 'VARCHAR',
                 label: 'Texto Curto',
                 description: 'Campo de texto simples (nome, email, telefone)',
-                preview: '<label class="input input-sm input-bordered flex items-center gap-2 opacity-70"><input type="text" class="grow" placeholder="Exemplo..." disabled /></label>'
+                preview: '<label class="input input-sm input-bordered flex items-center gap-2 opacity-70 w-full"><input type="text" class="grow" placeholder="Exemplo..." disabled /></label>'
             },
             {
                 name: 'TEXT',
@@ -96,25 +96,25 @@ export default function formBuilderMixin() {
                 name: 'BOOLEAN',
                 label: 'Sim/Não',
                 description: 'Checkbox simples para valores verdadeiro/falso',
-                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Sim/Não</span></label>'
+                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70 w-full"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Sim/Não</span></label>'
             },
             {
                 name: 'TOGGLE',
                 label: 'Interruptor',
                 description: 'Botão de liga/desliga estilo switch',
-                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70"><input type="checkbox" class="toggle toggle-sm" disabled /><span class="label-text text-xs">Ativar</span></label>'
+                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70 w-full"><input type="checkbox" class="toggle toggle-sm" disabled /><span class="label-text text-xs">Ativar</span></label>'
             },
             {
                 name: 'STATUS',
                 label: 'Status Ativo/Inativo',
                 description: 'Interruptor específico para status (ativo/inativo)',
-                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70"><input type="checkbox" class="toggle toggle-success toggle-sm" disabled /><span class="label-text text-xs">Ativo</span></label>'
+                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70 w-full"><input type="checkbox" class="toggle toggle-success toggle-sm" disabled /><span class="label-text text-xs">Ativo</span></label>'
             },
             {
                 name: 'TAGS',
                 label: 'Etiquetas/Tags',
                 description: 'Digite tags separadas por vírgula ou ponto-e-vírgula',
-                preview: '<div class="flex flex-wrap gap-1 opacity-70"><span class="badge badge-primary badge-xs">Tag 1</span><span class="badge badge-primary badge-xs">Tag 2</span></div>'
+                preview: '<div class="flex flex-wrap gap-1 opacity-70 w-full"><span class="badge badge-primary badge-xs">Tag 1</span><span class="badge badge-primary badge-xs">Tag 2</span></div>'
             },
             {
                 name: 'SELECT',
@@ -126,13 +126,13 @@ export default function formBuilderMixin() {
                 name: 'RADIO',
                 label: 'Opção Única',
                 description: 'Escolha única entre várias opções que você define',
-                preview: '<div class="flex flex-col gap-1 opacity-70"><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Opção 2</span></label></div>'
+                preview: '<div class="flex flex-col gap-1 opacity-70 w-full"><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Opção 2</span></label></div>'
             },
             {
                 name: 'CHECKBOX',
                 label: 'Múltipla Escolha',
                 description: 'Permite selecionar várias opções que você define',
-                preview: '<div class="flex flex-col gap-1 opacity-70"><label class="label cursor-pointer justify-start gap-2"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Opção 2</span></label></div>'
+                preview: '<div class="flex flex-col gap-1 opacity-70 w-full"><label class="label cursor-pointer justify-start gap-2"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Opção 2</span></label></div>'
             },
             {
                 name: 'REFERENCE_SELECT',
@@ -144,7 +144,7 @@ export default function formBuilderMixin() {
                 name: 'REFERENCE_RADIO',
                 label: 'Relacionamento (Opções)',
                 description: 'Conecta com outro módulo mostrando opções',
-                preview: '<div class="flex flex-col gap-1 opacity-70"><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Ref: Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Ref: Opção 2</span></label></div>'
+                preview: '<div class="flex flex-col gap-1 opacity-70 w-full"><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Ref: Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Ref: Opção 2</span></label></div>'
             },
             {
                 name: 'FILE',
@@ -156,25 +156,25 @@ export default function formBuilderMixin() {
                 name: 'COLOR',
                 label: 'Seletor de Cor',
                 description: 'Escolha de cores com paleta visual',
-                preview: '<div class="flex gap-2 opacity-70"><input type="color" class="w-10 h-8 rounded border-2" disabled /><input type="text" class="input input-sm input-bordered flex-1" placeholder="#000000" disabled /></div>'
+                preview: '<div class="flex gap-2 opacity-70 w-full"><input type="color" class="w-10 h-8 rounded border-2" disabled /><input type="text" class="input input-sm input-bordered flex-1" placeholder="#000000" disabled /></div>'
             },
             {
                 name: 'WYSIWYG',
                 label: 'Editor de Texto Rico',
                 description: 'Editor visual com formatação (negrito, itálico, etc)',
-                preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-50">Rich Text Editor</div>'
+                preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-50 w-full">Rich Text Editor</div>'
             },
             {
                 name: 'MARKDOWN',
                 label: 'Editor Markdown',
                 description: 'Editor de texto com sintaxe Markdown',
-                preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-50 font-mono"># Markdown</div>'
+                preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-50 font-mono w-full"># Markdown</div>'
             },
             {
                 name: 'CODE',
                 label: 'Editor de Código',
                 description: 'Editor para código de programação',
-                preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-900 text-green-400 font-mono">{ code }</div>'
+                preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-900 text-green-400 font-mono w-full">{ code }</div>'
             }
         ],
 
@@ -687,11 +687,35 @@ export default function formBuilderMixin() {
             return templates[field.type] || templates['VARCHAR'];
         },
 
+        canReduceColumns(row) {
+            if (!row || !row.columns) return true;
+            // Mínimo é 2 colunas
+            if (row.columns.length <= 2) return false;
+            
+            // Contar quantas colunas têm campos
+            const columnsWithFields = row.columns.filter(col => col.fields && col.fields.length > 0).length;
+            
+            // Só pode reduzir se o número de colunas com campos for menor que o total de colunas
+            // Ou seja, precisa ter pelo menos uma coluna vazia para poder remover
+            return columnsWithFields < row.columns.length;
+        },
+
         changeColumns(rowId, newCount) {
             const row = this.items.find(i => i.id === rowId);
             if (!row) return;
 
             const current = row.columns.length;
+
+            // Mínimo 2 colunas
+            if (newCount < 2) {
+                return;
+            }
+
+            // Validar se pode reduzir
+            if (newCount < current && !this.canReduceColumns(row)) {
+                flash('Remova os campos das colunas antes de reduzir o número de colunas.', 'warn');
+                return;
+            }
 
             if (newCount > current) {
                 for (let i = current; i < newCount; i++) {
@@ -702,16 +726,17 @@ export default function formBuilderMixin() {
                     });
                 }
             } else if (newCount < current) {
-                const removed = row.columns.splice(newCount);
-                removed.forEach(col => {
-                    if (col.fields && row.columns[row.columns.length - 1].fields) {
-                        row.columns[row.columns.length - 1].fields.push(...col.fields);
+                // Remover apenas colunas vazias do final
+                let removed = [];
+                for (let i = current - 1; i >= newCount; i--) {
+                    if (row.columns[i].fields && row.columns[i].fields.length === 0) {
+                        removed.push(row.columns.splice(i, 1)[0]);
                     }
-                });
+                }
             }
 
             row.columns.forEach(col => {
-                col.width = Math.floor(12 / newCount);
+                col.width = Math.floor(12 / row.columns.length);
             });
         },
 
