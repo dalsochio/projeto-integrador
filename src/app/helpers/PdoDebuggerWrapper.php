@@ -21,7 +21,7 @@ class PdoDebuggerWrapper extends PdoQueryCapture
         $this->username = $_ENV['DB_USERNAME'];
         $this->password = $_ENV['DB_PASSWORD'];
         $this->options = [
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'utf8mb4\', time_zone = \'+00:00\'',
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8mb4'; SET time_zone = '+00:00';",
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_STRINGIFY_FETCHES => false,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
