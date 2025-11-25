@@ -39,6 +39,36 @@
                 </div>
             </div>
 
+            <div class="divider my-1 text-xs">DIVISORES</div>
+
+            <div class="card card-border border-accent cursor-move hover:shadow-md transition-shadow overflow-hidden"
+                 draggable="true"
+                 @dragstart="handlePaletteDragStart($event, 'DIVIDER_HORIZONTAL')">
+                <div class="p-2 bg-accent/10 border-b border-accent/20">
+                    <div class="font-medium text-sm">Divisor Horizontal</div>
+                    <div class="text-xs opacity-60">Separa campos verticalmente</div>
+                </div>
+                <div class="p-2 pointer-events-none">
+                    <div class="divider my-0">Divisor</div>
+                </div>
+            </div>
+
+            <div class="card card-border border-accent cursor-move hover:shadow-md transition-shadow overflow-hidden"
+                 draggable="true"
+                 @dragstart="handlePaletteDragStart($event, 'DIVIDER_VERTICAL')">
+                <div class="p-2 bg-accent/10 border-b border-accent/20">
+                    <div class="font-medium text-sm">Divisor de Coluna</div>
+                    <div class="text-xs opacity-60">Separa campos dentro de colunas</div>
+                </div>
+                <div class="p-2 pointer-events-none">
+                    <div class="flex gap-1 h-16">
+                        <div class="flex-1 flex items-center justify-center bg-base-200/50 rounded">Col 1</div>
+                        <div class="divider divider-horizontal my-0"></div>
+                        <div class="flex-1 flex items-center justify-center bg-base-200/50 rounded">Col 2</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="divider my-1 text-xs">CAMPOS</div>
 
             
@@ -109,6 +139,46 @@
             <template x-for="(item, index) in items" :key="item.id">
                 <div x-sort:item="item" class="mb-3" :data-item-id="item.id">
                     
+                    <template x-if="item.itemType === 'divider'">
+                        <div class="card card-border cursor-pointer hover:border-accent transition-all"
+                             x-bind:class="selectedItemId === item.id ? 'border-accent bg-accent/5' : ''"
+                             @click="selectItem(item.id, 'divider')"
+                             draggable="true"
+                             @dragstart="handleFieldDragStart($event, item.id, true)">
+
+                            <div class="flex justify-between items-start p-2 bg-base-200/50 border-b rounded-t-[var(--radius-box)]">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <svg class="h-4 w-4 drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                    </svg>
+                                    <div>
+                                        <div class="font-medium text-sm" x-text="item.divider_type === 'horizontal' ? 'Divisor Horizontal' : 'Divisor de Coluna'"></div>
+                                        <div class="text-xs opacity-60">Elemento visual</div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <button @click.stop="moveItemUp(index)" class="btn btn-xs btn-ghost btn-square" x-show="index > 0" title="Mover para cima">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop="moveItemDown(index)" class="btn btn-xs btn-ghost btn-square" x-show="index < items.length - 1" title="Mover para baixo">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    <button @click.stop="deleteItem(index)" class="btn btn-xs btn-ghost btn-square">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="p-3 pointer-events-none" x-html="getDividerPreviewHtml(item)"></div>
+                        </div>
+                    </template>
+
                     <template x-if="item.itemType === 'field'">
                         <div class="card card-border cursor-pointer hover:border-primary transition-all"
                              x-bind:class="selectedItemId === item.id ? 'border-primary bg-primary/5' : ''"
@@ -210,11 +280,52 @@
 
                                             <template x-for="(field, fieldIndex) in (col.fields || [])" :key="field.id">
                                                 <div x-sort:item="field" :data-item-id="field.id">
-                                                    <div class="card card-border cursor-pointer hover:border-primary transition-all"
-                                                         x-bind:class="selectedItemId === field.id ? 'border-primary bg-primary/5' : ''"
-                                                         @click.stop="selectItem(field.id, 'field')"
-                                                         draggable="true"
-                                                         @dragstart="handleFieldDragStart($event, field.id, false)">
+                                                    <template x-if="field.itemType === 'divider'">
+                                                        <div class="card card-border cursor-pointer hover:border-accent transition-all"
+                                                             x-bind:class="selectedItemId === field.id ? 'border-accent bg-accent/5' : ''"
+                                                             @click.stop="selectItem(field.id, 'divider')"
+                                                             draggable="true"
+                                                             @dragstart="handleFieldDragStart($event, field.id, false)">
+
+                                                            <div class="flex justify-between items-start p-2 bg-base-200/50 border-b rounded-t-[var(--radius-box)]">
+                                                                <div class="flex items-center gap-2 flex-1">
+                                                                    <svg class="h-4 w-4 field-drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                                                                    </svg>
+                                                                    <div>
+                                                                        <div class="font-medium text-sm">Divisor de Coluna</div>
+                                                                        <div class="text-xs opacity-60">Elemento visual</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex gap-1">
+                                                                    <button @click.stop="moveFieldInColumn(item.id, col.id, fieldIndex, 'up')" class="btn btn-xs btn-ghost btn-square" x-show="fieldIndex > 0" title="Mover para cima">
+                                                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button @click.stop="moveFieldInColumn(item.id, col.id, fieldIndex, 'down')" class="btn btn-xs btn-ghost btn-square" x-show="fieldIndex < (col.fields?.length || 0) - 1" title="Mover para baixo">
+                                                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button @click.stop="deleteFieldFromColumn(item.id, col.id, fieldIndex)" class="btn btn-xs btn-ghost btn-square">
+                                                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="p-3 pointer-events-none" x-html="getDividerPreviewHtml(field)"></div>
+                                                        </div>
+                                                    </template>
+
+                                                    <template x-if="field.itemType === 'field'">
+                                                        <div class="card card-border cursor-pointer hover:border-primary transition-all"
+                                                             x-bind:class="selectedItemId === field.id ? 'border-primary bg-primary/5' : ''"
+                                                             @click.stop="selectItem(field.id, 'field')"
+                                                             draggable="true"
+                                                             @dragstart="handleFieldDragStart($event, field.id, false)">
 
                                                         <div class="flex justify-between items-start p-2 bg-base-200/50 border-b rounded-t-[var(--radius-box)]">
                                                             <div class="flex items-center gap-2 flex-1">
@@ -245,8 +356,9 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="p-3 pointer-events-none" x-html="getFieldPreviewHtml(field)"></div>
-                                                    </div>
+                                                            <div class="p-3 pointer-events-none" x-html="getFieldPreviewHtml(field)"></div>
+                                                        </div>
+                                                    </template>
                                                 </div>
                                             </template>
 
@@ -297,8 +409,87 @@
             <div x-ref="scrollProps" class="card-body p-4 overflow-y-auto h-full">
             
             <div x-show="!selectedItemId" class="text-center text-base-content/50">
-                Selecione um campo
+                Selecione um elemento
             </div>
+
+            
+            <template x-if="selectedItemId && selectedItemType === 'divider'">
+                <div class="flex flex-col gap-3">
+                    <template x-for="item in items" :key="item.id">
+                        <div x-show="item.id === selectedItemId && item.itemType === 'divider'" class="flex flex-col gap-3">
+                            <div class="form-control">
+                                <label class="label"><span class="label-text font-medium">Texto do Divisor</span></label>
+                                <input type="text" class="input input-sm input-bordered" x-model="item.divider_text" placeholder="Opcional">
+                                <label class="label"><span class="label-text-alt">Deixe vazio para divisor sem texto</span></label>
+                            </div>
+
+                            <div class="form-control">
+                                <label class="label"><span class="label-text font-medium">Cor</span></label>
+                                <select class="select select-sm select-bordered" x-model="item.divider_color">
+                                    <option value="">Padrão</option>
+                                    <option value="neutral">Neutral</option>
+                                    <option value="primary">Primary</option>
+                                    <option value="secondary">Secondary</option>
+                                    <option value="accent">Accent</option>
+                                    <option value="success">Success</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="info">Info</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </div>
+
+                            <div class="form-control">
+                                <label class="label"><span class="label-text font-medium">Alinhamento do Texto</span></label>
+                                <select class="select select-sm select-bordered" x-model="item.divider_align">
+                                    <option value="">Centro (padrão)</option>
+                                    <option value="start">Início</option>
+                                    <option value="end">Fim</option>
+                                </select>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-for="item in items" :key="item.id">
+                        <template x-if="item.itemType === 'row' && item.columns">
+                            <template x-for="col in item.columns" :key="col.id">
+                                <template x-for="field in (col.fields || [])" :key="field.id">
+                                    <div x-show="field.id === selectedItemId && field.itemType === 'divider'" class="flex flex-col gap-3">
+                                        <div class="form-control">
+                                            <label class="label"><span class="label-text font-medium">Texto do Divisor</span></label>
+                                            <input type="text" class="input input-sm input-bordered" x-model="field.divider_text" placeholder="Opcional">
+                                            <label class="label"><span class="label-text-alt">Deixe vazio para divisor sem texto</span></label>
+                                        </div>
+
+                                        <div class="form-control">
+                                            <label class="label"><span class="label-text font-medium">Cor</span></label>
+                                            <select class="select select-sm select-bordered" x-model="field.divider_color">
+                                                <option value="">Padrão</option>
+                                                <option value="neutral">Neutral</option>
+                                                <option value="primary">Primary</option>
+                                                <option value="secondary">Secondary</option>
+                                                <option value="accent">Accent</option>
+                                                <option value="success">Success</option>
+                                                <option value="warning">Warning</option>
+                                                <option value="info">Info</option>
+                                                <option value="error">Error</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-control">
+                                            <label class="label"><span class="label-text font-medium">Alinhamento do Texto</span></label>
+                                            <select class="select select-sm select-bordered" x-model="field.divider_align">
+                                                <option value="">Centro (padrão)</option>
+                                                <option value="start">Início</option>
+                                                <option value="end">Fim</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                        </template>
+                    </template>
+                </div>
+            </template>
 
             
             <template x-if="selectedItemId && selectedItemType === 'field'">
@@ -439,8 +630,8 @@
 
                     <div class="form-control">
                         <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_nullable">
-                            <span class="label-text">Campo opcional</span>
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_required">
+                            <span class="label-text">Campo obrigatório</span>
                         </label>
                     </div>
 

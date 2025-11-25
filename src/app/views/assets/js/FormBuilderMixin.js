@@ -250,6 +250,12 @@ export default function formBuilderMixin() {
             event.preventDefault();
 
             if (this.draggedType) {
+                if (this.draggedType === 'DIVIDER_VERTICAL') {
+                    flash('Divisor de coluna só pode ser usado dentro de colunas!', 'warn');
+                    this.draggedType = null;
+                    return;
+                }
+
                 const dropTarget = event.target.closest('[x-sort]');
                 if (dropTarget) {
                     const children = Array.from(dropTarget.children).filter(el => el.hasAttribute('data-item-id'));
@@ -265,7 +271,14 @@ export default function formBuilderMixin() {
                         }
                     }
 
-                    const newItem = this.draggedType === 'ROW' ? this.createRow() : this.createField(this.draggedType);
+                    let newItem;
+                    if (this.draggedType === 'ROW') {
+                        newItem = this.createRow();
+                    } else if (this.draggedType === 'DIVIDER_HORIZONTAL') {
+                        newItem = this.createDivider(this.draggedType);
+                    } else {
+                        newItem = this.createField(this.draggedType);
+                    }
                     this.items.splice(insertIndex, 0, newItem);
                 } else {
                     this.addItem(this.draggedType);
@@ -287,6 +300,13 @@ export default function formBuilderMixin() {
                 }
 
                 if (movedField) {
+                    if (movedField.itemType === 'divider' && movedField.divider_type === 'vertical') {
+                        flash('Divisor de coluna só pode ser usado dentro de colunas!', 'warn');
+                        this.draggedFieldId = null;
+                        this.draggedFromCanvas = false;
+                        return;
+                    }
+
                     const dropTarget = event.target.closest('[x-sort]');
                     let insertIndex = this.items.length;
 
@@ -334,6 +354,11 @@ export default function formBuilderMixin() {
                     this.draggedType = null;
                     return;
                 }
+                if (this.draggedType === 'DIVIDER_HORIZONTAL') {
+                    flash('Divisor horizontal só pode ser usado fora de colunas!', 'warn');
+                    this.draggedType = null;
+                    return;
+                }
                 this.addFieldToColumnDirect(rowId, columnId, this.draggedType);
                 this.draggedType = null;
             } else if (this.draggedFieldId && this.draggedFromCanvas) {
@@ -344,6 +369,13 @@ export default function formBuilderMixin() {
 
                     if (field.itemType === 'row') {
                         flash('Não é possível adicionar Colunas dentro de colunas!', 'warn');
+                        this.draggedFieldId = null;
+                        this.draggedFromCanvas = false;
+                        return;
+                    }
+
+                    if (field.itemType === 'divider' && field.divider_type === 'horizontal') {
+                        flash('Divisor horizontal só pode ser usado fora de colunas!', 'warn');
                         this.draggedFieldId = null;
                         this.draggedFromCanvas = false;
                         return;
@@ -406,6 +438,8 @@ export default function formBuilderMixin() {
         addItem(type) {
             if (type === 'ROW') {
                 this.items.push(this.createRow());
+            } else if (type === 'DIVIDER_HORIZONTAL' || type === 'DIVIDER_VERTICAL') {
+                this.items.push(this.createDivider(type));
             } else {
                 this.items.push(this.createField(type));
             }
@@ -416,9 +450,24 @@ export default function formBuilderMixin() {
             if (row && row.columns) {
                 const col = row.columns.find(c => c.id === columnId);
                 if (col && col.fields) {
-                    col.fields.push(this.createField(type));
+                    if (type === 'DIVIDER_VERTICAL') {
+                        col.fields.push(this.createDivider(type));
+                    } else {
+                        col.fields.push(this.createField(type));
+                    }
                 }
             }
+        },
+
+        createDivider(type) {
+            return {
+                id: `divider_${++this.fieldCounter}`,
+                itemType: 'divider',
+                divider_type: type === 'DIVIDER_HORIZONTAL' ? 'horizontal' : 'vertical',
+                divider_text: '',
+                divider_color: '',
+                divider_align: ''
+            };
         },
 
         createField(type) {
@@ -467,7 +516,8 @@ export default function formBuilderMixin() {
                 display_name: `Campo ${fieldNumber}`,
                 type: type,
                 length: defaultLength,
-                is_nullable: false,
+                is_nullable: true,
+                is_required: false,
                 default_value: null,
                 is_unique: false,
                 is_primary: false,
@@ -687,6 +737,44 @@ export default function formBuilderMixin() {
             return templates[field.type] || templates['VARCHAR'];
         },
 
+        getDividerPreviewHtml(divider) {
+            const text = divider.divider_text || '';
+            
+            const colorMap = {
+                '': '',
+                'neutral': 'divider-neutral',
+                'primary': 'divider-primary',
+                'secondary': 'divider-secondary',
+                'accent': 'divider-accent',
+                'success': 'divider-success',
+                'warning': 'divider-warning',
+                'info': 'divider-info',
+                'error': 'divider-error'
+            };
+            
+            const alignMap = {
+                '': '',
+                'start': 'divider-start',
+                'end': 'divider-end'
+            };
+            
+            const colorClass = colorMap[divider.divider_color || ''] || '';
+            const alignClass = alignMap[divider.divider_align || ''] || '';
+            const orientationClass = divider.divider_type === 'vertical' ? 'divider-horizontal' : '';
+            
+            const classes = ['divider', orientationClass, colorClass, alignClass, 'my-0'].filter(c => c).join(' ');
+            
+            if (divider.divider_type === 'vertical') {
+                return `<div class="flex gap-2 h-16">
+                    <div class="flex-1 flex items-center justify-center bg-base-200/50 rounded text-xs opacity-50">Col</div>
+                    <div class="${classes}">${text}</div>
+                    <div class="flex-1 flex items-center justify-center bg-base-200/50 rounded text-xs opacity-50">Col</div>
+                </div>`;
+            }
+            
+            return `<div class="${classes}">${text}</div>`;
+        },
+
         canReduceColumns(row) {
             if (!row || !row.columns) return true;
             // Mínimo é 2 colunas
@@ -760,6 +848,10 @@ export default function formBuilderMixin() {
             let currentRowIndex = 1;
 
             this.items.forEach(item => {
+                if (item.itemType === 'divider') {
+                    return;
+                }
+                
                 if (item.itemType === 'field') {
                     const { id, itemType, ...fieldData } = item;
 
@@ -777,7 +869,7 @@ export default function formBuilderMixin() {
                     }
 
                     // Converter booleanos para inteiros
-                    fieldData.is_nullable = fieldData.is_nullable ? 1 : 0;
+                    fieldData.is_nullable = fieldData.is_required ? 0 : 1;
                     fieldData.is_unique = fieldData.is_unique ? 1 : 0;
                     fieldData.is_primary = fieldData.is_primary ? 1 : 0;
                     fieldData.auto_increment = fieldData.auto_increment ? 1 : 0;
@@ -785,6 +877,7 @@ export default function formBuilderMixin() {
                     fieldData.is_visible_form = fieldData.is_visible_form ? 1 : 0;
                     fieldData.is_editable = fieldData.is_editable ? 1 : 0;
                     fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
+                    delete fieldData.is_required;
 
                     fieldData.row_index = currentRowIndex;
                     fieldData.row_size = 1;
@@ -796,6 +889,10 @@ export default function formBuilderMixin() {
                     item.columns.forEach(col => {
                         if (col.fields) {
                             col.fields.forEach(field => {
+                                if (field.itemType === 'divider') {
+                                    return;
+                                }
+                                
                                 const {id, itemType, ...fieldData} = field;
 
                                 if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
@@ -812,7 +909,7 @@ export default function formBuilderMixin() {
                                 }
 
                                 // Converter booleanos para inteiros
-                                fieldData.is_nullable = fieldData.is_nullable ? 1 : 0;
+                                fieldData.is_nullable = fieldData.is_required ? 0 : 1;
                                 fieldData.is_unique = fieldData.is_unique ? 1 : 0;
                                 fieldData.is_primary = fieldData.is_primary ? 1 : 0;
                                 fieldData.auto_increment = fieldData.auto_increment ? 1 : 0;
@@ -820,6 +917,7 @@ export default function formBuilderMixin() {
                                 fieldData.is_visible_form = fieldData.is_visible_form ? 1 : 0;
                                 fieldData.is_editable = fieldData.is_editable ? 1 : 0;
                                 fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
+                                delete fieldData.is_required;
 
                                 fieldData.row_index = currentRowIndex;
                                 fieldData.row_size = item.columns.length;
