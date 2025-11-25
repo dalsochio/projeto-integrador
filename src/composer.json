@@ -18,9 +18,7 @@
     "ext-dom": "*",
     "ext-libxml": "*",
     "cocur/slugify": "^4.6",
-    "flightphp/core": "^3.17"
-  },
-  "require-dev": {
+    "flightphp/core": "^3.17",
     "flightphp/tracy-extensions": "^0.2.7"
   },
   "autoload": {

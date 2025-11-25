@@ -7,7 +7,7 @@ use Flight;
 class FlightResourceWrapper
 {
     
-    public static function register(string $pathPrefix = '/@category/@resource', string $controllerClass, array $middlewares = []): void
+    public static function register(string $pathPrefix, string $controllerClass, array $middlewares = []): void
     {
         $route = Flight::route('GET ' . $pathPrefix, [$controllerClass, 'index']);
         self::applyMiddlewares($route, $middlewares);

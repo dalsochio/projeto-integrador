@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d583d94d329b50822d207083acb608f5",
+    "content-hash": "ba42241badcc6d6d24086609ecd1c2ad",
     "packages": [
         {
             "name": "adhocore/cli",
@@ -85,26 +85,26 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/byjg/php-anydataset.git",
-                "reference": "6443bb77755dad966ee4e2dab7cce27a575aa7f8"
+                "reference": "43c378331797ba763ccb125fb3d0967cae3a834d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byjg/php-anydataset/zipball/6443bb77755dad966ee4e2dab7cce27a575aa7f8",
-                "reference": "6443bb77755dad966ee4e2dab7cce27a575aa7f8",
+                "url": "https://api.github.com/repos/byjg/php-anydataset/zipball/43c378331797ba763ccb125fb3d0967cae3a834d",
+                "reference": "43c378331797ba763ccb125fb3d0967cae3a834d",
                 "shasum": ""
             },
             "require": {
                 "byjg/serializer": "^6.0",
                 "byjg/xmlutil": "^6.0",
                 "ext-dom": "*",
-                "php": ">=8.1 <8.5"
+                "php": ">=8.3 <8.6"
             },
             "provide": {
                 "byjg/anydataset-implementation": "1.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^10.5|^11.5",
-                "vimeo/psalm": "^5.9|^6.2"
+                "vimeo/psalm": "^5.9|^6.13"
             },
             "type": "library",
             "autoload": {
@@ -116,7 +116,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Anydataset is an agnostic data source abstraction layer in PHP. Core Module.",
+            "description": "AnyDataset is a powerful data source abstraction layer for PHP that provides a simple and consistent interface to access different data sources. With AnyDataset, you can work with various data formats and storage systems using the same programming interface.",
             "support": {
                 "issues": "https://github.com/byjg/php-anydataset/issues",
                 "source": "https://github.com/byjg/php-anydataset/tree/6.0"
@@ -127,7 +127,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-23T19:28:24+00:00"
+            "time": "2025-11-25T03:55:37+00:00"
         },
         {
             "name": "byjg/anydataset-db",
@@ -135,12 +135,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/byjg/php-anydataset-db.git",
-                "reference": "78acc6063b4fc93dedd753b2da2bc8a115fd50de"
+                "reference": "1bbdefbd75559bdfd4b596011d28c8f7787d4288"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byjg/php-anydataset-db/zipball/78acc6063b4fc93dedd753b2da2bc8a115fd50de",
-                "reference": "78acc6063b4fc93dedd753b2da2bc8a115fd50de",
+                "url": "https://api.github.com/repos/byjg/php-anydataset-db/zipball/1bbdefbd75559bdfd4b596011d28c8f7787d4288",
+                "reference": "1bbdefbd75559bdfd4b596011d28c8f7787d4288",
                 "shasum": ""
             },
             "require": {
@@ -148,7 +148,7 @@
                 "byjg/uri": "^6.0",
                 "ext-json": "*",
                 "ext-pdo": "*",
-                "php": ">=8.1 <8.5",
+                "php": ">=8.3 <8.6",
                 "psr/cache": "^1.0|^2.0|^3.0",
                 "psr/log": "^1.1|^2.0|^3.0"
             },
@@ -158,7 +158,7 @@
             "require-dev": {
                 "byjg/cache-engine": "^6.0",
                 "phpunit/phpunit": "^10.5|^11.5|^12.3",
-                "vimeo/psalm": "^5.9|^6.2"
+                "vimeo/psalm": "^5.9|^6.13"
             },
             "suggest": {
                 "byjg/cache-engine": "^6.0",
@@ -177,7 +177,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Anydataset Database Relational abstraction. Anydataset is an agnostic data source abstraction layer in PHP.",
+            "description": "AnyDataset-DB provides a relational database abstraction layer. It is part of the Anydataset project, an agnostic data source abstraction layer for PHP.",
             "support": {
                 "issues": "https://github.com/byjg/php-anydataset-db/issues",
                 "source": "https://github.com/byjg/php-anydataset-db/tree/6.0"
@@ -188,7 +188,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-05T19:37:42+00:00"
+            "time": "2025-11-24T23:25:38+00:00"
         },
         {
             "name": "byjg/migration",
@@ -196,23 +196,26 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/byjg/php-migration.git",
-                "reference": "32102cda69b0f16d2d9f2f01dcc0c547a8155c2b"
+                "reference": "1cad4547d43d21815ba11b5614ba716ea926ddc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byjg/php-migration/zipball/32102cda69b0f16d2d9f2f01dcc0c547a8155c2b",
-                "reference": "32102cda69b0f16d2d9f2f01dcc0c547a8155c2b",
+                "url": "https://api.github.com/repos/byjg/php-migration/zipball/1cad4547d43d21815ba11b5614ba716ea926ddc0",
+                "reference": "1cad4547d43d21815ba11b5614ba716ea926ddc0",
                 "shasum": ""
             },
             "require": {
                 "byjg/anydataset-db": "^6.0",
                 "ext-pdo": "*",
-                "php": ">=8.1 <8.5"
+                "php": ">=8.3 <8.6"
             },
             "require-dev": {
                 "phpunit/phpunit": "^10.5|^11.5",
-                "vimeo/psalm": "^5.9|^6.2"
+                "vimeo/psalm": "^6.13"
             },
+            "bin": [
+                "bin/migrate"
+            ],
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -223,7 +226,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Simple library in PHP for database version control. Supports Sqlite, MySql, Sql Server and Postgres.",
+            "description": "A simple, framework-agnostic database migration tool that uses pure SQL commands for versioning your database.",
             "support": {
                 "issues": "https://github.com/byjg/php-migration/issues",
                 "source": "https://github.com/byjg/php-migration/tree/6.0"
@@ -234,7 +237,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-25T02:50:45+00:00"
+            "time": "2025-11-23T21:00:07+00:00"
         },
         {
             "name": "byjg/serializer",
@@ -242,23 +245,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/byjg/php-serializer.git",
-                "reference": "d59c4bbd05b06b30d7aaf566f3fb08a794135dea"
+                "reference": "38201e30d65a679e913239fa40c599b204d9b52c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byjg/php-serializer/zipball/d59c4bbd05b06b30d7aaf566f3fb08a794135dea",
-                "reference": "d59c4bbd05b06b30d7aaf566f3fb08a794135dea",
+                "url": "https://api.github.com/repos/byjg/php-serializer/zipball/38201e30d65a679e913239fa40c599b204d9b52c",
+                "reference": "38201e30d65a679e913239fa40c599b204d9b52c",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-simplexml": "*",
-                "php": ">=8.1 <8.5",
+                "php": ">=8.3 <8.6",
                 "symfony/yaml": "> 4"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.5|^11.5",
-                "vimeo/psalm": "^5.9|^6.2"
+                "phpunit/phpunit": "^9.6|^11.5",
+                "vimeo/psalm": "^5.9|^6.13"
             },
             "suggest": {
                 "ext-curl": "*"
@@ -273,7 +276,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Serialize any object into array and format it JSON or XML",
+            "description": "A powerful multi-format serialization library that converts objects, arrays, and data between JSON, XML, YAML, CSV, PHP serialize, and plain text formats with intelligent property mapping and transformation",
             "support": {
                 "issues": "https://github.com/byjg/php-serializer/issues",
                 "source": "https://github.com/byjg/php-serializer/tree/6.0"
@@ -284,7 +287,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-23T18:02:04+00:00"
+            "time": "2025-11-20T18:00:11+00:00"
         },
         {
             "name": "byjg/uri",
@@ -292,16 +295,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/byjg/php-uri.git",
-                "reference": "cc7a3df379d2ece02adf330152822f82f41a00e3"
+                "reference": "2b9e3bb18643f16eb4a9d611e229f017f67b0e6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byjg/php-uri/zipball/cc7a3df379d2ece02adf330152822f82f41a00e3",
-                "reference": "cc7a3df379d2ece02adf330152822f82f41a00e3",
+                "url": "https://api.github.com/repos/byjg/php-uri/zipball/2b9e3bb18643f16eb4a9d611e229f017f67b0e6c",
+                "reference": "2b9e3bb18643f16eb4a9d611e229f017f67b0e6c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1 <8.5",
+                "php": ">=8.3 <8.6",
                 "psr/http-message": "^1.0|^1.1|^2.0"
             },
             "provide": {
@@ -309,7 +312,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "^10.5|^11.5",
-                "vimeo/psalm": "^5.9|^6.2"
+                "vimeo/psalm": "^5.9|^6.13"
             },
             "type": "project",
             "autoload": {
@@ -321,7 +324,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "An implementation of PSR-7 Uri Interface ",
+            "description": "A PHP implementation of PSR-7 UriInterface with additional utility methods",
             "support": {
                 "issues": "https://github.com/byjg/php-uri/issues",
                 "source": "https://github.com/byjg/php-uri/tree/6.0"
@@ -332,7 +335,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-23T19:36:07+00:00"
+            "time": "2025-11-22T01:28:16+00:00"
         },
         {
             "name": "byjg/xmlutil",
@@ -340,12 +343,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/byjg/php-xmlutil.git",
-                "reference": "f30b81410df4b4e07f88ee42ad772fa0c054c255"
+                "reference": "ae005cd5edfd223c3ab9ceaf50c12261b27178f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byjg/php-xmlutil/zipball/f30b81410df4b4e07f88ee42ad772fa0c054c255",
-                "reference": "f30b81410df4b4e07f88ee42ad772fa0c054c255",
+                "url": "https://api.github.com/repos/byjg/php-xmlutil/zipball/ae005cd5edfd223c3ab9ceaf50c12261b27178f0",
+                "reference": "ae005cd5edfd223c3ab9ceaf50c12261b27178f0",
                 "shasum": ""
             },
             "require": {
@@ -353,11 +356,11 @@
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-simplexml": "*",
-                "php": ">=8.1 <8.5"
+                "php": ">=8.3 <8.6"
             },
             "require-dev": {
                 "phpunit/phpunit": "^10.5|^11.5",
-                "vimeo/psalm": "^5.9|^6.2"
+                "vimeo/psalm": "^5.9|^6.13"
             },
             "type": "library",
             "autoload": {
@@ -369,7 +372,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "A utility class to make easy work with XML in PHP.",
+            "description": "A powerful and intuitive PHP library for working with XML documents. This utility makes XML manipulation, querying, and conversion simple and straightforward in PHP.",
             "support": {
                 "issues": "https://github.com/byjg/php-xmlutil/issues",
                 "source": "https://github.com/byjg/php-xmlutil/tree/6.0"
@@ -380,20 +383,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-23T18:54:07+00:00"
+            "time": "2025-11-22T05:14:51+00:00"
         },
         {
             "name": "casbin/casbin",
-            "version": "v4.0.6",
+            "version": "v4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-casbin/php-casbin.git",
-                "reference": "3042d89fc2d3de59ed08fe625789d0feb15bf955"
+                "reference": "55f943f77d2847c06533809792f73a9ed50ad705"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-casbin/php-casbin/zipball/3042d89fc2d3de59ed08fe625789d0feb15bf955",
-                "reference": "3042d89fc2d3de59ed08fe625789d0feb15bf955",
+                "url": "https://api.github.com/repos/php-casbin/php-casbin/zipball/55f943f77d2847c06533809792f73a9ed50ad705",
+                "reference": "55f943f77d2847c06533809792f73a9ed50ad705",
                 "shasum": ""
             },
             "require": {
@@ -436,7 +439,7 @@
             ],
             "support": {
                 "issues": "https://github.com/php-casbin/php-casbin/issues",
-                "source": "https://github.com/php-casbin/php-casbin/tree/v4.0.6"
+                "source": "https://github.com/php-casbin/php-casbin/tree/v4.1.0"
             },
             "funding": [
                 {
@@ -444,7 +447,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2025-07-13T16:30:09+00:00"
+            "time": "2025-11-21T18:45:07+00:00"
         },
         {
             "name": "casbin/database-adapter",
@@ -764,6 +767,51 @@
             "time": "2025-01-11T17:52:47+00:00"
         },
         {
+            "name": "flightphp/tracy-extensions",
+            "version": "v0.2.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flightphp/tracy-extensions.git",
+                "reference": "4150ea7dc9bbb56fa089e7a4662f68011a771256"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flightphp/tracy-extensions/zipball/4150ea7dc9bbb56fa089e7a4662f68011a771256",
+                "reference": "4150ea7dc9bbb56fa089e7a4662f68011a771256",
+                "shasum": ""
+            },
+            "require": {
+                "flightphp/core": "^3.0",
+                "php": ">=8.0",
+                "tracy/tracy": "^2.10"
+            },
+            "require-dev": {
+                "ghostff/session": "^2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "n0nag0n",
+                    "email": "n0nag0n@sky-9.com"
+                }
+            ],
+            "description": "A few Flight specific extensions for Tracy Debugger to help debug your code quickly.",
+            "support": {
+                "issues": "https://github.com/flightphp/tracy-extensions/issues",
+                "source": "https://github.com/flightphp/tracy-extensions/tree/v0.2.7"
+            },
+            "time": "2025-09-03T13:47:57+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.1.3",
             "source": {
@@ -827,22 +875,22 @@
         },
         {
             "name": "latte/latte",
-            "version": "v3.0.23",
+            "version": "v3.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/latte.git",
-                "reference": "3198a4e336a2a1e535924af11d9a63fbf1650836"
+                "reference": "2ec95b542197d82a4837ba5949bd823d0ca7d170"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/latte/zipball/3198a4e336a2a1e535924af11d9a63fbf1650836",
-                "reference": "3198a4e336a2a1e535924af11d9a63fbf1650836",
+                "url": "https://api.github.com/repos/nette/latte/zipball/2ec95b542197d82a4837ba5949bd823d0ca7d170",
+                "reference": "2ec95b542197d82a4837ba5949bd823d0ca7d170",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-tokenizer": "*",
-                "php": "8.0 - 8.4"
+                "php": "8.0 - 8.5"
             },
             "conflict": {
                 "nette/application": "<3.1.7",
@@ -910,9 +958,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/latte/issues",
-                "source": "https://github.com/nette/latte/tree/v3.0.23"
+                "source": "https://github.com/nette/latte/tree/v3.0.24"
             },
-            "time": "2025-07-17T01:01:46+00:00"
+            "time": "2025-10-31T00:53:04+00:00"
         },
         {
             "name": "leeqvip/database",
@@ -1219,16 +1267,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.0.8",
+            "version": "v4.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "c930ca4e3cf4f17dcfb03037703679d2396d2ede"
+                "reference": "505a30ad386daa5211f08a318e47015b501cad30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/c930ca4e3cf4f17dcfb03037703679d2396d2ede",
-                "reference": "c930ca4e3cf4f17dcfb03037703679d2396d2ede",
+                "url": "https://api.github.com/repos/nette/utils/zipball/505a30ad386daa5211f08a318e47015b501cad30",
+                "reference": "505a30ad386daa5211f08a318e47015b501cad30",
                 "shasum": ""
             },
             "require": {
@@ -1302,9 +1350,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.8"
+                "source": "https://github.com/nette/utils/tree/v4.0.9"
             },
-            "time": "2025-08-06T21:43:34+00:00"
+            "time": "2025-10-31T00:45:47+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -2049,16 +2097,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v7.3.4",
+            "version": "v7.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "bf8afc8ffd4bfd3d9c373e417f041d9f1e5b863f"
+                "reference": "1277a1ec61c8d93ea61b2a59738f1deb9bfb6701"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/bf8afc8ffd4bfd3d9c373e417f041d9f1e5b863f",
-                "reference": "bf8afc8ffd4bfd3d9c373e417f041d9f1e5b863f",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/1277a1ec61c8d93ea61b2a59738f1deb9bfb6701",
+                "reference": "1277a1ec61c8d93ea61b2a59738f1deb9bfb6701",
                 "shasum": ""
             },
             "require": {
@@ -2127,7 +2175,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v7.3.4"
+                "source": "https://github.com/symfony/cache/tree/v7.3.6"
             },
             "funding": [
                 {
@@ -2147,7 +2195,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-11T10:12:26+00:00"
+            "time": "2025-10-30T13:22:58+00:00"
         },
         {
             "name": "symfony/cache-contracts",
@@ -2614,16 +2662,16 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.6.0",
+            "version": "v3.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "f021b05a130d35510bd6b25fe9053c2a8a15d5d4"
+                "reference": "45112560a3ba2d715666a509a0bc9521d10b6c43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/f021b05a130d35510bd6b25fe9053c2a8a15d5d4",
-                "reference": "f021b05a130d35510bd6b25fe9053c2a8a15d5d4",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/45112560a3ba2d715666a509a0bc9521d10b6c43",
+                "reference": "45112560a3ba2d715666a509a0bc9521d10b6c43",
                 "shasum": ""
             },
             "require": {
@@ -2677,7 +2725,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.6.0"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.6.1"
             },
             "funding": [
                 {
@@ -2689,11 +2737,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-25T09:37:31+00:00"
+            "time": "2025-07-15T11:30:57+00:00"
         },
         {
             "name": "symfony/var-exporter",
@@ -2778,16 +2830,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v7.3.3",
+            "version": "v7.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "d4f4a66866fe2451f61296924767280ab5732d9d"
+                "reference": "90208e2fc6f68f613eae7ca25a2458a931b1bacc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/d4f4a66866fe2451f61296924767280ab5732d9d",
-                "reference": "d4f4a66866fe2451f61296924767280ab5732d9d",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/90208e2fc6f68f613eae7ca25a2458a931b1bacc",
+                "reference": "90208e2fc6f68f613eae7ca25a2458a931b1bacc",
                 "shasum": ""
             },
             "require": {
@@ -2830,7 +2882,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v7.3.3"
+                "source": "https://github.com/symfony/yaml/tree/v7.3.5"
             },
             "funding": [
                 {
@@ -2850,26 +2902,26 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-27T11:34:33+00:00"
+            "time": "2025-09-27T09:00:46+00:00"
         },
         {
             "name": "tracy/tracy",
-            "version": "v2.10.10",
+            "version": "v2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/tracy.git",
-                "reference": "32303e02c222eea8571402a8310fc3fe70422c37"
+                "reference": "eec57bcf2ff11d79f519a19da9d7ae1e2c63c42e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/tracy/zipball/32303e02c222eea8571402a8310fc3fe70422c37",
-                "reference": "32303e02c222eea8571402a8310fc3fe70422c37",
+                "url": "https://api.github.com/repos/nette/tracy/zipball/eec57bcf2ff11d79f519a19da9d7ae1e2c63c42e",
+                "reference": "eec57bcf2ff11d79f519a19da9d7ae1e2c63c42e",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-session": "*",
-                "php": "8.0 - 8.4"
+                "php": "8.2 - 8.5"
             },
             "conflict": {
                 "nette/di": "<3.0"
@@ -2881,19 +2933,22 @@
                 "nette/mail": "^3.0 || ^4.0",
                 "nette/tester": "^2.2",
                 "nette/utils": "^3.0 || ^4.0",
-                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan-nette": "^2.0@stable",
                 "psr/log": "^1.0 || ^2.0 || ^3.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.10-dev"
+                    "dev-master": "2.11-dev"
                 }
             },
             "autoload": {
                 "files": [
                     "src/Tracy/functions.php"
                 ],
+                "psr-4": {
+                    "Tracy\\": "src"
+                },
                 "classmap": [
                     "src"
                 ]
@@ -2923,9 +2978,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/tracy/issues",
-                "source": "https://github.com/nette/tracy/tree/v2.10.10"
+                "source": "https://github.com/nette/tracy/tree/v2.11.0"
             },
-            "time": "2025-04-28T14:35:15+00:00"
+            "time": "2025-10-31T00:12:50+00:00"
         },
         {
             "name": "ucscode/easy-paginator",
@@ -3159,53 +3214,7 @@
             "time": "2025-04-30T23:37:27+00:00"
         }
     ],
-    "packages-dev": [
-        {
-            "name": "flightphp/tracy-extensions",
-            "version": "v0.2.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/flightphp/tracy-extensions.git",
-                "reference": "4150ea7dc9bbb56fa089e7a4662f68011a771256"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/flightphp/tracy-extensions/zipball/4150ea7dc9bbb56fa089e7a4662f68011a771256",
-                "reference": "4150ea7dc9bbb56fa089e7a4662f68011a771256",
-                "shasum": ""
-            },
-            "require": {
-                "flightphp/core": "^3.0",
-                "php": ">=8.0",
-                "tracy/tracy": "^2.10"
-            },
-            "require-dev": {
-                "ghostff/session": "^2.1"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "n0nag0n",
-                    "email": "n0nag0n@sky-9.com"
-                }
-            ],
-            "description": "A few Flight specific extensions for Tracy Debugger to help debug your code quickly.",
-            "support": {
-                "issues": "https://github.com/flightphp/tracy-extensions/issues",
-                "source": "https://github.com/flightphp/tracy-extensions/tree/v0.2.7"
-            },
-            "time": "2025-09-03T13:47:57+00:00"
-        }
-    ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
