@@ -21,8 +21,8 @@
     {block global-vars}
         {var $theme = $user['theme'] ?? $_COOKIE['theme'] ?? 'system'}
         {var $isLoggedIn = $user ? 'true' : 'false'}
-        {var $themeLightConfig = $env['config']['theme_light'] ?? 'light'}
-        {var $themeDarkConfig = $env['config']['theme_dark'] ?? 'dark'}
+        {var $themeLightConfig = $env['config']['theme_light'] ?? 'corporate'}
+        {var $themeDarkConfig = $env['config']['theme_dark'] ?? 'business'}
         <script id="global-vars"{if $htmx['oob'] ?? false} hx-swap-oob="true" {/if} type="text/global-vars">
             { "theme": "{$theme}", "isLoggedIn": {$isLoggedIn}, "themeLightConfig": "{$themeLightConfig}", "themeDarkConfig": "{$themeDarkConfig}" }
         </script>

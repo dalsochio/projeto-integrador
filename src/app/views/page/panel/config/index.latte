@@ -93,26 +93,25 @@
             </div>
 
             
-            <div class="card bg-base-100 shadow-sm border border-base-content/5 opacity-60">
+            <div class="card bg-base-100 shadow-sm border border-base-content/5">
                 <div class="card-body">
                     <h2 class="card-title text-base flex items-center gap-2">
                         <span class="material-symbols-outlined">palette</span>
                         Temas
-                        <span class="badge badge-sm ml-auto">Em breve</span>
                     </h2>
 
-                    <form id="formThemes" class="space-y-4 pointer-events-none">
+                    <form id="formThemes" class="space-y-4">
                         
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-text">Tema claro</span>
                             </label>
-                            <select name="theme_light" class="select select-bordered w-full" disabled>
-                                <option value="light" {if ($configs['theme_light'] ?? 'light') === 'light'}selected{/if}>Light (Padrão)</option>
+                            <select name="theme_light" class="select select-bordered w-full">
+                                <option value="corporate" {if ($configs['theme_light'] ?? 'corporate') === 'corporate'}selected{/if}>Corporate (Recomendado)</option>
+                                <option value="light" {if ($configs['theme_light'] ?? '') === 'light'}selected{/if}>Light</option>
                                 <option value="cupcake" {if ($configs['theme_light'] ?? '') === 'cupcake'}selected{/if}>Cupcake</option>
                                 <option value="bumblebee" {if ($configs['theme_light'] ?? '') === 'bumblebee'}selected{/if}>Bumblebee</option>
                                 <option value="emerald" {if ($configs['theme_light'] ?? '') === 'emerald'}selected{/if}>Emerald</option>
-                                <option value="corporate" {if ($configs['theme_light'] ?? '') === 'corporate'}selected{/if}>Corporate</option>
                                 <option value="retro" {if ($configs['theme_light'] ?? '') === 'retro'}selected{/if}>Retro</option>
                                 <option value="cyberpunk" {if ($configs['theme_light'] ?? '') === 'cyberpunk'}selected{/if}>Cyberpunk</option>
                                 <option value="valentine" {if ($configs['theme_light'] ?? '') === 'valentine'}selected{/if}>Valentine</option>
@@ -134,15 +133,15 @@
                             <label class="label">
                                 <span class="label-text">Tema escuro</span>
                             </label>
-                            <select name="theme_dark" class="select select-bordered w-full" disabled>
-                                <option value="dark" {if ($configs['theme_dark'] ?? 'dark') === 'dark'}selected{/if}>Dark (Padrão)</option>
+                            <select name="theme_dark" class="select select-bordered w-full">
+                                <option value="business" {if ($configs['theme_dark'] ?? 'business') === 'business'}selected{/if}>Business (Recomendado)</option>
+                                <option value="dark" {if ($configs['theme_dark'] ?? '') === 'dark'}selected{/if}>Dark</option>
                                 <option value="synthwave" {if ($configs['theme_dark'] ?? '') === 'synthwave'}selected{/if}>Synthwave</option>
                                 <option value="halloween" {if ($configs['theme_dark'] ?? '') === 'halloween'}selected{/if}>Halloween</option>
                                 <option value="forest" {if ($configs['theme_dark'] ?? '') === 'forest'}selected{/if}>Forest</option>
                                 <option value="black" {if ($configs['theme_dark'] ?? '') === 'black'}selected{/if}>Black</option>
                                 <option value="luxury" {if ($configs['theme_dark'] ?? '') === 'luxury'}selected{/if}>Luxury</option>
                                 <option value="dracula" {if ($configs['theme_dark'] ?? '') === 'dracula'}selected{/if}>Dracula</option>
-                                <option value="business" {if ($configs['theme_dark'] ?? '') === 'business'}selected{/if}>Business</option>
                                 <option value="night" {if ($configs['theme_dark'] ?? '') === 'night'}selected{/if}>Night</option>
                                 <option value="coffee" {if ($configs['theme_dark'] ?? '') === 'coffee'}selected{/if}>Coffee</option>
                                 <option value="dim" {if ($configs['theme_dark'] ?? '') === 'dim'}selected{/if}>Dim</option>
@@ -152,7 +151,7 @@
 
                         
                         <div class="flex justify-end gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary" disabled>
+                            <button type="submit" class="btn btn-primary">
                                 <span class="material-symbols-outlined">save</span>
                                 <span>Salvar Alterações</span>
                             </button>

@@ -266,6 +266,12 @@ Flight::group('/panel/config', function () {
     Flight::route('POST /', [ConfigController::class, 'update']);
 }, [authenticationMiddleware()]);
 
+Flight::group('', function () {
+    Flight::route('GET /@category:[a-zA-Z0-9_-]+', function ($category) {
+        Flight::redirect('/');
+    });
+}, [authenticationMiddleware()]);
+
 FlightResourceWrapper::register('/@category/@resource', ResourceController::class, [ResourceMiddleware::class]);
 Flight::map('notFound', function () {
     $path = Flight::request()->url;
