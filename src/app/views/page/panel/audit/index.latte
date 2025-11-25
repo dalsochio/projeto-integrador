@@ -1,24 +1,17 @@
 {layout ../../../layout/panel.latte}
 
 {block panel}
-<div class="audit-container">
-    
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-3xl font-bold flex items-center gap-2">
-                <span class="material-symbols-outlined">shield</span>
-                Auditoria
-            </h1>
-            <p class="text-sm text-base-content/70 mt-1">
-                Visualize todas as ações realizadas no sistema
-            </p>
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <div>
+                <p class="text-xl font-semibold">Auditoria</p>
+                <p class="text-sm text-base-content/70">Visualize todas as ações realizadas no sistema</p>
+            </div>
         </div>
-    </div>
 
-    
-    <div class="card bg-base-100 shadow-xl mb-6">
-        <div class="card-body">
-            <h2 class="card-title text-lg mb-4">
+        
+        <div class="rounded-box border border-base-content/5 bg-base-100 p-4">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined">filter_list</span>
                 Filtros
             </h2>
@@ -108,21 +101,18 @@
                 </div>
             </form>
         </div>
-    </div>
 
-    
-    <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="card-title">
-                    Registros ({$pagination['total']})
-                </h2>
-            </div>
+        
+        <div class="rounded-box border border-base-content/5 bg-base-100 p-4">
+            <h2 class="text-lg font-semibold mb-4">
+                Registros ({$pagination['total']})
+            </h2>
 
             {if empty($logs)}
-                <div class="alert alert-info">
-                    <span class="material-symbols-outlined">info</span>
-                    <span>Nenhum log encontrado com os filtros aplicados.</span>
+                <div class="flex flex-col items-center justify-center p-12 text-center">
+                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">shield</span>
+                    <p class="text-lg font-semibold mb-2">Nenhum log encontrado</p>
+                    <p class="text-sm text-base-content/70 mb-4">Nenhum log encontrado com os filtros aplicados</p>
                 </div>
             {else}
                 <div class="overflow-x-auto">
@@ -203,10 +193,11 @@
                         </tbody>
                     </table>
                 </div>
+            {/if}
 
-                
-                {if $pagination['totalPages'] > 1}
-                    <div class="flex justify-center mt-6">
+            
+            {if $pagination['totalPages'] > 1}
+                <div class="flex justify-center mt-6">
                         <div class="join">
                             {if $pagination['currentPage'] > 1}
                                 <a href="?page={$pagination['currentPage'] - 1}{if $filters['table_name']}&table_name={$filters['table_name']}{/if}{if $filters['action']}&action={$filters['action']}{/if}{if $filters['route_type']}&route_type={$filters['route_type']}{/if}{if $filters['user_id']}&user_id={$filters['user_id']}{/if}{if $filters['date_from']}&date_from={$filters['date_from']}{/if}{if $filters['date_to']}&date_to={$filters['date_to']}{/if}" 
@@ -223,12 +214,10 @@
                             {if $pagination['currentPage'] < $pagination['totalPages']}
                                 <a href="?page={$pagination['currentPage'] + 1}{if $filters['table_name']}&table_name={$filters['table_name']}{/if}{if $filters['action']}&action={$filters['action']}{/if}{if $filters['route_type']}&route_type={$filters['route_type']}{/if}{if $filters['user_id']}&user_id={$filters['user_id']}{/if}{if $filters['date_from']}&date_from={$filters['date_from']}{/if}{if $filters['date_to']}&date_to={$filters['date_to']}{/if}" 
                                    class="join-item btn">»</a>
-                            {/if}
+                             {/if}
                         </div>
                     </div>
                 {/if}
-            {/if}
         </div>
     </div>
-</div>
 {/block}

@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block');
 
 @import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 
@@ -15,9 +14,27 @@
 
 @custom-variant dark (&:where([data-theme=business], [data-theme=business] *));
 
+:root {
+    --font-main: "IBM Plex Sans", sans-serif;
+    --font-highlight: "Hind Siliguri", sans-serif;
+}
+
 @layer utilities {
     * {
-        font-family: "DM Sans", sans-serif;
+        font-family: var(--font-main);
+    }
+
+    code, pre, .font-mono, .font-highlight {
+        font-family: var(--font-highlight);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-highlight);
+        font-weight: 600;
+    }
+
+    .btn, .badge, .stat-value, .label-text, th {
+        font-family: var(--font-highlight);
     }
 
 }
@@ -133,7 +150,7 @@ body {
     padding: 0.125em 0.25em;
     border-radius: 0.25em;
     font-size: 0.875em;
-    font-family: monospace;
+    font-family: var(--font-highlight);
 }
 
 .prose pre {

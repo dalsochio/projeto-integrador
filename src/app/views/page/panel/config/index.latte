@@ -106,7 +106,7 @@
                             <label class="label">
                                 <span class="label-text">Tema claro</span>
                             </label>
-                            <select name="theme_light" class="select select-bordered w-full">
+                            <select name="theme_light" id="theme-light-select" class="select select-bordered w-full">
                                 <option value="corporate" {if ($configs['theme_light'] ?? 'corporate') === 'corporate'}selected{/if}>Corporate (Recomendado)</option>
                                 <option value="light" {if ($configs['theme_light'] ?? '') === 'light'}selected{/if}>Light</option>
                                 <option value="cupcake" {if ($configs['theme_light'] ?? '') === 'cupcake'}selected{/if}>Cupcake</option>
@@ -133,7 +133,7 @@
                             <label class="label">
                                 <span class="label-text">Tema escuro</span>
                             </label>
-                            <select name="theme_dark" class="select select-bordered w-full">
+                            <select name="theme_dark" id="theme-dark-select" class="select select-bordered w-full">
                                 <option value="business" {if ($configs['theme_dark'] ?? 'business') === 'business'}selected{/if}>Business (Recomendado)</option>
                                 <option value="dark" {if ($configs['theme_dark'] ?? '') === 'dark'}selected{/if}>Dark</option>
                                 <option value="synthwave" {if ($configs['theme_dark'] ?? '') === 'synthwave'}selected{/if}>Synthwave</option>
@@ -306,6 +306,27 @@
 
                 toggleRedirectUrl();
                 allowUserPanelCheckbox.addEventListener('change', toggleRedirectUrl);
+            }
+
+            // Preview de temas em tempo real
+            const themeLightSelect = document.getElementById('theme-light-select');
+            const themeDarkSelect = document.getElementById('theme-dark-select');
+            const htmlElement = document.documentElement;
+
+            function applyThemePreview(theme) {
+                htmlElement.setAttribute('data-theme', theme);
+            }
+
+            if (themeLightSelect) {
+                themeLightSelect.addEventListener('change', function() {
+                    applyThemePreview(this.value);
+                });
+            }
+
+            if (themeDarkSelect) {
+                themeDarkSelect.addEventListener('change', function() {
+                    applyThemePreview(this.value);
+                });
             }
         })();
 

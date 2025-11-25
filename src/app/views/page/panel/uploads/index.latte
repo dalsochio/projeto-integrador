@@ -1,31 +1,39 @@
 {layout ../../../layout/panel.latte}
 
 {block panel}
-<div class="uploads-general-container">
-    
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Uploads Gerais</h1>
-        {if $canCreate}
-            <a href="/panel/uploads/create" class="btn btn-primary">
-                <span class="material-symbols-outlined">add</span>
-                Novo Upload
-            </a>
-        {/if}
-    </div>
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between">
+            <div>
+                <p class="text-xl font-semibold">Uploads Gerais</p>
+                <p class="text-sm text-base-content/70">Gerencie arquivos e uploads do sistema</p>
+            </div>
+            {if $canCreate}
+                <a href="/panel/uploads/create" class="btn btn-primary">
+                    <span class="material-symbols-outlined">add</span>
+                    <p class="hidden lg:inline-block uppercase">Novo Upload</p>
+                </a>
+            {/if}
+        </div>
 
     
-    <section class="mb-8">
-        <h2 class="text-xl font-semibold mb-4">Recentes</h2>
-
         {if empty($recentFiles)}
-            <div class="alert alert-info">
-                <span class="material-symbols-outlined">info</span>
-                <span>Nenhum arquivo encontrado. {if $canCreate}Faça o primeiro upload!{/if}</span>
+            <div class="flex flex-col items-center justify-center p-12 text-center rounded-box border border-base-content/5 bg-base-100">
+                <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
+                <p class="text-lg font-semibold mb-2">Nenhum arquivo encontrado</p>
+                <p class="text-sm text-base-content/70 mb-4">{if $canCreate}Faça o primeiro upload para começar!{/if}</p>
+                {if $canCreate}
+                    <a href="/panel/uploads/create" class="btn btn-primary btn-sm">
+                        <span class="material-symbols-outlined">add</span>
+                        Primeiro upload
+                    </a>
+                {/if}
             </div>
         {else}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="rounded-box border border-base-content/5 bg-base-100 p-4">
+                <h2 class="text-lg font-semibold mb-4">Recentes</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {foreach $recentFiles as $file}
-                    <div class="card bg-base-100 shadow-xl">
+                    <div class="card bg-base-200 border border-base-content/5">
                         <figure class="h-48 bg-base-300">
                             {if $file['isImage']}
                                 <img src="{$file['url']}" alt="{$file['filename']}" class="object-contain w-full h-full"/>
@@ -62,18 +70,18 @@
                         </div>
                     </div>
                 {/foreach}
+                </div>
             </div>
         {/if}
-    </section>
 
-    
-    <section>
-        <h2 class="text-xl font-semibold mb-4">Navegar por Data</h2>
-        <div id="folder-browser" class="bg-base-100 rounded-box p-4 shadow-xl">
-            <p class="text-base-content/50">Carregando estrutura de pastas...</p>
+        
+        <div class="rounded-box border border-base-content/5 bg-base-100 p-4">
+            <h2 class="text-lg font-semibold mb-4">Navegar por Data</h2>
+            <div id="folder-browser">
+                <p class="text-base-content/50">Carregando estrutura de pastas...</p>
+            </div>
         </div>
-    </section>
-</div>
+    </div>
 
 <script>
     // Copiar URL para clipboard
@@ -218,7 +226,7 @@ dayFilesEl.innerHTML = '<p class="text-error">Erro ao carregar arquivos.</p>';
         html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
         
         files.forEach(file => {
-            html += '<div class="card bg-base-100 shadow-xl">';
+            html += '<div class="card bg-base-200 border border-base-content/5">';
             html += '<figure class="h-48 bg-base-300">';
             
             if (file.isImage) {

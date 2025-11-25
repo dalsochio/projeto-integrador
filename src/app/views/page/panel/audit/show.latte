@@ -1,29 +1,28 @@
 {layout ../../../layout/panel.latte}
 
 {block panel}
-<div class="audit-detail-container">
-    
-    <div class="mb-6">
-        <a href="/panel/audit" class="btn btn-ghost btn-sm mb-4">
-            <span class="material-symbols-outlined">arrow_back</span>
-            Voltar
-        </a>
-        <h1 class="text-3xl font-bold flex items-center gap-2">
-            <span class="material-symbols-outlined">description</span>
-            Detalhes do Log #{$log['id']}
-        </h1>
-    </div>
+    <div class="flex flex-col gap-4">
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <p class="text-xl font-semibold">Detalhes do Log #{$log['id']}</p>
+                <p class="text-sm text-base-content/70">Informações detalhadas do registro de auditoria</p>
+            </div>
+            <a href="/panel/audit" class="btn btn-ghost btn-sm">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Voltar
+            </a>
+        </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="lg:col-span-2 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <h2 class="card-title">
-                        <span class="material-symbols-outlined">info</span>
-                        Informações Gerais
-                    </h2>
+            <div class="lg:col-span-2 space-y-4">
+                
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                    <div class="card-body">
+                        <h2 class="card-title text-base">
+                            <span class="material-symbols-outlined">info</span>
+                            Informações Gerais
+                        </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div>
@@ -116,9 +115,9 @@
 
             
             {if !empty($log['data_decoded'])}
-                <div class="card bg-base-100 shadow-xl">
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
                     <div class="card-body">
-                        <h2 class="card-title">
+                        <h2 class="card-title text-base">
                             <span class="material-symbols-outlined">data_object</span>
                             Dados Enviados
                         </h2>
@@ -168,9 +167,9 @@
 
             
             {if !empty($log['changes_decoded'])}
-                <div class="card bg-base-100 shadow-xl">
+                <div class="card bg-base-100 shadow-sm border border-base-content/5">
                     <div class="card-body">
-                        <h2 class="card-title">
+                        <h2 class="card-title text-base">
                             <span class="material-symbols-outlined">compare_arrows</span>
                             Alterações
                         </h2>
@@ -203,9 +202,9 @@
         </div>
 
         
-        <div class="space-y-6">
+        <div class="space-y-4">
             
-            <div class="card bg-base-100 shadow-xl">
+            <div class="card bg-base-100 shadow-sm border border-base-content/5">
                 <div class="card-body">
                     <h2 class="card-title text-base">
                         <span class="material-symbols-outlined">code</span>
@@ -238,20 +237,16 @@
             </div>
 
             
-            <div class="card bg-info text-info-content shadow-xl">
-                <div class="card-body">
-                    <h3 class="font-semibold flex items-center gap-2">
-                        <span class="material-symbols-outlined">info</span>
-                        Informação
-                    </h3>
-                    <p class="text-sm">
-                        Os logs de auditoria são somente leitura e não podem ser editados ou removidos manualmente.
-                    </p>
+            <div class="alert alert-info">
+                <span class="material-symbols-outlined">info</span>
+                <div>
+                    <h3 class="font-semibold">Informação</h3>
+                    <div class="text-sm">Os logs de auditoria são somente leitura e não podem ser editados ou removidos manualmente.</div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 <script>
 function copyToClipboard(text) {
