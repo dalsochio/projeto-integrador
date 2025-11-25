@@ -17,7 +17,8 @@
     "ucscode/table-generator": "^3.2",
     "ext-dom": "*",
     "ext-libxml": "*",
-    "cocur/slugify": "^4.6"
+    "cocur/slugify": "^4.6",
+    "flightphp/core": "^3.17"
   },
   "require-dev": {
     "flightphp/tracy-extensions": "^0.2.7"
@@ -33,8 +34,6 @@
       "App\\Records\\": "app/records/",
       "App\\Services\\": "app/services/",
       "App\\Traits\\": "app/traits/",
-      "App\\Extensions\\": "app/extensions/",
-      "App\\Loaders\\": "app/loaders/",
       "App\\Middlewares\\": "app/middlewares/"
     }
   },
