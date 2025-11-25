@@ -529,7 +529,9 @@ class ModulesController
                         if (isset($fieldData['display_name']) && $fieldData['display_name'] !== $column->display_name) {
                             $column->name = $this->slugify->slugify($fieldData['display_name']);
                         }
-                        $column->column_width = $fieldData['column_width'] ?? $column->column_width;
+                        $column->column_size = $fieldData['column_size'] ?? $column->column_size ?? 12;
+                        $column->row_index = $fieldData['row_index'] ?? $column->row_index ?? null;
+                        $column->row_size = $fieldData['row_size'] ?? $column->row_size ?? 1;
                         $column->position = $fieldData['position'] ?? $index;
                         $column->input_type = $fieldData['input_type'] ?? $column->input_type;
                         $column->input_placeholder = $fieldData['input_placeholder'] ?? null;
@@ -573,7 +575,9 @@ class ModulesController
                     $newColumn->input_suffix = $fieldData['input_suffix'] ?? null;
                     $newColumn->help_text = $fieldData['help_text'] ?? null;
                     $newColumn->position = $fieldData['position'] ?? $index;
-                    $newColumn->column_width = $fieldData['column_width'] ?? 12;
+                    $newColumn->column_size = $fieldData['column_size'] ?? 12;
+                    $newColumn->row_index = $fieldData['row_index'] ?? null;
+                    $newColumn->row_size = $fieldData['row_size'] ?? 1;
 
                     $newColumn->save();
                     $createdCount++;

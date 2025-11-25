@@ -217,6 +217,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             getGlobalVars();
         }
+
+        // Capturar HX-Trigger para showToast em respostas de erro
+        const hxTrigger = evt.detail.xhr.getResponseHeader('HX-Trigger');
+        if (hxTrigger) {
+            try {
+                const triggers = JSON.parse(hxTrigger);
+                if (triggers.showToast) {
+                    window.flash(triggers.showToast.message, triggers.showToast.type);
+                }
+            } catch (e) {
+                // Ignorar erros de parsing
+            }
+        }
     });
 
     document.body.addEventListener('htmx:afterSwap', function (evt) {

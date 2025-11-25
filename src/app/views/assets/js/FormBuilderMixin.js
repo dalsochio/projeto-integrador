@@ -681,6 +681,7 @@ export default function formBuilderMixin() {
             };
 
             const output = [];
+            let globalRowIndex = 0;
 
             this.items.forEach(item => {
                 if (item.itemType === 'field') {
@@ -709,8 +710,15 @@ export default function formBuilderMixin() {
                     fieldData.is_editable = fieldData.is_editable ? 1 : 0;
                     fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
 
+                    // Campos órfãos (fora de row) não tem row_index
+                    fieldData.row_index = null;
+                    fieldData.column_size = 12;
+                    fieldData.row_size = 1;
+
                     output.push(fieldData);
                 } else if (item.itemType === 'row' && item.columns) {
+                    const currentRowIndex = globalRowIndex++;
+                    
                     item.columns.forEach(col => {
                         if (col.fields) {
                             col.fields.forEach(field => {
@@ -739,7 +747,11 @@ export default function formBuilderMixin() {
                                 fieldData.is_editable = fieldData.is_editable ? 1 : 0;
                                 fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
 
-                                fieldData.column_width = col.width;
+                                // Campos dentro de row recebem row_index, column_size e row_size
+                                fieldData.row_index = currentRowIndex;
+                                fieldData.column_size = col.width;
+                                fieldData.row_size = 1;
+
                                 output.push(fieldData);
                             });
                         }

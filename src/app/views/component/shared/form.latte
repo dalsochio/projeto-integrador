@@ -36,46 +36,33 @@
 
     
     {if $layout === 'single' || count($fieldsByTab) === 1}
+        {* Agrupar campos por row_index *}
+        {var $fieldsByRow = []}
+        {var $orphanFields = []}
+        
+        {foreach $visibleFields as $field}
+            {if isset($field['row_index']) && $field['row_index'] !== null}
+                {var $rowIdx = (int)$field['row_index']}
+                {if !isset($fieldsByRow[$rowIdx])}
+                    {var $fieldsByRow[$rowIdx] = []}
+                {/if}
+                {var $fieldsByRow[$rowIdx][] = $field}
+            {else}
+                {var $orphanFields[] = $field}
+            {/if}
+        {/foreach}
+        
+        {* Ordenar rows *}
+        {php ksort($fieldsByRow)}
+        
         <div class="space-y-4">
-            {foreach $visibleFields as $field}
-                {var $colWidth = $field['column_width'] ?? 12}
-                <div class="{if $colWidth === 12}w-full{else}grid grid-cols-12 gap-4{/if}">
-                    {if $colWidth === 12}
-                        
-                        {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
-                            {var $filePath = $data[$field['name']]}
-                            {var $fileUrl = '/upload/' . $filePath}
-                            <div class="mb-3 p-3 bg-base-200 rounded">
-                                <p class="text-xs font-medium mb-2">Arquivo atual:</p>
-                                {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
-                                {if file_exists($absolutePath)}
-                                    {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
-                                    {if $isImage}
-                                        {var $pathInfo = pathinfo($filePath)}
-                                        {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
-                                        {var $thumbUrl = '/upload/' . $thumbPath}
-                                        <a href="{$fileUrl}" target="_blank">
-                                            <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
-                                        </a>
-                                    {else}
-                                        <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
-                                            <span class="material-symbols-outlined text-sm align-middle">download</span>
-                                            {basename($filePath)}
-                                        </a>
-                                    {/if}
-                                {/if}
-                                <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
-                            </div>
-                        {/if}
-
-                        {include '../input/field.latte',
-                        field: $field,
-                        name: $field['name'],
-                        value: $data[$field['name']] ?? null
-                        }
-                    {else}
-                        <div class="col-span-12 md:col-span-{$colWidth}">
-                            
+            {* Renderizar campos agrupados por row *}
+            {foreach $fieldsByRow as $rowFields}
+                <div class="grid grid-cols-12 gap-4">
+                    {foreach $rowFields as $field}
+                        {var $colSize = $field['column_size'] ?? 12}
+                        {var $rowSize = $field['row_size'] ?? 1}
+                        <div class="col-span-12 md:col-span-{$colSize}" style="grid-row: span {$rowSize}">
                             {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
                                 {var $filePath = $data[$field['name']]}
                                 {var $fileUrl = '/upload/' . $filePath}
@@ -101,18 +88,60 @@
                                     <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
                                 </div>
                             {/if}
-
+                            
                             {include '../input/field.latte',
-                            field: $field,
-                            name: $field['name'],
-                            value: $data[$field['name']] ?? null
+                                field: $field,
+                                name: $field['name'],
+                                value: $data[$field['name']] ?? null
                             }
+                            
+                            {if !empty($errors[$field['name']])}
+                                <span class="text-error text-sm">Erro: {$errors[$field['name']]}</span>
+                            {/if}
+                        </div>
+                    {/foreach}
+                </div>
+            {/foreach}
+            
+            {* Renderizar campos órfãos (sem row_index) *}
+            {foreach $orphanFields as $field}
+                <div class="w-full">
+                    {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
+                        {var $filePath = $data[$field['name']]}
+                        {var $fileUrl = '/upload/' . $filePath}
+                        <div class="mb-3 p-3 bg-base-200 rounded">
+                            <p class="text-xs font-medium mb-2">Arquivo atual:</p>
+                            {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+                            {if file_exists($absolutePath)}
+                                {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+                                {if $isImage}
+                                    {var $pathInfo = pathinfo($filePath)}
+                                    {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                    {var $thumbUrl = '/upload/' . $thumbPath}
+                                    <a href="{$fileUrl}" target="_blank">
+                                        <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
+                                    </a>
+                                {else}
+                                    <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
+                                        <span class="material-symbols-outlined text-sm align-middle">download</span>
+                                        {basename($filePath)}
+                                    </a>
+                                {/if}
+                            {/if}
+                            <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
                         </div>
                     {/if}
+                    
+                    {include '../input/field.latte',
+                        field: $field,
+                        name: $field['name'],
+                        value: $data[$field['name']] ?? null
+                    }
+                    
+                    {if !empty($errors[$field['name']])}
+                        <span class="text-error text-sm">Erro: {$errors[$field['name']]}</span>
+                    {/if}
                 </div>
-                {if !empty($errors[$field['name']]) > 0}
-                    <span class="text-error text-sm">Erro: {$errors[$field['name']]}</span>
-                {/if}
             {/foreach}
         </div>
 
