@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4" x-data="roleEdit()">
         <div class="flex flex-row justify-between items-center py-4">
             <a href="/panel/role" class="btn btn-ghost btn-sm">
-                <span class="material-symbols-outlined">arrow_back</span>
+                <span translate="no" class="material-symbols-outlined">arrow_back</span>
                 Voltar
             </a>
             <div class="flex-1 ml-4">
@@ -22,7 +22,7 @@
 
                         {if $role['is_system']}
                             <div class="alert alert-info mb-4">
-                                <span class="material-symbols-outlined">info</span>
+                                <span translate="no" class="material-symbols-outlined">info</span>
                                 <div>
                                     <h3 class="font-bold">Role de Sistema</h3>
                                     <div class="text-sm">Esta é uma role de sistema. Algumas informações não podem ser alteradas.</div>
@@ -32,7 +32,7 @@
 
                         {if $role['is_locked']}
                             <div class="alert alert-warning mb-4">
-                                <span class="material-symbols-outlined">lock</span>
+                                <span translate="no" class="material-symbols-outlined">lock</span>
                                 <div>
                                     <h3 class="font-bold">Permissões Bloqueadas</h3>
                                     <div class="text-sm">As permissões desta role não podem ser alteradas por segurança do sistema.</div>
@@ -86,7 +86,7 @@
                                 <button type="submit"
                                         class="btn btn-primary"
                                         :disabled="saving">
-                                    <span class="material-symbols-outlined" x-show="!saving">save</span>
+                                    <span translate="no" class="material-symbols-outlined" x-show="!saving">save</span>
                                     <span class="loading loading-spinner loading-sm" x-show="saving"></span>
                                     <span x-text="saving ? 'Salvando...' : 'Salvar alterações'"></span>
                                 </button>
@@ -149,7 +149,7 @@
                                     @click="openPermissionsModal()"
                                     class="btn btn-secondary btn-block"
                                     :disabled="role.is_locked">
-                                <span class="material-symbols-outlined">vpn_key</span>
+                                <span translate="no" class="material-symbols-outlined">vpn_key</span>
                                 <span x-text="role.is_locked ? 'Permissões Bloqueadas' : 'Editar Permissões'"></span>
                             </button>
                         </div>
@@ -172,7 +172,7 @@
                 </p>
 
                 <div x-show="role.role_name === 'guest'" class="alert alert-warning mb-4">
-                    <span class="material-symbols-outlined">info</span>
+                    <span translate="no" class="material-symbols-outlined">info</span>
                     <div>
                         <h3 class="font-bold">Limitações de Guest</h3>
                         <div class="text-sm">Guests (visitantes não autenticados) só podem ter permissões de leitura. Não é possível conceder permissões de criar, editar ou deletar.</div>
@@ -180,7 +180,7 @@
                 </div>
 
                 <div x-show="role.role_name === 'user'" class="alert alert-info mb-4">
-                    <span class="material-symbols-outlined">info</span>
+                    <span translate="no" class="material-symbols-outlined">info</span>
                     <div>
                         <h3 class="font-bold">Permissões de Usuário</h3>
                         <div class="text-sm">Usuários com role 'user' podem <strong>listar e visualizar todos os registros</strong>, assim como guests. Porém, ao habilitar <strong>criar, editar ou deletar</strong>, o usuário só poderá executar essas ações em registros que ele mesmo criou, não em registros de outros usuários.</div>
@@ -245,7 +245,7 @@
                         <button class="btn btn-ghost">Cancelar</button>
                     </form>
                     <button type="button" @click="savePermissions()" class="btn btn-primary" :disabled="savingPermissions">
-                        <span class="material-symbols-outlined" x-show="!savingPermissions">save</span>
+                        <span translate="no" class="material-symbols-outlined" x-show="!savingPermissions">save</span>
                         <span class="loading loading-spinner loading-sm" x-show="savingPermissions"></span>
                         <span x-text="savingPermissions ? 'Salvando...' : 'Salvar Permissões'"></span>
                     </button>

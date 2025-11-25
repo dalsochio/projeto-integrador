@@ -12,7 +12,7 @@
         
         <div class="card card-border p-4">
             <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined">filter_list</span>
+                <span translate="no" class="material-symbols-outlined">filter_list</span>
                 Filtros
             </h2>
             
@@ -91,11 +91,11 @@
                 
                 <div class="col-span-1 md:col-span-2 lg:col-span-3 flex gap-2 justify-end">
                     <a href="/panel/audit" class="btn btn-ghost">
-                        <span class="material-symbols-outlined">clear</span>
+                        <span translate="no" class="material-symbols-outlined">clear</span>
                         Limpar
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <span class="material-symbols-outlined">search</span>
+                        <span translate="no" class="material-symbols-outlined">search</span>
                         Filtrar
                     </button>
                 </div>
@@ -110,7 +110,7 @@
 
             {if empty($logs)}
                 <div class="flex flex-col items-center justify-center p-12 text-center">
-                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">shield</span>
+                    <span translate="no" class="material-symbols-outlined text-6xl text-base-content/30 mb-4">shield</span>
                     <p class="text-lg font-semibold mb-2">Nenhum log encontrado</p>
                     <p class="text-sm text-base-content/70 mb-4">Nenhum log encontrado com os filtros aplicados</p>
                 </div>
@@ -137,24 +137,24 @@
                                     </td>
                                     <td>
                                         <div class="flex items-center gap-2">
-                                            <span class="material-symbols-outlined text-sm">person</span>
+                                            <span translate="no" class="material-symbols-outlined text-sm">person</span>
                                             <span class="font-medium">{$logItem['username']}</span>
                                         </div>
                                     </td>
                                     <td>
                                         {if $logItem['action'] == 'POST'}
                                             <div class="badge badge-success gap-1">
-                                                <span class="material-symbols-outlined text-xs">add</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">add</span>
                                                 Criar
                                             </div>
                                         {elseif $logItem['action'] == 'PUT'}
                                             <div class="badge badge-warning gap-1">
-                                                <span class="material-symbols-outlined text-xs">edit</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">edit</span>
                                                 Atualizar
                                             </div>
                                         {elseif $logItem['action'] == 'DELETE'}
                                             <div class="badge badge-error gap-1">
-                                                <span class="material-symbols-outlined text-xs">delete</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">delete</span>
                                                 Deletar
                                             </div>
                                         {/if}
@@ -168,12 +168,12 @@
                                     <td>
                                         {if $logItem['route_type'] == 'api'}
                                             <div class="badge badge-info gap-1">
-                                                <span class="material-symbols-outlined text-xs">api</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">api</span>
                                                 API
                                             </div>
                                         {else}
                                             <div class="badge badge-primary gap-1">
-                                                <span class="material-symbols-outlined text-xs">dashboard</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">dashboard</span>
                                                 Painel
                                             </div>
                                         {/if}
@@ -185,7 +185,7 @@
                                     </td>
                                     <td>
                                         <a href="/panel/audit/{$logItem['id']}" class="btn btn-ghost btn-sm">
-                                            <span class="material-symbols-outlined">visibility</span>
+                                            <span translate="no" class="material-symbols-outlined">visibility</span>
                                         </a>
                                     </td>
                                 </tr>

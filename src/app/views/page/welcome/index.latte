@@ -17,7 +17,7 @@
         {if isset($stats['users'])}
         <div class="stat">
             <div class="stat-figure text-primary">
-                <span class="material-symbols-outlined text-4xl">group</span>
+                <span translate="no" class="material-symbols-outlined text-4xl">group</span>
             </div>
             <div class="stat-title">Usuários</div>
             <div class="stat-value text-primary">{$stats['users']}</div>
@@ -28,7 +28,7 @@
         {if isset($stats['modules'])}
         <div class="stat">
             <div class="stat-figure text-secondary">
-                <span class="material-symbols-outlined text-4xl">table_chart</span>
+                <span translate="no" class="material-symbols-outlined text-4xl">table_chart</span>
             </div>
             <div class="stat-title">Módulos</div>
             <div class="stat-value text-secondary">{$stats['modules']}</div>
@@ -39,7 +39,7 @@
         {if isset($stats['uploads'])}
         <div class="stat">
             <div class="stat-figure text-accent">
-                <span class="material-symbols-outlined text-4xl">cloud_upload</span>
+                <span translate="no" class="material-symbols-outlined text-4xl">cloud_upload</span>
             </div>
             <div class="stat-title">Arquivos</div>
             <div class="stat-value text-accent">{$stats['uploads']}</div>
@@ -50,7 +50,7 @@
         {if isset($stats['todayActions'])}
         <div class="stat">
             <div class="stat-figure text-success">
-                <span class="material-symbols-outlined text-4xl">bar_chart</span>
+                <span translate="no" class="material-symbols-outlined text-4xl">bar_chart</span>
             </div>
             <div class="stat-title">Atividade Hoje</div>
             <div class="stat-value text-success">{$stats['todayActions']}</div>
@@ -65,32 +65,32 @@
         <h2 class="mb-4 text-2xl font-bold">Atalhos Rápidos</h2>
         <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             <a href="/administration/user" class="btn btn-outline btn-primary flex-col gap-2 h-24">
-                <i class="ti ti-user text-2xl"></i>
+                <i class="ti ti-user text-2xl" translate="no"></i>
                 <span class="text-xs">Usuários</span>
             </a>
 
             <a href="/panel/module" class="btn btn-outline btn-secondary flex-col gap-2 h-24">
-                <i class="ti ti-layout-grid text-2xl"></i>
+                <i class="ti ti-layout-grid text-2xl" translate="no"></i>
                 <span class="text-xs">Módulos</span>
             </a>
 
             <a href="/panel/role" class="btn btn-outline btn-accent flex-col gap-2 h-24">
-                <i class="ti ti-shield-check text-2xl"></i>
+                <i class="ti ti-shield-check text-2xl" translate="no"></i>
                 <span class="text-xs">Permissões</span>
             </a>
 
             <a href="/panel/uploads" class="btn btn-outline btn-info flex-col gap-2 h-24">
-                <i class="ti ti-folder text-2xl"></i>
+                <i class="ti ti-folder text-2xl" translate="no"></i>
                 <span class="text-xs">Arquivos</span>
             </a>
 
             <a href="/panel/config" class="btn btn-outline btn-warning flex-col gap-2 h-24">
-                <i class="ti ti-settings text-2xl"></i>
+                <i class="ti ti-settings text-2xl" translate="no"></i>
                 <span class="text-xs">Configurações</span>
             </a>
 
             <a href="/panel/audit" class="btn btn-outline btn-error flex-col gap-2 h-24">
-                <i class="ti ti-file-text text-2xl"></i>
+                <i class="ti ti-file-text text-2xl" translate="no"></i>
                 <span class="text-xs">Auditoria</span>
             </a>
         </div>
@@ -103,7 +103,7 @@
         <div class="card card-border">
             <div class="card-body">
                 <h2 class="card-title text-base flex items-center gap-2">
-                    <span class="material-symbols-outlined">schedule</span>
+                    <span translate="no" class="material-symbols-outlined">schedule</span>
                     Atividades Recentes
                 </h2>
                 <ul class="space-y-3 mt-4">
@@ -148,12 +148,12 @@
         <div class="card card-border">
             <div class="card-body">
                 <h2 class="card-title text-base flex items-center gap-2">
-                    <span class="material-symbols-outlined">lightbulb</span>
+                    <span translate="no" class="material-symbols-outlined">lightbulb</span>
                     Dicas e Recursos
                 </h2>
                 <div class="space-y-4 mt-4">
                     <div class="alert alert-info">
-                        <span class="material-symbols-outlined">api</span>
+                        <span translate="no" class="material-symbols-outlined">api</span>
                         <div>
                             <h3 class="font-bold text-sm">API Documentada</h3>
                             <div class="text-xs">Acesse a <a href="/developer/swagger" class="link">documentação Swagger</a> para integrar com a API</div>
@@ -161,7 +161,7 @@
                     </div>
 
                     <div class="alert alert-success">
-                        <span class="material-symbols-outlined">verified_user</span>
+                        <span translate="no" class="material-symbols-outlined">verified_user</span>
                         <div>
                             <h3 class="font-bold text-sm">Controle Total</h3>
                             <div class="text-xs">Configure permissões granulares para cada módulo e usuário</div>
@@ -169,7 +169,7 @@
                     </div>
 
                     <div class="alert alert-warning">
-                        <span class="material-symbols-outlined">assignment</span>
+                        <span translate="no" class="material-symbols-outlined">assignment</span>
                         <div>
                             <h3 class="font-bold text-sm">Auditoria Ativa</h3>
                             <div class="text-xs">Todas as ações são registradas para segurança e conformidade</div>

@@ -5,7 +5,7 @@
         <div class="flex flex-row justify-between items-center py-4">
             <div class="flex items-center gap-4">
                 <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/../" class="btn btn-ghost btn-sm">
-                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span translate="no" class="material-symbols-outlined">arrow_back</span>
                     Voltar
                 </a>
                 <div>
@@ -14,7 +14,7 @@
                 </div>
             </div>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/edit" class="btn btn-primary btn-sm">
-                <span class="material-symbols-outlined">edit</span>
+                <span translate="no" class="material-symbols-outlined">edit</span>
                 Editar
             </a>
         </div>
@@ -82,13 +82,13 @@
                                                     <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-xs hover:opacity-80 transition" />
                                                 </a>
                                                 <a href="{$fileUrl}" target="_blank" class="link link-primary text-xs mt-2 inline-flex items-center gap-1">
-                                                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                                    <span translate="no" class="material-symbols-outlined text-sm">open_in_new</span>
                                                     Ver imagem original
                                                 </a>
                                             </div>
                                         {else}
                                             <a href="{$fileUrl}" target="_blank" class="link link-primary inline-flex items-center gap-2">
-                                                <span class="material-symbols-outlined text-sm">download</span>
+                                                <span translate="no" class="material-symbols-outlined text-sm">download</span>
                                                 Baixar arquivo ({basename($filePath)})
                                             </a>
                                         {/if}
@@ -140,12 +140,12 @@
                                 {elseif $inputType === 'status'}
                                     {if $fieldValue}
                                         <span class="badge badge-success gap-2">
-                                            <span class="material-symbols-outlined text-xs">check_circle</span>
+                                            <span translate="no" class="material-symbols-outlined text-xs">check_circle</span>
                                             Ativo
                                         </span>
                                     {else}
                                         <span class="badge badge-ghost gap-2">
-                                            <span class="material-symbols-outlined text-xs">cancel</span>
+                                            <span translate="no" class="material-symbols-outlined text-xs">cancel</span>
                                             Inativo
                                         </span>
                                     {/if}
@@ -183,7 +183,7 @@
                                 
                                 {elseif ($inputType === 'date' || $inputType === 'datetime') && !empty($fieldValue)}
                                     <span class="flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-base-content/60">calendar_today</span>
+                                        <span translate="no" class="material-symbols-outlined text-base-content/60">calendar_today</span>
                                         {if $inputType === 'date'}
                                             {$fieldValue|date:'d/m/Y'}
                                         {else}
@@ -265,7 +265,7 @@
                             <div class="p-2 bg-base-200 rounded text-sm">
                                 {if ($inputType === 'datetime' || $field['name'] === 'created_at' || $field['name'] === 'updated_at') && !empty($fieldValue)}
                                     <span class="flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-base-content/60 text-sm">calendar_today</span>
+                                        <span translate="no" class="material-symbols-outlined text-base-content/60 text-sm">calendar_today</span>
                                         {$fieldValue|date:'d/m/Y H:i:s'}
                                     </span>
                                 {elseif !empty($fieldValue)}

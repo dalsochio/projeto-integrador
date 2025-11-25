@@ -9,7 +9,7 @@
             </div>
             {if $canCreate}
                 <a href="/panel/uploads/create" class="btn btn-primary">
-                    <span class="material-symbols-outlined">add</span>
+                    <span translate="no" class="material-symbols-outlined">add</span>
                     <p class="hidden lg:inline-block uppercase">Novo Upload</p>
                 </a>
             {/if}
@@ -18,12 +18,12 @@
     
         {if empty($recentFiles)}
             <div class="flex flex-col items-center justify-center p-12 text-center card card-border">
-                <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
+                <span translate="no" class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
                 <p class="text-lg font-semibold mb-2">Nenhum arquivo encontrado</p>
                 <p class="text-sm text-base-content/70 mb-4">{if $canCreate}Faça o primeiro upload para começar!{/if}</p>
                 {if $canCreate}
                     <a href="/panel/uploads/create" class="btn btn-primary btn-sm">
-                        <span class="material-symbols-outlined">add</span>
+                        <span translate="no" class="material-symbols-outlined">add</span>
                         Primeiro upload
                     </a>
                 {/if}
@@ -56,14 +56,14 @@
                                     class="btn btn-sm btn-ghost"
                                     onclick="copyToClipboard('{$file['url']}')"
                                     title="Copiar URL">
-                                    <span class="material-symbols-outlined text-sm">content_copy</span>
+                                    <span translate="no" class="material-symbols-outlined text-sm">content_copy</span>
                                 </button>
                                 {if $canDelete}
                                     <button
                                         class="btn btn-sm btn-error btn-ghost"
                                         onclick="confirmDelete('{$file['relativePath']}', '{$file['filename']}')"
                                         title="Deletar arquivo">
-                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                        <span translate="no" class="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 {/if}
                             </div>
@@ -149,7 +149,7 @@ browserEl.innerHTML = '<p class="text-error">Erro ao carregar estrutura de pasta
             html += '<div class="collapse collapse-arrow bg-base-200">';
             html += '<input type="checkbox" />';
             html += '<div class="collapse-title text-lg font-medium">';
-            html += '<span class="material-symbols-outlined align-middle">calendar_today</span> ';
+            html += '<span translate="no" class="material-symbols-outlined align-middle">calendar_today</span> ';
             html += yearData.year;
             html += '</div>';
             html += '<div class="collapse-content">';
@@ -159,7 +159,7 @@ browserEl.innerHTML = '<p class="text-error">Erro ao carregar estrutura de pasta
                 html += '<div class="collapse collapse-arrow bg-base-300">';
                 html += '<input type="checkbox" />';
                 html += '<div class="collapse-title font-medium">';
-                html += '<span class="material-symbols-outlined align-middle text-sm">event</span> ';
+                html += '<span translate="no" class="material-symbols-outlined align-middle text-sm">event</span> ';
                 html += monthData.monthName;
                 html += '</div>';
                 html += '<div class="collapse-content">';
@@ -220,7 +220,7 @@ dayFilesEl.innerHTML = '<p class="text-error">Erro ao carregar arquivos.</p>';
         
         let html = '<div class="bg-base-200 rounded-box p-4">';
         html += '<h3 class="text-lg font-semibold mb-4">';
-        html += '<span class="material-symbols-outlined align-middle">folder_open</span> ';
+        html += '<span translate="no" class="material-symbols-outlined align-middle">folder_open</span> ';
         html += 'Arquivos de ' + path;
         html += '</h3>';
         html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
@@ -250,14 +250,14 @@ dayFilesEl.innerHTML = '<p class="text-error">Erro ao carregar arquivos.</p>';
             html += '<button class="btn btn-sm btn-ghost" ';
             html += 'onclick="copyToClipboard(\'' + file.url + '\')" ';
             html += 'title="Copiar URL">';
-            html += '<span class="material-symbols-outlined text-sm">content_copy</span>';
+            html += '<span translate="no" class="material-symbols-outlined text-sm">content_copy</span>';
             html += '</button>';
             
             if (canDelete) {
                 html += '<button class="btn btn-sm btn-error btn-ghost" ';
                 html += 'onclick="confirmDelete(\'' + file.relativePath + '\', \'' + file.filename + '\')" ';
                 html += 'title="Deletar arquivo">';
-                html += '<span class="material-symbols-outlined text-sm">delete</span>';
+                html += '<span translate="no" class="material-symbols-outlined text-sm">delete</span>';
                 html += '</button>';
             }
             

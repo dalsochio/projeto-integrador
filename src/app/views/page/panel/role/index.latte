@@ -8,7 +8,7 @@
                 <p class="text-sm text-base-content/70">Gerencie roles e permissões do sistema usando Casbin</p>
             </div>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
-                <span class="material-symbols-outlined">add</span>
+                <span translate="no" class="material-symbols-outlined">add</span>
                 <p class="hidden lg:inline-block uppercase">Nova Role</p>
             </a>
         </div>
@@ -18,7 +18,7 @@
             <div class="stats stats-vertical lg:stats-horizontal border border-base-200">
                 <div class="stat">
                     <div class="stat-figure text-primary">
-                        <span class="material-symbols-outlined text-4xl">group</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">group</span>
                     </div>
                     <div class="stat-title">Total de Roles</div>
                     <div class="stat-value text-primary">{count($roles)}</div>
@@ -27,7 +27,7 @@
 
                 <div class="stat">
                     <div class="stat-figure text-success">
-                        <span class="material-symbols-outlined text-4xl">verified_user</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">verified_user</span>
                     </div>
                     <div class="stat-title">Roles de Sistema</div>
                     <div class="stat-value text-success">
@@ -38,7 +38,7 @@
 
                 <div class="stat">
                     <div class="stat-figure text-secondary">
-                        <span class="material-symbols-outlined text-4xl">lock</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">lock</span>
                     </div>
                     <div class="stat-title">Permissões Totais</div>
                     <div class="stat-value text-secondary">
@@ -52,11 +52,11 @@
         <div class="overflow-x-auto card card-border">
             {if count($roles) === 0}
                 <div class="flex flex-col items-center justify-center p-12 text-center">
-                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">group_off</span>
+                    <span translate="no" class="material-symbols-outlined text-6xl text-base-content/30 mb-4">group_off</span>
                     <p class="text-lg font-semibold mb-2">Nenhuma role criada</p>
                     <p class="text-sm text-base-content/70 mb-4">Crie sua primeira role para começar</p>
                     <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
-                        <span class="material-symbols-outlined">add</span>
+                        <span translate="no" class="material-symbols-outlined">add</span>
                         Criar primeira role
                     </a>
                 </div>
@@ -66,25 +66,25 @@
                     <tr>
                         <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">badge</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">badge</span>
                                     Role
                                 </span>
                         </th>
                         <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">description</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">description</span>
                                     Descrição
                                 </span>
                         </th>
                         <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">key</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">key</span>
                                     Permissões
                                 </span>
                         </th>
                         <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">shield</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">shield</span>
                                     Tipo
                                 </span>
                         </th>
@@ -98,7 +98,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="avatar placeholder">
                                         <div class="bg-{$role['is_system'] ? 'primary' : 'secondary'}/10 text-{$role['is_system'] ? 'primary' : 'secondary'} rounded-lg w-10 h-10 flex items-center justify-center">
-                                                <span class="material-symbols-outlined text-xl">
+                                                <span translate="no" class="material-symbols-outlined text-xl">
                                                     {if $role['is_locked']}shield_lock{elseif $role['is_system']}verified_user{else}person{/if}
                                                 </span>
                                         </div>
@@ -118,7 +118,7 @@
                             </td>
                             <td>
                                 <div class="badge badge-ghost gap-2">
-                                    <span class="material-symbols-outlined text-xs">vpn_key</span>
+                                    <span translate="no" class="material-symbols-outlined text-xs">vpn_key</span>
                                     {$role['permissions_count']}
                                     permiss{if $role['permissions_count'] != 1}ões{else}ão{/if}
                                 </div>
@@ -126,17 +126,17 @@
                             <td>
                                 {if $role['is_locked']}
                                     <div class="badge badge-warning gap-2">
-                                        <span class="material-symbols-outlined text-xs">lock</span>
+                                        <span translate="no" class="material-symbols-outlined text-xs">lock</span>
                                         Bloqueada
                                     </div>
                                 {elseif $role['is_system']}
                                     <div class="badge badge-info gap-2">
-                                        <span class="material-symbols-outlined text-xs">verified</span>
+                                        <span translate="no" class="material-symbols-outlined text-xs">verified</span>
                                         Sistema
                                     </div>
                                 {else}
                                     <div class="badge badge-ghost gap-2">
-                                        <span class="material-symbols-outlined text-xs">person</span>
+                                        <span translate="no" class="material-symbols-outlined text-xs">person</span>
                                         Custom
                                     </div>
                                 {/if}
@@ -146,13 +146,13 @@
                                     <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$role['id']}/edit"
                                        class="btn btn-ghost btn-xs"
                                        title="Editar">
-                                        <span class="material-symbols-outlined">edit</span>
+                                        <span translate="no" class="material-symbols-outlined">edit</span>
                                     </a>
                                     {if !$role['is_system']}
                                         <button class="btn btn-ghost btn-xs text-error"
                                                 onclick="confirmDelete({$role['id']}, '{$role['display_name']}')"
                                                 title="Deletar">
-                                            <span class="material-symbols-outlined">delete</span>
+                                            <span translate="no" class="material-symbols-outlined">delete</span>
                                         </button>
                                     {else}
                                         <div class="tooltip tooltip-left"
@@ -160,7 +160,7 @@
                                             <button class="btn btn-ghost btn-xs btn-disabled opacity-30"
                                                     disabled
                                                     title="Não é possível deletar">
-                                                <span class="material-symbols-outlined">delete</span>
+                                                <span translate="no" class="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>
                                     {/if}

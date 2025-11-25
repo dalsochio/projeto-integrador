@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4">
         <div class="flex flex-row justify-between items-center py-4">
             <a href="/panel/category" class="btn btn-ghost btn-sm">
-                <span class="material-symbols-outlined">arrow_back</span>
+                <span translate="no" class="material-symbols-outlined">arrow_back</span>
                 Voltar
             </a>
             <div class="flex-1 ml-4">
@@ -15,7 +15,7 @@
 
         {if $category['internal']}
             <div class="alert alert-warning">
-                <span class="material-symbols-outlined">lock</span>
+                <span translate="no" class="material-symbols-outlined">lock</span>
                 <div>
                     <h3 class="font-bold">Categoria Interna do Sistema</h3>
                     <div class="text-sm">Esta categoria contém módulos internos com rotas hardcoded. O nome técnico e URL não podem ser alterados.</div>
@@ -135,7 +135,7 @@
                                 </a>
                                 <button type="submit"
                                         class="btn btn-primary">
-                                    <span class="material-symbols-outlined">save</span>
+                                    <span translate="no" class="material-symbols-outlined">save</span>
                                     <span>Salvar alterações</span>
                                 </button>
                             </div>
@@ -181,19 +181,19 @@
 
                         {if count($modules) === 0}
                             <div class="text-center py-8 text-base-content/50">
-                                <span class="material-symbols-outlined text-4xl mb-2">inbox</span>
+                                <span translate="no" class="material-symbols-outlined text-4xl mb-2">inbox</span>
                                 <p class="text-sm">Nenhum módulo nesta categoria</p>
                             </div>
                         {else}
                             <div class="alert alert-info mb-4">
-                                <span class="material-symbols-outlined">info</span>
+                                <span translate="no" class="material-symbols-outlined">info</span>
                                 <span class="text-sm">Arraste para reordenar os módulos no menu</span>
                             </div>
 
                             <div id="modules-list" class="space-y-2">
                                 {foreach $modules as $index => $module}
                                     <div class="module-item flex items-center gap-2 p-3 rounded border border-base-200 bg-base-200 cursor-move hover:bg-base-300 transition-colors" data-module-id="{$module['id']}">
-                                        <span class="material-symbols-outlined text-base-content/40 drag-handle">drag_indicator</span>
+                                        <span translate="no" class="material-symbols-outlined text-base-content/40 drag-handle">drag_indicator</span>
                                         <div class="flex-1">
                                             <div class="font-semibold text-sm">{$module['display_name']}</div>
                                             <div class="text-xs text-base-content/60">/{$module['url_path']}</div>
@@ -208,7 +208,7 @@
                                         id="save-modules-order"
                                         class="btn btn-primary btn-sm"
                                         disabled>
-                                    <span class="material-symbols-outlined">save</span>
+                                    <span translate="no" class="material-symbols-outlined">save</span>
                                     <span>Salvar ordem</span>
                                 </button>
                             </div>

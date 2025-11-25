@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4">
         <div class="flex flex-row justify-between items-center py-4">
             <a href="/administration/user" class="btn btn-ghost btn-sm">
-                <span class="material-symbols-outlined">arrow_back</span>
+                <span translate="no" class="material-symbols-outlined">arrow_back</span>
                 Voltar
             </a>
             <div class="flex-1 ml-4">
@@ -51,7 +51,7 @@
                             <div class="divider">Alterar Senha (opcional)</div>
 
                             <div class="alert alert-info mb-4">
-                                <span class="material-symbols-outlined">info</span>
+                                <span translate="no" class="material-symbols-outlined">info</span>
                                 <span class="text-sm">Deixe em branco para manter a senha atual</span>
                             </div>
 
@@ -106,7 +106,7 @@
                                 </a>
                                 <button type="submit"
                                         class="btn btn-primary">
-                                    <span class="material-symbols-outlined">save</span>
+                                    <span translate="no" class="material-symbols-outlined">save</span>
                                     <span>Salvar alterações</span>
                                 </button>
                             </div>
@@ -182,7 +182,7 @@
                                     @click="saveRoles()"
                                     class="btn btn-secondary btn-block btn-sm"
                                     :disabled="savingRoles">
-                                <span class="material-symbols-outlined" x-show="!savingRoles">save</span>
+                                <span translate="no" class="material-symbols-outlined" x-show="!savingRoles">save</span>
                                 <span class="loading loading-spinner loading-sm" x-show="savingRoles"></span>
                                 <span x-text="savingRoles ? 'Salvando...' : 'Salvar Roles'"></span>
                             </button>

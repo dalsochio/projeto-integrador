@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4" x-data="moduleEdit()">
         <div class="flex flex-row justify-between items-center py-4">
             <a href="/panel/module" class="btn btn-ghost btn-sm">
-                <span class="material-symbols-outlined">arrow_back</span>
+                <span translate="no" class="material-symbols-outlined">arrow_back</span>
                 Voltar
             </a>
             <div class="flex-1 ml-4">
@@ -16,7 +16,7 @@
         
         {if $module['internal']}
             <div class="alert alert-warning">
-                <span class="material-symbols-outlined">lock</span>
+                <span translate="no" class="material-symbols-outlined">lock</span>
                 <div>
                     <h3 class="font-bold">Módulo Interno do Sistema</h3>
                     <div class="text-sm">Este módulo é gerenciado via código e possui rotas hardcoded. A categoria e URL não podem ser alteradas para evitar quebra do sistema.</div>
@@ -143,7 +143,7 @@
                                 <button type="submit"
                                         class="btn btn-primary"
                                         :disabled="saving">
-                                    <span class="material-symbols-outlined" x-show="!saving">save</span>
+                                    <span translate="no" class="material-symbols-outlined" x-show="!saving">save</span>
                                     <span class="loading loading-spinner loading-sm" x-show="saving"></span>
                                     <span x-text="saving ? 'Salvando...' : 'Salvar alterações'"></span>
                                 </button>
@@ -202,14 +202,14 @@
                                 <div class="tooltip tooltip-left" data-tip="Campos de m\u00f3dulos internos n\u00e3o podem ser editados">
                                     <button class="btn btn-ghost btn-xs btn-disabled opacity-30"
                                             disabled>
-                                        <span class="material-symbols-outlined text-base">edit</span>
+                                        <span translate="no" class="material-symbols-outlined text-base">edit</span>
                                         Editar
                                     </button>
                                 </div>
                             {else}
                                 <button @click="$refs.fieldsModal.showModal()"
                                         class="btn btn-ghost btn-xs">
-                                    <span class="material-symbols-outlined text-base">edit</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">edit</span>
                                     Editar
                                 </button>
                             {/if}
@@ -218,7 +218,7 @@
                         <div class="space-y-2">
                             {if count($userColumns) === 0}
                                 <div class="text-center text-base-content/50 py-4">
-                                    <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">inbox</span>
+                                    <span translate="no" class="material-symbols-outlined text-4xl block mb-2 opacity-30">inbox</span>
                                     <p class="text-sm">Nenhum campo personalizado</p>
                                     <p class="text-xs mt-1">Clique em "Editar" para adicionar campos</p>
                                 </div>
@@ -226,7 +226,7 @@
                                 {foreach $columns as $column}
                                     {if !in_array($column['name'], ['id', 'created_at', 'created_by', 'updated_at', 'updated_by'])}
                                         <div class="flex items-center gap-2 p-2 rounded border border-base-200">
-                                            <span class="material-symbols-outlined text-sm text-base-content/50">
+                                            <span translate="no" class="material-symbols-outlined text-sm text-base-content/50">
                                                 {if $column['is_primary']}key
                                                 {elseif $column['type'] === 'VARCHAR' || $column['type'] === 'TEXT'}text_fields
                                                 {elseif $column['type'] === 'INT' || $column['type'] === 'DECIMAL'}numbers

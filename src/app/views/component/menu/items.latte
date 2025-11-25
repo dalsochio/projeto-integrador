@@ -15,9 +15,9 @@
             <summary class="font-medium text-base">
                 {if $category['icon_type'] === 'text'}
                     {if $category['icon']}
-                        <span class="material-symbols-outlined !text-2xl">{$category['icon']}</span>
+                        <span translate="no" class="material-symbols-outlined !text-2xl">{$category['icon']}</span>
                     {else}
-                        <i class="ti ti-menu-2 !text-2xl"></i>
+                        <i class="ti ti-menu-2 !text-2xl" translate="no"></i>
                     {/if}
                 {else}
                     <img src="{$category['icon']}" alt="{$category['name']} icon" class="w-6 h-6"/>
@@ -33,9 +33,9 @@
                         <a href="{$itemUrl}" class="{if $isActive}menu-active{/if} text-sm">
                             {if $item['icon_type'] === 'text'}
                                 {if $item['icon']}
-                                    <span class="material-symbols-outlined !text-xl">{$item['icon']}</span>
+                                    <span translate="no" class="material-symbols-outlined !text-xl">{$item['icon']}</span>
                                 {else}
-                                    <i class="ti ti-point !text-xl"></i>
+                                    <i class="ti ti-point !text-xl" translate="no"></i>
                                 {/if}
                             {else}
                                 <img src="{$item['icon']}" alt="{$item['name']} icon" class="w-5 h-5"/>

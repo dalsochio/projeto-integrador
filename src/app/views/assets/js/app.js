@@ -80,7 +80,7 @@ window.showConfirmModal = function(options) {
         <dialog id="globalConfirmModal" class="modal">
             <div class="modal-box">
                 <h3 class="font-bold text-lg flex items-center gap-2">
-                    <span class="material-symbols-outlined ${ colors[type] }">${ icons[type] }</span>
+                    <span translate="no" class="material-symbols-outlined ${ colors[type] }">${ icons[type] }</span>
                     ${ title }
                 </h3>
                 
@@ -90,11 +90,11 @@ window.showConfirmModal = function(options) {
                 
                 <div class="modal-action">
                     <button class="btn btn-ghost" onclick="document.getElementById('globalConfirmModal').close(); globalConfirmModalCancel()">
-                        <span class="material-symbols-outlined">close</span>
+                        <span translate="no" class="material-symbols-outlined">close</span>
                         ${ cancelText }
                     </button>
                     <button class="btn btn-${ type === 'error' || type === 'danger' ? 'error' : 'primary' }" onclick="document.getElementById('globalConfirmModal').close(); globalConfirmModalConfirm()">
-                        <span class="material-symbols-outlined">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined">check_circle</span>
                         ${ confirmText }
                     </button>
                 </div>

@@ -8,7 +8,7 @@
                 <p class="text-sm text-base-content/70">Informações detalhadas do registro de auditoria</p>
             </div>
             <a href="/panel/audit" class="btn btn-ghost btn-sm">
-                <span class="material-symbols-outlined">arrow_back</span>
+                <span translate="no" class="material-symbols-outlined">arrow_back</span>
                 Voltar
             </a>
         </div>
@@ -20,7 +20,7 @@
                 <div class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title text-base">
-                            <span class="material-symbols-outlined">info</span>
+                            <span translate="no" class="material-symbols-outlined">info</span>
                             Informações Gerais
                         </h2>
                     
@@ -30,17 +30,17 @@
                             <div class="mt-1">
                                 {if $log['action'] == 'POST'}
                                     <div class="badge badge-success badge-lg gap-2">
-                                        <span class="material-symbols-outlined">add</span>
+                                        <span translate="no" class="material-symbols-outlined">add</span>
                                         Criar
                                     </div>
                                 {elseif $log['action'] == 'PUT'}
                                     <div class="badge badge-warning badge-lg gap-2">
-                                        <span class="material-symbols-outlined">edit</span>
+                                        <span translate="no" class="material-symbols-outlined">edit</span>
                                         Atualizar
                                     </div>
                                 {elseif $log['action'] == 'DELETE'}
                                     <div class="badge badge-error badge-lg gap-2">
-                                        <span class="material-symbols-outlined">delete</span>
+                                        <span translate="no" class="material-symbols-outlined">delete</span>
                                         Deletar
                                     </div>
                                 {/if}
@@ -69,12 +69,12 @@
                             <div class="mt-1">
                                 {if $log['route_type'] == 'api'}
                                     <div class="badge badge-info badge-lg gap-2">
-                                        <span class="material-symbols-outlined">api</span>
+                                        <span translate="no" class="material-symbols-outlined">api</span>
                                         API
                                     </div>
                                 {else}
                                     <div class="badge badge-primary badge-lg gap-2">
-                                        <span class="material-symbols-outlined">dashboard</span>
+                                        <span translate="no" class="material-symbols-outlined">dashboard</span>
                                         Painel
                                     </div>
                                 {/if}
@@ -91,7 +91,7 @@
                         <div>
                             <label class="text-sm font-semibold text-base-content/70">Usuário</label>
                             <div class="mt-1 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-base-content/60">person</span>
+                                <span translate="no" class="material-symbols-outlined text-base-content/60">person</span>
                                 <span class="font-medium">{$log['username']}</span>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                 <div class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title text-base">
-                            <span class="material-symbols-outlined">data_object</span>
+                            <span translate="no" class="material-symbols-outlined">data_object</span>
                             Dados Enviados
                         </h2>
                         
@@ -170,7 +170,7 @@
                 <div class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title text-base">
-                            <span class="material-symbols-outlined">compare_arrows</span>
+                            <span translate="no" class="material-symbols-outlined">compare_arrows</span>
                             Alterações
                         </h2>
                         
@@ -207,7 +207,7 @@
             <div class="card card-border">
                 <div class="card-body">
                     <h2 class="card-title text-base">
-                        <span class="material-symbols-outlined">code</span>
+                        <span translate="no" class="material-symbols-outlined">code</span>
                         JSON Raw
                     </h2>
                     
@@ -215,7 +215,7 @@
                         <button 
                             onclick="copyToClipboard(document.getElementById('raw-json').textContent)" 
                             class="btn btn-sm btn-ghost w-full">
-                            <span class="material-symbols-outlined">content_copy</span>
+                            <span translate="no" class="material-symbols-outlined">content_copy</span>
                             Copiar JSON
                         </button>
                     </div>
@@ -238,7 +238,7 @@
 
             
             <div class="alert alert-info">
-                <span class="material-symbols-outlined">info</span>
+                <span translate="no" class="material-symbols-outlined">info</span>
                 <div>
                     <h3 class="font-semibold">Informação</h3>
                     <div class="text-sm">Os logs de auditoria são somente leitura e não podem ser editados ou removidos manualmente.</div>

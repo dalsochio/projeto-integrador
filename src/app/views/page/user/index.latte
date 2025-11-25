@@ -8,7 +8,7 @@
                 <p class="text-sm text-base-content/70">Gerencie usuários e suas permissões</p>
             </div>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
-                <span class="material-symbols-outlined">person_add</span>
+                <span translate="no" class="material-symbols-outlined">person_add</span>
                 <p class="hidden lg:inline-block uppercase">Novo Usuário</p>
             </a>
         </div>
@@ -18,7 +18,7 @@
             <div class="stats stats-vertical lg:stats-horizontal border border-base-200">
                 <div class="stat">
                     <div class="stat-figure text-primary">
-                        <span class="material-symbols-outlined text-4xl">group</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">group</span>
                     </div>
                     <div class="stat-title">Total de Usuários</div>
                     <div class="stat-value text-primary">{count($users)}</div>
@@ -27,7 +27,7 @@
 
                 <div class="stat">
                     <div class="stat-figure text-success">
-                        <span class="material-symbols-outlined text-4xl">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">check_circle</span>
                     </div>
                     <div class="stat-title">Usuários Ativos</div>
                     <div class="stat-value text-success">
@@ -38,7 +38,7 @@
 
                 <div class="stat">
                     <div class="stat-figure text-warning">
-                        <span class="material-symbols-outlined text-4xl">block</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">block</span>
                     </div>
                     <div class="stat-title">Usuários Inativos</div>
                     <div class="stat-value text-warning">
@@ -52,11 +52,11 @@
         <div class="overflow-x-auto card card-border">
             {if count($users) === 0}
                 <div class="flex flex-col items-center justify-center p-12 text-center">
-                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">person_off</span>
+                    <span translate="no" class="material-symbols-outlined text-6xl text-base-content/30 mb-4">person_off</span>
                     <p class="text-lg font-semibold mb-2">Nenhum usuário encontrado</p>
                     <p class="text-sm text-base-content/70 mb-4">Crie o primeiro usuário para começar</p>
                     <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
-                        <span class="material-symbols-outlined">person_add</span>
+                        <span translate="no" class="material-symbols-outlined">person_add</span>
                         Criar primeiro usuário
                     </a>
                 </div>
@@ -66,31 +66,31 @@
                         <tr>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">person</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">person</span>
                                     Usuário
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">mail</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">mail</span>
                                     Email
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">badge</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">badge</span>
                                     Roles
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">toggle_on</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">toggle_on</span>
                                     Status
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">calendar_today</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">calendar_today</span>
                                     Criado em
                                 </span>
                             </th>
@@ -104,7 +104,7 @@
                                     <div class="flex items-center gap-3">
                                         <div class="avatar placeholder">
                                             <div class="bg-{$userItem['is_active'] ? 'primary' : 'base-300'}/20 text-{$userItem['is_active'] ? 'primary' : 'base-content'} rounded-full w-10 h-10 flex items-center justify-center">
-                                                <span class="material-symbols-outlined text-xl">person</span>
+                                                <span translate="no" class="material-symbols-outlined text-xl">person</span>
                                             </div>
                                         </div>
                                         <div>
@@ -130,12 +130,12 @@
                                 <td>
                                     {if $userItem['is_active']}
                                         <div class="badge badge-success gap-2">
-                                            <span class="material-symbols-outlined text-xs">check_circle</span>
+                                            <span translate="no" class="material-symbols-outlined text-xs">check_circle</span>
                                             Ativo
                                         </div>
                                     {else}
                                         <div class="badge badge-warning gap-2">
-                                            <span class="material-symbols-outlined text-xs">block</span>
+                                            <span translate="no" class="material-symbols-outlined text-xs">block</span>
                                             Inativo
                                         </div>
                                     {/if}
@@ -153,14 +153,14 @@
                                         <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$userItem['id']}/edit"
                                            class="btn btn-ghost btn-xs"
                                            title="Editar">
-                                            <span class="material-symbols-outlined">edit</span>
+                                            <span translate="no" class="material-symbols-outlined">edit</span>
                                         </a>
                                         <form method="POST" action="/administration/user/{$userItem['id']}/toggle-status" class="inline">
                                     <button type="submit"
                                             class="btn btn-ghost btn-xs {$userItem['is_active'] ? 'text-warning' : 'text-success'}"
                                             title="{$userItem['is_active'] ? 'Inativar' : 'Ativar'}"
                                             onclick="return confirm('Tem certeza que deseja {$userItem['is_active'] ? 'inativar' : 'ativar'} o usuário {$userItem['username']}?')">
-                                        <span class="material-symbols-outlined">
+                                        <span translate="no" class="material-symbols-outlined">
                                             {$userItem['is_active'] ? 'block' : 'check_circle'}
                                         </span>
                                     </button>

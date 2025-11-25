@@ -4,14 +4,14 @@
 
 {if !is_null($callback)}
     <button onclick="{$callback}" type="button" class="btn btn-primary">
-        <span class="material-symbols-outlined">add</span>
+        <span translate="no" class="material-symbols-outlined">add</span>
         {if !is_null($label)}
             <p class="hidden lg:inline-block uppercase">{$label ?? $display_name}</p>
         {/if}
     </button>
 {else}
     <a href="{$href}" class="btn btn-primary">
-        <span class="material-symbols-outlined">add</span>
+        <span translate="no" class="material-symbols-outlined">add</span>
         {if !is_null($label)}
             <p class="hidden lg:inline-block uppercase">{$label ?? $display_name}</p>
         {/if}

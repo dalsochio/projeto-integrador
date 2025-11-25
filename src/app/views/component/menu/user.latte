@@ -10,17 +10,17 @@
                 <h1 class="font-semibold">{$_SESSION['user']['username']}</h1>
                 <h2 class="font-normal text-xs">{$_SESSION['user']['email']}</h2>
             </div>
-            <span class="material-symbols-outlined absolute top-4 right-2">unfold_more</span>
+            <span translate="no" class="material-symbols-outlined absolute top-4 right-2">unfold_more</span>
         </div>
     </div>
     <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-full p-2 border border-base-200">
         <a href="/account" class="btn btn-ghost justify-start">
-            <span class="material-symbols-outlined">person</span>
+            <span translate="no" class="material-symbols-outlined">person</span>
             Minha Conta
         </a>
         <div class="divider my-0"></div>
         <a href="/logout" hx-disable class="btn btn-ghost justify-start">
-            <span class="material-symbols-outlined">logout</span>
+            <span translate="no" class="material-symbols-outlined">logout</span>
             Logout
         </a>
     </ul>

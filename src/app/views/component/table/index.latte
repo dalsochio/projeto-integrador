@@ -8,11 +8,11 @@
     {if count($table['records']) === 0}
         
         <div class="flex flex-col items-center justify-center p-12 text-center card card-border">
-            <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
+            <span translate="no" class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
             <p class="text-lg font-semibold mb-2">Nenhum registro encontrado</p>
             <p class="text-sm text-base-content/70 mb-4">Não há registros cadastrados até o momento</p>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
-                <span class="material-symbols-outlined">add</span>
+                <span translate="no" class="material-symbols-outlined">add</span>
                 Criar primeiro registro
             </a>
         </div>
@@ -62,12 +62,12 @@
                                     <td>
                                         {if $value}
                                             <div class="badge badge-success gap-2">
-                                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">check_circle</span>
                                                 Ativo
                                             </div>
                                         {else}
                                             <div class="badge badge-ghost gap-2">
-                                                <span class="material-symbols-outlined text-xs">cancel</span>
+                                                <span translate="no" class="material-symbols-outlined text-xs">cancel</span>
                                                 Inativo
                                             </div>
                                         {/if}
@@ -98,12 +98,12 @@
                                 <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}"
                                    class="btn btn-ghost btn-xs"
                                    title="Visualizar">
-                                    <span class="material-symbols-outlined">visibility</span>
+                                    <span translate="no" class="material-symbols-outlined">visibility</span>
                                 </a>
                                 <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}/edit"
                                    class="btn btn-ghost btn-xs"
                                    title="Editar">
-                                    <span class="material-symbols-outlined">edit</span>
+                                    <span translate="no" class="material-symbols-outlined">edit</span>
                                 </a>
                                 <button type="button"
                                         class="btn btn-ghost btn-xs text-error"
@@ -111,7 +111,7 @@
                                         hx-delete="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}"
                                         hx-confirm="Tem certeza que deseja deletar este registro? Esta ação não pode ser desfeita."
                                         hx-on::after-request="if(event.detail.successful) window.location.reload()">
-                                    <span class="material-symbols-outlined">delete</span>
+                                    <span translate="no" class="material-symbols-outlined">delete</span>
                                 </button>
                             </div>
                         </td>

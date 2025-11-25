@@ -8,7 +8,7 @@
                 <p class="text-sm text-base-content/70">Gerencie os módulos e tabelas do sistema</p>
             </div>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
-                <span class="material-symbols-outlined">add</span>
+                <span translate="no" class="material-symbols-outlined">add</span>
                 <p class="hidden lg:inline-block uppercase">Novo módulo</p>
             </a>
         </div>
@@ -18,7 +18,7 @@
             <div class="stats stats-vertical lg:stats-horizontal border border-base-200">
                 <div class="stat">
                     <div class="stat-figure text-primary">
-                        <span class="material-symbols-outlined text-4xl">table_chart</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">table_chart</span>
                     </div>
                     <div class="stat-title">Total de Módulos</div>
                     <div class="stat-value text-primary">{count($modules)}</div>
@@ -27,7 +27,7 @@
 
                 <div class="stat">
                     <div class="stat-figure text-success">
-                        <span class="material-symbols-outlined text-4xl">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">check_circle</span>
                     </div>
                     <div class="stat-title">Módulos Ativos</div>
                     <div class="stat-value text-success">
@@ -38,7 +38,7 @@
 
                 <div class="stat">
                     <div class="stat-figure text-secondary">
-                        <span class="material-symbols-outlined text-4xl">category</span>
+                        <span translate="no" class="material-symbols-outlined text-4xl">category</span>
                     </div>
                     <div class="stat-title">Módulos Internos</div>
                     <div class="stat-value text-secondary">
@@ -52,11 +52,11 @@
         <div class="overflow-x-auto card card-border">
             {if count($modules) === 0}
                 <div class="flex flex-col items-center justify-center p-12 text-center">
-                    <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
+                    <span translate="no" class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
                     <p class="text-lg font-semibold mb-2">Nenhum módulo criado</p>
                     <p class="text-sm text-base-content/70 mb-4">Crie seu primeiro módulo para começar</p>
                     <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary btn-sm">
-                        <span class="material-symbols-outlined">add</span>
+                        <span translate="no" class="material-symbols-outlined">add</span>
                         Criar primeiro módulo
                     </a>
                 </div>
@@ -66,37 +66,37 @@
                         <tr>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">table_chart</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">table_chart</span>
                                     Nome do Módulo
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">category</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">category</span>
                                     Categoria
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">database</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">database</span>
                                     Tabela
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">link</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">link</span>
                                     URL
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">toggle_on</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">toggle_on</span>
                                     Status
                                 </span>
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-base">calendar_today</span>
+                                    <span translate="no" class="material-symbols-outlined text-base">calendar_today</span>
                                     Criado em
                                 </span>
                             </th>
@@ -111,7 +111,7 @@
                                         {if $module['icon']}
                                             <div class="avatar placeholder">
                                                 <div class="bg-primary/10 text-primary rounded-lg w-10 h-10 flex items-center justify-center">
-                                                    <span class="material-symbols-outlined text-xl">{$module['icon']}</span>
+                                                    <span translate="no" class="material-symbols-outlined text-xl">{$module['icon']}</span>
                                                 </div>
                                             </div>
                                         {/if}
@@ -152,12 +152,12 @@
                                 <td>
                                     {if $module['is_active']}
                                         <div class="badge badge-success gap-2">
-                                            <span class="material-symbols-outlined text-xs">check_circle</span>
+                                            <span translate="no" class="material-symbols-outlined text-xs">check_circle</span>
                                             Ativo
                                         </div>
                                     {else}
                                         <div class="badge badge-ghost gap-2">
-                                            <span class="material-symbols-outlined text-xs">cancel</span>
+                                            <span translate="no" class="material-symbols-outlined text-xs">cancel</span>
                                             Inativo
                                         </div>
                                     {/if}
@@ -179,26 +179,26 @@
                                                 {/if}"
                                            class="btn btn-ghost btn-xs"
                                            title="Ir para o módulo">
-                                            <span class="material-symbols-outlined">visibility</span>
+                                            <span translate="no" class="material-symbols-outlined">visibility</span>
                                         </a>
                                         <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$module['id']}/edit"
                                            class="btn btn-ghost btn-xs"
                                            title="Editar">
-                                            <span class="material-symbols-outlined">edit</span>
+                                            <span translate="no" class="material-symbols-outlined">edit</span>
                                         </a>
 
                                         {if $module['can_delete']}
                                             <button class="btn btn-ghost btn-xs text-error"
                                                     onclick="confirmDelete({$module['id']}, '{$module['display_name']}')"
                                                     title="Deletar">
-                                                <span class="material-symbols-outlined">delete</span>
+                                                <span translate="no" class="material-symbols-outlined">delete</span>
                                             </button>
                                         {else}
                                             <div class="tooltip tooltip-left" data-tip="{$module['delete_reason']}">
                                                 <button class="btn btn-ghost btn-xs btn-disabled opacity-30"
                                                         disabled
                                                         title="{$module['delete_reason']}">
-                                                    <span class="material-symbols-outlined">delete</span>
+                                                    <span translate="no" class="material-symbols-outlined">delete</span>
                                                 </button>
                                             </div>
                                         {/if}

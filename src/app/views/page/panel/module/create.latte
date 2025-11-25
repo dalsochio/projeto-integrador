@@ -4,7 +4,7 @@
     <div class="flex flex-col gap-4" x-data="formBuilder()">
         <div class="flex flex-row items-center gap-4 py-4">
             <a href="/panel/module" class="btn btn-ghost btn-sm">
-                <span class="material-symbols-outlined">arrow_back</span>
+                <span translate="no" class="material-symbols-outlined">arrow_back</span>
                 Voltar
             </a>
             <div class="flex-1">
@@ -142,7 +142,7 @@
                             @click="nextStep()"
                             :disabled="!isStep1Valid()">
                         Continuar
-                        <span class="material-symbols-outlined">arrow_forward</span>
+                        <span translate="no" class="material-symbols-outlined">arrow_forward</span>
                     </button>
                 </div>
             </div>
@@ -167,7 +167,7 @@
                     <button type="button"
                             class="btn btn-outline"
                             @click="previousStep()">
-                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span translate="no" class="material-symbols-outlined">arrow_back</span>
                         Voltar
                     </button>
                     <button type="button"
@@ -175,7 +175,7 @@
                             @click="nextStep()"
                             :disabled="!isStep2Valid()">
                         Continuar
-                        <span class="material-symbols-outlined">arrow_forward</span>
+                        <span translate="no" class="material-symbols-outlined">arrow_forward</span>
                     </button>
                 </div>
             </div>
@@ -192,7 +192,7 @@
 
                         <template x-if="items.length === 0">
                             <div class="alert alert-warning">
-                                <span class="material-symbols-outlined">warning</span>
+                                <span translate="no" class="material-symbols-outlined">warning</span>
                                 <span>Nenhum campo foi adicionado ainda. Volte ao Step 2 para adicionar campos.</span>
                             </div>
                         </template>
@@ -227,14 +227,14 @@
                     <button type="button"
                             class="btn btn-outline"
                             @click="previousStep()">
-                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span translate="no" class="material-symbols-outlined">arrow_back</span>
                         Voltar
                     </button>
                     <button type="button"
                             class="btn btn-primary"
                             @click="nextStep()">
                         Continuar
-                        <span class="material-symbols-outlined">arrow_forward</span>
+                        <span translate="no" class="material-symbols-outlined">arrow_forward</span>
                     </button>
                 </div>
             </div>
@@ -278,7 +278,7 @@
                                 <button type="button"
                                         class="btn btn-ghost btn-sm"
                                         @click="goToStep(1)">
-                                    <span class="material-symbols-outlined">edit</span>
+                                    <span translate="no" class="material-symbols-outlined">edit</span>
                                     Editar
                                 </button>
                             </div>
@@ -326,7 +326,7 @@
                                 <button type="button"
                                         class="btn btn-ghost btn-sm"
                                         @click="goToStep(2)">
-                                    <span class="material-symbols-outlined">edit</span>
+                                    <span translate="no" class="material-symbols-outlined">edit</span>
                                     Editar
                                 </button>
                             </div>
@@ -340,20 +340,20 @@
                     <button type="button"
                             class="btn btn-outline"
                             @click="previousStep()">
-                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span translate="no" class="material-symbols-outlined">arrow_back</span>
                         Voltar
                     </button>
 
                     <div class="flex gap-3">
                         <a href="/painel/module"
                            class="btn btn-ghost">
-                            <span class="material-symbols-outlined">close</span>
+                            <span translate="no" class="material-symbols-outlined">close</span>
                             Cancelar
                         </a>
                         <button type="button"
                                 class="btn btn-success"
                                 @click="confirmCreate()">
-                            <span class="material-symbols-outlined">check_circle</span>
+                            <span translate="no" class="material-symbols-outlined">check_circle</span>
                             Confirmar e Criar
                         </button>
                     </div>
@@ -521,7 +521,7 @@
                             // Re-habilitar botão
                             if (confirmBtn) {
                                 confirmBtn.disabled = false;
-                                confirmBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
+                                confirmBtn.innerHTML = '<span translate="no" class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
                             }
                         }
                     } catch (error) {
@@ -529,7 +529,7 @@
 
                         if (confirmBtn) {
                             confirmBtn.disabled = false;
-                            confirmBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
+                            confirmBtn.innerHTML = '<span translate="no" class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
                         }
                     }
                 },
