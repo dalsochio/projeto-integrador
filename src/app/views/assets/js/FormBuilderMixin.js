@@ -337,15 +337,15 @@ export default function formBuilderMixin() {
                 display_name: `Campo ${this.fieldCounter}`,
                 type: type,
                 length: defaultLength,
-                is_nullable: 0,
+                is_nullable: false,
                 default_value: null,
-                is_unique: 0,
-                is_primary: 0,
-                auto_increment: 0,
-                is_visible_list: 1,
-                is_visible_form: 1,
-                is_editable: 1,
-                is_searchable: 0,
+                is_unique: false,
+                is_primary: false,
+                auto_increment: false,
+                is_visible_list: true,
+                is_visible_form: true,
+                is_editable: true,
+                is_searchable: false,
                 input_type: actualInputType,
                 input_placeholder: null,
                 input_prefix: null,
@@ -568,7 +568,7 @@ export default function formBuilderMixin() {
 
             this.items.forEach(item => {
                 if (item.itemType === 'field') {
-                    const {id, itemType, ...fieldData} = item;
+                    const { id, itemType, ...fieldData } = item;
 
                     if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
                         fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
@@ -582,6 +582,16 @@ export default function formBuilderMixin() {
                     if ((originalType === 'REFERENCE_SELECT' || originalType === 'REFERENCE_RADIO') && fieldData.foreign_table) {
                         fieldData.is_foreign_key = true;
                     }
+
+                    // Converter booleanos para inteiros
+                    fieldData.is_nullable = fieldData.is_nullable ? 1 : 0;
+                    fieldData.is_unique = fieldData.is_unique ? 1 : 0;
+                    fieldData.is_primary = fieldData.is_primary ? 1 : 0;
+                    fieldData.auto_increment = fieldData.auto_increment ? 1 : 0;
+                    fieldData.is_visible_list = fieldData.is_visible_list ? 1 : 0;
+                    fieldData.is_visible_form = fieldData.is_visible_form ? 1 : 0;
+                    fieldData.is_editable = fieldData.is_editable ? 1 : 0;
+                    fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
 
                     output.push(fieldData);
                 } else if (item.itemType === 'row' && item.columns) {
@@ -602,6 +612,16 @@ export default function formBuilderMixin() {
                                 if ((originalType === 'REFERENCE_SELECT' || originalType === 'REFERENCE_RADIO') && fieldData.foreign_table) {
                                     fieldData.is_foreign_key = true;
                                 }
+
+                                // Converter booleanos para inteiros
+                                fieldData.is_nullable = fieldData.is_nullable ? 1 : 0;
+                                fieldData.is_unique = fieldData.is_unique ? 1 : 0;
+                                fieldData.is_primary = fieldData.is_primary ? 1 : 0;
+                                fieldData.auto_increment = fieldData.auto_increment ? 1 : 0;
+                                fieldData.is_visible_list = fieldData.is_visible_list ? 1 : 0;
+                                fieldData.is_visible_form = fieldData.is_visible_form ? 1 : 0;
+                                fieldData.is_editable = fieldData.is_editable ? 1 : 0;
+                                fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
 
                                 fieldData.column_width = col.width;
                                 output.push(fieldData);

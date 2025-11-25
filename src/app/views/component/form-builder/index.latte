@@ -229,37 +229,37 @@
 
             
             <template x-if="selectedItemId && selectedItemType === 'field'">
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-3" x-data="{ get selectedField() { return findField(selectedItemId) } }">
                     <div class="form-control">
                         <label class="label"><span class="label-text font-medium">Nome de Exibição</span></label>
-                        <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).display_name">
+                        <input type="text" class="input input-sm input-bordered" x-model="selectedField.display_name">
                         <label class="label"><span class="label-text-alt">O nome técnico será gerado automaticamente</span></label>
                     </div>
 
                     <div class="form-control">
                         <label class="label"><span class="label-text font-medium">Placeholder</span></label>
-                        <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).input_placeholder">
+                        <input type="text" class="input input-sm input-bordered" x-model="selectedField.input_placeholder">
                     </div>
 
                     <div class="grid grid-cols-2 gap-2">
                         <div class="form-control">
                             <label class="label"><span class="label-text font-medium">Prefixo</span></label>
-                            <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).input_prefix" placeholder="R$, @">
+                            <input type="text" class="input input-sm input-bordered" x-model="selectedField.input_prefix" placeholder="R$, @">
                         </div>
 
                         <div class="form-control">
                             <label class="label"><span class="label-text font-medium">Sufixo</span></label>
-                            <input type="text" class="input input-sm input-bordered" x-model="findField(selectedItemId).input_suffix" placeholder="kg, %">
+                            <input type="text" class="input input-sm input-bordered" x-model="selectedField.input_suffix" placeholder="kg, %">
                         </div>
                     </div>
 
                     <div class="form-control">
                         <label class="label"><span class="label-text font-medium">Texto de Ajuda</span></label>
-                        <textarea class="textarea textarea-sm textarea-bordered" x-model="findField(selectedItemId).help_text" rows="2"></textarea>
+                        <textarea class="textarea textarea-sm textarea-bordered" x-model="selectedField.help_text" rows="2"></textarea>
                     </div>
 
 
-                    <template x-if="['SELECT', 'RADIO', 'CHECKBOX'].includes(findField(selectedItemId).type)">
+                    <template x-if="['SELECT', 'RADIO', 'CHECKBOX'].includes(selectedField.type)">
                         <div>
                             <div class="divider text-xs">Opções do Campo</div>
 
@@ -267,7 +267,7 @@
                                 <label class="label cursor-pointer justify-start gap-2">
                                     <input type="checkbox"
                                            class="checkbox checkbox-sm"
-                                           x-model="findField(selectedItemId).use_separate_value">
+                                           x-model="selectedField.use_separate_value">
                                     <span class="label-text">Usar valor diferente da label</span>
                                 </label>
                                 <label class="label">
@@ -280,14 +280,14 @@
                                     <span class="label-text font-medium">Opções</span>
                                 </label>
 
-                                <template x-for="(option, idx) in (findField(selectedItemId).manual_options || [])" :key="idx">
+                                <template x-for="(option, idx) in (selectedField.manual_options || [])" :key="idx">
                                     <div class="flex gap-2 mb-2">
                                         <input type="text"
                                                placeholder="Label (ex: Brasil)"
                                                class="input input-sm input-bordered flex-1"
                                                x-model="option.label">
 
-                                        <input x-show="findField(selectedItemId).use_separate_value"
+                                        <input x-show="selectedField.use_separate_value"
                                                type="text"
                                                placeholder="Valor (ex: BR)"
                                                class="input input-sm input-bordered flex-1"
@@ -315,15 +315,15 @@
                     </template>
 
 
-                    <template x-if="['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(findField(selectedItemId).type)">
+                    <template x-if="['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(selectedField.type)">
                         <div>
                             <div class="divider text-xs">Configuração de Referência</div>
 
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-medium">Módulo de Referência</span></label>
                                 <select class="select select-sm select-bordered"
-                                        x-model="findField(selectedItemId).foreign_table"
-                                        @change="loadModuleColumns(findField(selectedItemId))">
+                                        x-model="selectedField.foreign_table"
+                                        @change="loadModuleColumns(selectedField)">
                                     <option value="">Selecione um módulo...</option>
                                     <template x-for="module in availableModules" :key="module.name">
                                         <option :value="module.name" x-text="module.display_name"></option>
@@ -332,12 +332,12 @@
                                 <label class="label"><span class="label-text-alt">Módulo que será referenciado</span></label>
                             </div>
 
-                            <div class="form-control" x-show="findField(selectedItemId).foreign_table">
+                            <div class="form-control" x-show="selectedField.foreign_table">
                                 <label class="label"><span class="label-text font-medium">Coluna para Exibição</span></label>
                                 <select class="select select-sm select-bordered"
-                                        x-model="findField(selectedItemId).foreign_column">
+                                        x-model="selectedField.foreign_column">
                                     <option value="">Selecione uma coluna...</option>
-                                    <template x-for="column in moduleColumns[findField(selectedItemId).foreign_table] || []" :key="column.name">
+                                    <template x-for="column in moduleColumns[selectedField.foreign_table] || []" :key="column.name">
                                         <option :value="column.name" x-text="column.display_name || column.name"></option>
                                     </template>
                                 </select>
@@ -350,14 +350,14 @@
 
                     <div class="form-control">
                         <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_visible_list">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_visible_list">
                             <span class="label-text">Mostrar na tabela</span>
                         </label>
                     </div>
 
                     <div class="form-control">
                         <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_searchable">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_searchable">
                             <span class="label-text">Incluir na busca</span>
                         </label>
                     </div>
@@ -366,21 +366,21 @@
 
                     <div class="form-control">
                         <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_nullable">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_nullable">
                             <span class="label-text">Campo opcional</span>
                         </label>
                     </div>
 
-                    <div class="form-control" x-show="!['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(findField(selectedItemId).type)">
+                    <div class="form-control" x-show="!['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(selectedField.type)">
                         <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_unique">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_unique">
                             <span class="label-text">Não permitir valores repetidos</span>
                         </label>
                     </div>
 
                     <div class="form-control">
                         <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" class="checkbox checkbox-sm" x-model="findField(selectedItemId).is_editable">
+                            <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_editable">
                             <span class="label-text">Pode ser editado</span>
                         </label>
                     </div>
