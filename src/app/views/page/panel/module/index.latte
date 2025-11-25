@@ -5,7 +5,7 @@
         <div class="flex flex-row justify-between py-4">
             <div>
                 <p class="text-xl font-semibold">Módulos</p>
-                <p class="text-sm text-base-content/70">Gerencie os módulos e tabelas do sistema</p>
+                <p class="text-sm text-base-content/70">Gerencie os módulos do sistema</p>
             </div>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary hidden lg:flex">
                 <span translate="no" class="material-symbols-outlined">add</span>
@@ -78,8 +78,8 @@
                             </th>
                             <th>
                                 <span class="flex items-center gap-2">
-                                    <span translate="no" class="material-symbols-outlined text-base">database</span>
-                                    Tabela
+                                    <span translate="no" class="material-symbols-outlined text-base">label</span>
+                                    Identificador
                                 </span>
                             </th>
                             <th>
@@ -100,7 +100,25 @@
                                     Criado em
                                 </span>
                             </th>
-                            <th class="text-right">Ações</th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span translate="no" class="material-symbols-outlined text-base">person</span>
+                                    Criado por
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span translate="no" class="material-symbols-outlined text-base">calendar_today</span>
+                                    Atualizado em
+                                </span>
+                            </th>
+                            <th>
+                                <span class="flex items-center gap-2">
+                                    <span translate="no" class="material-symbols-outlined text-base">person</span>
+                                    Atualizado por
+                                </span>
+                            </th>
+                            <th class="text-right sticky right-0 bg-base-100 z-10">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -171,6 +189,36 @@
                                     </div>
                                 </td>
                                 <td>
+                                    {if !empty($module['created_by_name'])}
+                                        <span class="text-sm">{$module['created_by_name']}</span>
+                                    {elseif !empty($module['created_by'])}
+                                        <code class="text-xs text-base-content/60">ID: {$module['created_by']}</code>
+                                    {else}
+                                        <span class="text-base-content/40">-</span>
+                                    {/if}
+                                </td>
+                                <td>
+                                    {if !empty($module['updated_at'])}
+                                        <div class="text-sm">
+                                            {$module['updated_at']|date:'d/m/Y'}
+                                        </div>
+                                        <div class="text-xs opacity-60">
+                                            {$module['updated_at']|date:'H:i'}
+                                        </div>
+                                    {else}
+                                        <span class="text-base-content/40">-</span>
+                                    {/if}
+                                </td>
+                                <td>
+                                    {if !empty($module['updated_by_name'])}
+                                        <span class="text-sm">{$module['updated_by_name']}</span>
+                                    {elseif !empty($module['updated_by'])}
+                                        <code class="text-xs text-base-content/60">ID: {$module['updated_by']}</code>
+                                    {else}
+                                        <span class="text-base-content/40">-</span>
+                                    {/if}
+                                </td>
+                                <td class="sticky right-0 bg-base-100">
                                     <div class="flex justify-end gap-2">
                                         <a href="{if $module['category_url_path']}
                                                     /{$module['category_url_path']}/{$module['url_path']}
@@ -216,7 +264,7 @@
         async function confirmDelete(id, name) {
             showConfirmModal({
                 title: 'Confirmar Exclusão',
-                message: `Tem certeza que deseja deletar o módulo "${ name }"?\n\nEsta ação não pode ser desfeita e a tabela do banco de dados será removida permanentemente.`,
+                message: `Tem certeza que deseja deletar o módulo "${ name }"?\n\nEsta ação não pode ser desfeita e todos os dados do módulo serão removidos permanentemente.`,
                 confirmText: 'Confirmar Exclusão',
                 cancelText: 'Cancelar',
                 type: 'error',

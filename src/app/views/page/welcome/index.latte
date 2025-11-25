@@ -121,13 +121,13 @@
                         <div class="flex-1">
                             <p class="text-sm font-medium">
                                 {if $activity['action'] === 'create'}
-                                    <strong>{$activity['user_name']}</strong> criou um registro em <em>{$activity['table_name']}</em>
+                                    <strong>{$activity['user_name']}</strong> criou um registro em <em>{$activity['table_display_name'] ?? $activity['table_name']}</em>
                                 {elseif $activity['action'] === 'update'}
-                                    <strong>{$activity['user_name']}</strong> atualizou um registro em <em>{$activity['table_name']}</em>
+                                    <strong>{$activity['user_name']}</strong> atualizou um registro em <em>{$activity['table_display_name'] ?? $activity['table_name']}</em>
                                 {elseif $activity['action'] === 'delete'}
-                                    <strong>{$activity['user_name']}</strong> excluiu um registro de <em>{$activity['table_name']}</em>
+                                    <strong>{$activity['user_name']}</strong> excluiu um registro de <em>{$activity['table_display_name'] ?? $activity['table_name']}</em>
                                 {else}
-                                    <strong>{$activity['user_name']}</strong> realizou ação em <em>{$activity['table_name']}</em>
+                                    <strong>{$activity['user_name']}</strong> realizou ação em <em>{$activity['table_display_name'] ?? $activity['table_name']}</em>
                                 {/if}
                             </p>
                             <p class="text-xs opacity-60">

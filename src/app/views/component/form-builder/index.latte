@@ -237,7 +237,7 @@
                     <div class="form-control">
                         <label class="label"><span class="label-text font-medium">Nome de Exibição</span></label>
                         <input type="text" class="input input-sm input-bordered" x-model="selectedField.display_name">
-                        <label class="label"><span class="label-text-alt">O nome técnico será gerado automaticamente</span></label>
+                        <label class="label"><span class="label-text-alt">Nome que será exibido para o usuário</span></label>
                     </div>
 
                     <div class="form-control">
@@ -337,25 +337,25 @@
                             </div>
 
                             <div class="form-control" x-show="selectedField.foreign_table">
-                                <label class="label"><span class="label-text font-medium">Coluna para Exibição</span></label>
+                                <label class="label"><span class="label-text font-medium">Campo para Exibição</span></label>
                                 <select class="select select-sm select-bordered"
                                         x-model="selectedField.foreign_column">
-                                    <option value="">Selecione uma coluna...</option>
+                                    <option value="">Selecione um campo...</option>
                                     <template x-for="column in moduleColumns[selectedField.foreign_table] || []" :key="column.name">
                                         <option :value="column.name" x-text="column.display_name || column.name"></option>
                                     </template>
                                 </select>
-                                <label class="label"><span class="label-text-alt">Coluna que será mostrada no select/radio</span></label>
+                                <label class="label"><span class="label-text-alt">Campo que será exibido nas opções</span></label>
                             </div>
                         </div>
                     </template>
 
-                    <div class="divider text-xs">Tabela</div>
+                    <div class="divider text-xs">Exibição</div>
 
                     <div class="form-control">
                         <label class="label cursor-pointer justify-start gap-2">
                             <input type="checkbox" class="checkbox checkbox-sm" x-model="selectedField.is_visible_list">
-                            <span class="label-text">Mostrar na tabela</span>
+                            <span class="label-text">Mostrar na listagem</span>
                         </label>
                     </div>
 

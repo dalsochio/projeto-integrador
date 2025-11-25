@@ -23,9 +23,42 @@
                 <tr>
                     {foreach $table['columns'] as $column}
                         {if $column['is_visible_list']}
-                            <th>{$column['display_name']}</th>
+                            {if $column['name'] === 'id'}
+                                <th>
+                                    <span class="flex items-center gap-2">
+                                        <span translate="no" class="material-symbols-outlined text-base">tag</span>
+                                        {$column['display_name']}
+                                    </span>
+                                </th>
+                            {else}
+                                <th>{$column['display_name']}</th>
+                            {/if}
                         {/if}
                     {/foreach}
+                    <th>
+                        <span class="flex items-center gap-2">
+                            <span translate="no" class="material-symbols-outlined text-base">calendar_today</span>
+                            Criado em
+                        </span>
+                    </th>
+                    <th>
+                        <span class="flex items-center gap-2">
+                            <span translate="no" class="material-symbols-outlined text-base">person</span>
+                            Criado por
+                        </span>
+                    </th>
+                    <th>
+                        <span class="flex items-center gap-2">
+                            <span translate="no" class="material-symbols-outlined text-base">calendar_today</span>
+                            Atualizado em
+                        </span>
+                    </th>
+                    <th>
+                        <span class="flex items-center gap-2">
+                            <span translate="no" class="material-symbols-outlined text-base">person</span>
+                            Atualizado por
+                        </span>
+                    </th>
                     <th class="text-right sticky right-0 bg-base-100 z-10">Ações</th>
                 </tr>
                 </thead>
@@ -93,6 +126,48 @@
                                 {/if}
                             {/if}
                         {/foreach}
+                        <td>
+                            <div class="text-sm">
+                                {if !empty($row['created_at'])}
+                                    {$row['created_at']|date:'d/m/Y'}
+                                    <div class="text-xs opacity-60">
+                                        {$row['created_at']|date:'H:i'}
+                                    </div>
+                                {else}
+                                    <span class="text-base-content/40">-</span>
+                                {/if}
+                            </div>
+                        </td>
+                        <td>
+                            {if !empty($row['created_by_name'])}
+                                <span class="text-sm">{$row['created_by_name']}</span>
+                            {elseif !empty($row['created_by'])}
+                                <code class="text-xs text-base-content/60">ID: {$row['created_by']}</code>
+                            {else}
+                                <span class="text-base-content/40">-</span>
+                            {/if}
+                        </td>
+                        <td>
+                            <div class="text-sm">
+                                {if !empty($row['updated_at'])}
+                                    {$row['updated_at']|date:'d/m/Y'}
+                                    <div class="text-xs opacity-60">
+                                        {$row['updated_at']|date:'H:i'}
+                                    </div>
+                                {else}
+                                    <span class="text-base-content/40">-</span>
+                                {/if}
+                            </div>
+                        </td>
+                        <td>
+                            {if !empty($row['updated_by_name'])}
+                                <span class="text-sm">{$row['updated_by_name']}</span>
+                            {elseif !empty($row['updated_by'])}
+                                <code class="text-xs text-base-content/60">ID: {$row['updated_by']}</code>
+                            {else}
+                                <span class="text-base-content/40">-</span>
+                            {/if}
+                        </td>
                         <td class="sticky right-0 bg-base-100">
                             <div class="flex flex-row justify-end items-center gap-2">
                                 <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$row['id']}"

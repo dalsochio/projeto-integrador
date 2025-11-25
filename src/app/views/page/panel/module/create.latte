@@ -38,8 +38,7 @@
 
             <div x-show="currentStep === 1" x-transition>
                 <h3 class="text-lg font-semibold mb-4">Configuração do Módulo</h3>
-                <p class="text-sm text-base-content/70 mb-6">Defina as informações básicas do módulo/tabela que será
-                    criado.</p>
+                <p class="text-sm text-base-content/70 mb-6">Defina as informações básicas do módulo que será criado.</p>
 
                 <div class="grid grid-cols-12 gap-4">
 
@@ -66,13 +65,31 @@
                     <div class="col-span-12">
                         <label class="form-control w-full">
                             <div class="label">
-                                <span class="label-text">URL do Recurso *</span>
+                                <span class="label-text">Nome do Módulo *</span>
+                            </div>
+                            <input type="text"
+                                   x-model="moduleData.name"
+                                   @input="updateModuleUrl()"
+                                   placeholder="Ex: Produtos"
+                                   class="input input-bordered w-full"
+                                   required/>
+                            <div class="label">
+                                <span class="label-text-alt">Nome que será exibido no menu e nas páginas do módulo</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="col-span-12">
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text">URL do Módulo *</span>
                             </div>
                             <label class="input input-bordered flex items-center gap-2">
                                 <span class="text-base-content/70 font-mono"
                                       x-text="'/' + (selectedCategoryUrlPath || 'painel') + '/'"></span>
                                 <input type="text"
                                        x-model="moduleData.url"
+                                       @input="sanitizeUrl()"
                                        placeholder="produtos"
                                        class="grow"
                                        required/>
@@ -87,27 +104,15 @@
                     </div>
 
 
-                    <div class="col-span-12">
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text">Nome do Módulo *</span>
-                            </div>
-                            <input type="text"
-                                   x-model="moduleData.name"
-                                   placeholder="Ex: Produtos"
-                                   class="input input-bordered w-full"
-                                   required/>
-                            <div class="label">
-                                <span class="label-text-alt">Nome de exibição do módulo (a tabela será gerada automaticamente)</span>
-                            </div>
-                        </label>
-                    </div>
-
-
                     <div class="col-span-12 md:col-span-6">
                         <label class="form-control w-full">
                             <div class="label">
                                 <span class="label-text">Ícone</span>
+                                <a href="https://fonts.google.com/icons"
+                                   target="_blank"
+                                   class="label-text-alt link link-primary">
+                                    Ver ícones disponíveis
+                                </a>
                             </div>
                             <input type="text"
                                    x-model="moduleData.icon"
@@ -400,6 +405,25 @@
 
                 init() {
                     this.initFormBuilder();
+                },
+
+                updateModuleUrl() {
+                    this.moduleData.url = this.moduleData.name
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                },
+
+                sanitizeUrl() {
+                    this.moduleData.url = this.moduleData.url
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/[^a-z0-9-]+/g, '-')
+                        .replace(/^-+|-+$/g, '')
+                        .replace(/-+/g, '-');
                 },
 
                 generateJson() {
