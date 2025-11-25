@@ -203,7 +203,7 @@ export default function formBuilderMixin() {
             this.fieldSortConfig = {
                 animation: 150,
                 handle: '.field-drag-handle',
-                group: {name: 'fields-group', pull: false, put: false},
+                group: 'fields-group',
                 swapThreshold: 0.65,
                 onStart(evt) {
                     const itemId = evt.item.getAttribute('data-item-id');
@@ -316,10 +316,10 @@ export default function formBuilderMixin() {
             event.preventDefault();
             event.stopPropagation();
 
-            const row = this.items.find(i => i.id === rowId);
-            if (row && row.columns) {
-                const col = row.columns.find(c => c.id === columnId);
-                if (col && col.fields && col.fields.length > 0) {
+            const targetRow = this.items.find(i => i.id === rowId);
+            if (targetRow && targetRow.columns) {
+                const targetCol = targetRow.columns.find(c => c.id === columnId);
+                if (targetCol && targetCol.fields && targetCol.fields.length > 0) {
                     flash('Cada coluna pode ter apenas 1 campo. Remova o campo existente primeiro.', 'warn');
                     this.draggedType = null;
                     this.draggedFieldId = null;
@@ -337,6 +337,7 @@ export default function formBuilderMixin() {
                 this.addFieldToColumnDirect(rowId, columnId, this.draggedType);
                 this.draggedType = null;
             } else if (this.draggedFieldId && this.draggedFromCanvas) {
+                // Campo vindo do canvas principal
                 const fieldIndex = this.items.findIndex(i => i.id === this.draggedFieldId);
                 if (fieldIndex >= 0) {
                     const field = this.items[fieldIndex];
@@ -355,6 +356,44 @@ export default function formBuilderMixin() {
                         const col = row.columns.find(c => c.id === columnId);
                         if (col && col.fields) {
                             col.fields.push(field);
+                        }
+                    }
+                }
+
+                this.draggedFieldId = null;
+                this.draggedFromCanvas = false;
+            } else if (this.draggedFieldId && !this.draggedFromCanvas) {
+                // Campo vindo de outra coluna - mover entre colunas
+                let movedField = null;
+                let sourceColId = null;
+
+                // Procurar o campo em todas as colunas de todos os rows
+                for (const item of this.items) {
+                    if (item.itemType === 'row' && item.columns) {
+                        for (const col of item.columns) {
+                            const fieldIndex = col.fields?.findIndex(f => f.id === this.draggedFieldId);
+                            if (fieldIndex !== undefined && fieldIndex >= 0) {
+                                sourceColId = col.id;
+                                // Não mover se for a mesma coluna
+                                if (sourceColId === columnId) {
+                                    this.draggedFieldId = null;
+                                    this.draggedFromCanvas = false;
+                                    return;
+                                }
+                                movedField = col.fields.splice(fieldIndex, 1)[0];
+                                break;
+                            }
+                        }
+                        if (movedField) break;
+                    }
+                }
+
+                if (movedField) {
+                    const row = this.items.find(i => i.id === rowId);
+                    if (row && row.columns) {
+                        const col = row.columns.find(c => c.id === columnId);
+                        if (col && col.fields) {
+                            col.fields.push(movedField);
                         }
                     }
                 }
