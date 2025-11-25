@@ -256,14 +256,16 @@
                     const result = await res.json();
 
                     if (res.ok) {
+                        formPassword.reset();
                         window.flashAndReload(result.message, 'success');
                     } else {
                         window.flash(result.message || 'Erro ao alterar senha', 'error');
+                        btn.disabled = false;
+                        btnText.textContent = originalText;
                     }
                 } catch (err) {
                     console.error(err);
                     window.flash('Erro ao alterar senha', 'error');
-                } finally {
                     btn.disabled = false;
                     btnText.textContent = originalText;
                 }

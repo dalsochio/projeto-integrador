@@ -1,0 +1,106 @@
+
+
+{default $id = $name}
+{default $value = $value ?? $field['default_value'] ?? ''}
+{default $attributes = []}
+
+{var $isRequired = !$field['is_nullable']}
+{var $isReadonly = !$field['is_editable']}
+{var $separator = $field['tag_separator'] ?? ','}
+
+<div class="form-control w-full" x-data="tagsInput('{$id}', '{$value|escape:'js'}', '{$separator}')">
+    <label for="{$id}" class="label">
+        <span class="label-text">
+            {$field['display_name'] ?? $field['name']}
+            {if $isRequired}<span class="text-error ml-1">*</span>{/if}
+        </span>
+        {if $field['tooltip']}
+            <span class="label-text-alt tooltip tooltip-left" data-tip="{$field['tooltip']}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </span>
+        {/if}
+    </label>
+
+    <input type="hidden"
+           name="{$name}"
+           x-model="hiddenValue"
+           {if $isRequired}required{/if} />
+
+    <div class="flex flex-wrap gap-2 p-3 border-2 border-base-300 rounded-lg min-h-[48px] bg-base-100 focus-within:border-primary transition-colors"
+         @click="$refs.tagInput.focus()">
+        <template x-for="(tag, index) in tags" :key="index">
+            <div class="badge badge-primary gap-2 py-3">
+                <span x-text="tag"></span>
+                <button type="button"
+                        @click.stop="removeTag(index)"
+                        {if $isReadonly}disabled{/if}
+                        class="btn btn-ghost btn-xs p-0 h-4 w-4 min-h-0 hover:text-error">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+        </template>
+
+        <input type="text"
+               x-ref="tagInput"
+               @keydown.enter.prevent="addTagFromInput()"
+               @keydown.comma.prevent="addTagFromInput()"
+               @keydown.semicolon.prevent="addTagFromInput()"
+               @keydown.backspace="handleBackspace()"
+               placeholder="{$field['input_placeholder'] ?? 'Digite e pressione Enter...'}"
+               {if $isReadonly}readonly{/if}
+               class="flex-1 min-w-[120px] outline-none bg-transparent" />
+    </div>
+
+    {if $field['help_text']}
+        <label class="label">
+            <span class="label-text-alt">{$field['help_text']}</span>
+        </label>
+    {/if}
+</div>
+
+<script n:syntax=off>
+function tagsInput(id, initialValue, separator) {
+    return {
+        tags: [],
+        hiddenValue: '',
+        separator: separator || ',',
+
+        init() {
+            if (initialValue && initialValue.trim()) {
+                this.tags = initialValue.split(new RegExp(`[${this.separator};,]+`)).map(t => t.trim()).filter(t => t);
+            }
+            this.updateHiddenValue();
+        },
+
+        addTagFromInput() {
+            const input = this.$refs.tagInput;
+            const value = input.value.trim();
+
+            if (value && !this.tags.includes(value)) {
+                this.tags.push(value);
+                this.updateHiddenValue();
+            }
+
+            input.value = '';
+        },
+
+        removeTag(index) {
+            this.tags.splice(index, 1);
+            this.updateHiddenValue();
+        },
+
+        handleBackspace() {
+            const input = this.$refs.tagInput;
+            if (input.value === '' && this.tags.length > 0) {
+                this.removeTag(this.tags.length - 1);
+            }
+        },
+
+        updateHiddenValue() {
+            this.hiddenValue = this.tags.join(this.separator + ' ');
+        }
+    };
+}
+</script>

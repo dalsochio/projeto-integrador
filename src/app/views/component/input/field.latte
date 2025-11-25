@@ -43,6 +43,10 @@
     {include '../input/checkbox.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
 {elseif $inputType === 'toggle'}
     {include '../input/toggle.latte', field: $field, name: $name, value: 1, checked: (bool)$value, id: $id, attributes: $attributes}
+{elseif $inputType === 'status'}
+    {include '../input/status.latte', field: $field, name: $name, value: 1, checked: (bool)$value, id: $id, attributes: $attributes}
+{elseif $inputType === 'tags'}
+    {include '../input/tags.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
 {elseif $inputType === 'date'}
     {include '../input/date.latte', field: $field, name: $name, value: $value, id: $id, attributes: $attributes}
 {elseif $inputType === 'datetime'}

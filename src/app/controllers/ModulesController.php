@@ -353,12 +353,27 @@ class ModulesController
             ];
         }
 
+        $createdByUser = null;
+        $updatedByUser = null;
+
+        if (!empty($module->created_by)) {
+            $userRecord = new \App\Records\UserRecord();
+            $createdByUser = $userRecord->equal('id', (int)$module->created_by)->find();
+        }
+
+        if (!empty($module->updated_by)) {
+            $userRecord = new \App\Records\UserRecord();
+            $updatedByUser = $userRecord->equal('id', (int)$module->updated_by)->find();
+        }
+
         Flight::render('page/panel/module/edit.latte', [
             'title' => 'Editar módulo: ' . $module->display_name,
             'module' => $module->toArray(),
             'categories' => $categories,
             'columns' => $columns,
-            'availableModules' => $availableModules
+            'availableModules' => $availableModules,
+            'createdByUser' => $createdByUser ? $createdByUser->toArray() : null,
+            'updatedByUser' => $updatedByUser ? $updatedByUser->toArray() : null
         ]);
     }
 
@@ -388,11 +403,13 @@ class ModulesController
             }
 
             if ($module->internal) {
-                Flight::json([
-                    'success' => false,
-                    'message' => 'Módulos internos não podem ter categoria ou URL alterados.'
-                ], 403);
-                return;
+                if ((int)$data['category_id'] !== (int)$module->category_id || trim($data['url'], '/') !== $module->url_path) {
+                    Flight::json([
+                        'success' => false,
+                        'message' => 'Módulos internos não podem ter categoria ou URL alterados.'
+                    ], 403);
+                    return;
+                }
             }
 
             $categoryRecord = new CategoryRecord();
@@ -408,12 +425,15 @@ class ModulesController
                 return;
             }
 
-            $module->category_id = (int)$category->id;
-            $module->url_path = trim($data['url'], '/');
+            if (!$module->internal) {
+                $module->category_id = (int)$category->id;
+                $module->url_path = trim($data['url'], '/');
+            }
+            
             $module->display_name = $data['name'];
             $module->description = $data['description'] ?? null;
             $module->icon = $data['icon'] ?? 'table_chart';
-            $module->is_active = $data['is_active'] ?? 1;
+            $module->is_active = $data['is_active'] ? 1 : 0;
             $module->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_table', 'update', $id, $data);
@@ -511,6 +531,7 @@ class ModulesController
                         }
                         $column->column_width = $fieldData['column_width'] ?? $column->column_width;
                         $column->position = $fieldData['position'] ?? $index;
+                        $column->input_type = $fieldData['input_type'] ?? $column->input_type;
                         $column->input_placeholder = $fieldData['input_placeholder'] ?? null;
                         $column->input_prefix = $fieldData['input_prefix'] ?? null;
                         $column->input_suffix = $fieldData['input_suffix'] ?? null;

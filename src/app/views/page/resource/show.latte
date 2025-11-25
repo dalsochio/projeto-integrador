@@ -137,6 +137,20 @@
                                     </div>
                                 
                                 
+                                {elseif $inputType === 'status'}
+                                    {if $fieldValue}
+                                        <span class="badge badge-success gap-2">
+                                            <span class="material-symbols-outlined text-xs">check_circle</span>
+                                            Ativo
+                                        </span>
+                                    {else}
+                                        <span class="badge badge-ghost gap-2">
+                                            <span class="material-symbols-outlined text-xs">cancel</span>
+                                            Inativo
+                                        </span>
+                                    {/if}
+                                
+                                
                                 {elseif ($inputType === 'checkbox' || $inputType === 'toggle')}
                                     {if $fieldValue}
                                         <span class="badge badge-success gap-2">
@@ -153,6 +167,18 @@
                                             Não
                                         </span>
                                     {/if}
+                                
+                                
+                                {elseif $inputType === 'tags' && !empty($fieldValue)}
+                                    {php $tags = preg_split('/[,;]+/', $fieldValue)}
+                                    <div class="flex flex-wrap gap-2 w-full">
+                                        {foreach $tags as $tag}
+                                            {php $tag = trim($tag)}
+                                            {if $tag}
+                                                <span class="badge badge-primary">{$tag}</span>
+                                            {/if}
+                                        {/foreach}
+                                    </div>
                                 
                                 
                                 {elseif ($inputType === 'date' || $inputType === 'datetime') && !empty($fieldValue)}

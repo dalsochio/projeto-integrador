@@ -58,6 +58,36 @@
                                             {if $inputType === 'code'}Code{/if}
                                         </span>
                                     </td>
+                                {elseif $inputType === 'status'}
+                                    <td>
+                                        {if $value}
+                                            <div class="badge badge-success gap-2">
+                                                <span class="material-symbols-outlined text-xs">check_circle</span>
+                                                Ativo
+                                            </div>
+                                        {else}
+                                            <div class="badge badge-ghost gap-2">
+                                                <span class="material-symbols-outlined text-xs">cancel</span>
+                                                Inativo
+                                            </div>
+                                        {/if}
+                                    </td>
+                                {elseif $inputType === 'tags'}
+                                    <td>
+                                        {if $displayValue}
+                                            {php $tags = preg_split('/[,;]+/', $displayValue)}
+                                            <div class="flex flex-wrap gap-1">
+                                                {foreach $tags as $tag}
+                                                    {php $tag = trim($tag)}
+                                                    {if $tag}
+                                                        <span class="badge badge-sm badge-primary">{$tag}</span>
+                                                    {/if}
+                                                {/foreach}
+                                            </div>
+                                        {else}
+                                            <span class="text-base-content/40 text-xs">Sem tags</span>
+                                        {/if}
+                                    </td>
                                 {else}
                                     <td class="max-w-xs truncate" title="{$displayValue}">{$displayValue}</td>
                                 {/if}

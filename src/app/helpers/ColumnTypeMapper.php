@@ -19,6 +19,8 @@ class ColumnTypeMapper
         'radio' => 'VARCHAR(255)',
         'checkbox' => 'TINYINT(1)',
         'toggle' => 'TINYINT(1)',
+        'status' => 'TINYINT(1)',
+        'tags' => 'VARCHAR(255)',
         'file' => 'VARCHAR(500)',
         'image' => 'VARCHAR(500)',
         'color' => 'VARCHAR(7)',

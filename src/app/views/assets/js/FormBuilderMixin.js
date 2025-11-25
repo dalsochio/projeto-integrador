@@ -18,90 +18,162 @@ export default function formBuilderMixin() {
         availableModules: [],
         moduleColumns: {},
 
+        typeLabels: {
+            'VARCHAR': 'Texto Curto',
+            'TEXT': 'Texto Longo',
+            'INT': 'Número Inteiro',
+            'TINYINT': 'Número Inteiro',
+            'DECIMAL': 'Número Decimal',
+            'DATE': 'Data',
+            'DATETIME': 'Data e Hora',
+            'BOOLEAN': 'Sim/Não',
+            'TOGGLE': 'Interruptor',
+            'STATUS': 'Status Ativo/Inativo',
+            'TAGS': 'Etiquetas/Tags',
+            'SELECT': 'Lista Suspensa',
+            'RADIO': 'Opção Única',
+            'CHECKBOX': 'Múltipla Escolha',
+            'REFERENCE_SELECT': 'Relacionamento (Lista)',
+            'REFERENCE_RADIO': 'Relacionamento (Opções)',
+            'FILE': 'Enviar Arquivo',
+            'COLOR': 'Seletor de Cor',
+            'WYSIWYG': 'Editor de Texto Rico',
+            'MARKDOWN': 'Editor Markdown',
+            'CODE': 'Editor de Código',
+            'ENUM': 'Lista de Valores',
+            'text': 'Texto Curto',
+            'textarea': 'Texto Longo',
+            'number': 'Número Inteiro',
+            'decimal': 'Número Decimal',
+            'date': 'Data',
+            'datetime': 'Data e Hora',
+            'datetime-local': 'Data e Hora',
+            'checkbox': 'Sim/Não',
+            'toggle': 'Interruptor',
+            'status': 'Status Ativo/Inativo',
+            'tags': 'Etiquetas/Tags',
+            'select': 'Lista Suspensa',
+            'radio': 'Opção Única',
+            'file': 'Enviar Arquivo',
+            'color': 'Seletor de Cor',
+            'wysiwyg': 'Editor de Texto Rico',
+            'markdown': 'Editor Markdown',
+            'code': 'Editor de Código'
+        },
+
         fieldTypes: [
             {
                 name: 'VARCHAR',
-                label: 'Text Field',
+                label: 'Texto Curto',
+                description: 'Campo de texto simples (nome, email, telefone)',
                 preview: '<label class="input input-sm input-bordered flex items-center gap-2 opacity-70"><input type="text" class="grow" placeholder="Exemplo..." disabled /></label>'
             },
             {
                 name: 'TEXT',
-                label: 'Text Area',
+                label: 'Texto Longo',
+                description: 'Área de texto para descrições e comentários',
                 preview: '<textarea class="textarea textarea-sm textarea-bordered opacity-70 w-full" rows="2" placeholder="Texto longo..." disabled></textarea>'
             },
             {
                 name: 'INT',
-                label: 'Number',
+                label: 'Número Inteiro',
+                description: 'Números sem casas decimais (idade, quantidade)',
                 preview: '<input type="number" class="input input-sm input-bordered opacity-70 w-full" placeholder="123" disabled />'
             },
             {
+                name: 'DECIMAL',
+                label: 'Número Decimal',
+                description: 'Números com casas decimais (preço, peso)',
+                preview: '<input type="number" step="0.01" class="input input-sm input-bordered opacity-70 w-full" placeholder="0.00" disabled />'
+            },
+            {
                 name: 'DATE',
-                label: 'Date',
+                label: 'Data',
+                description: 'Campo para selecionar datas',
                 preview: '<input type="date" class="input input-sm input-bordered opacity-70 w-full" disabled />'
             },
             {
                 name: 'BOOLEAN',
-                label: 'Toggle Simples',
+                label: 'Sim/Não',
+                description: 'Checkbox simples para valores verdadeiro/falso',
                 preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Sim/Não</span></label>'
             },
             {
                 name: 'TOGGLE',
-                label: 'Toggle Switch',
+                label: 'Interruptor',
+                description: 'Botão de liga/desliga estilo switch',
                 preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70"><input type="checkbox" class="toggle toggle-sm" disabled /><span class="label-text text-xs">Ativar</span></label>'
             },
             {
+                name: 'STATUS',
+                label: 'Status Ativo/Inativo',
+                description: 'Interruptor específico para status (ativo/inativo)',
+                preview: '<label class="label cursor-pointer justify-start gap-2 opacity-70"><input type="checkbox" class="toggle toggle-success toggle-sm" disabled /><span class="label-text text-xs">Ativo</span></label>'
+            },
+            {
+                name: 'TAGS',
+                label: 'Etiquetas/Tags',
+                description: 'Digite tags separadas por vírgula ou ponto-e-vírgula',
+                preview: '<div class="flex flex-wrap gap-1 opacity-70"><span class="badge badge-primary badge-xs">Tag 1</span><span class="badge badge-primary badge-xs">Tag 2</span></div>'
+            },
+            {
                 name: 'SELECT',
-                label: 'Select (Opções Manuais)',
+                label: 'Lista Suspensa',
+                description: 'Selecione uma opção de uma lista que você define',
                 preview: '<select class="select select-sm select-bordered w-full opacity-70" disabled><option>Opção 1</option><option>Opção 2</option></select>'
             },
             {
                 name: 'RADIO',
-                label: 'Radio (Opções Manuais)',
+                label: 'Opção Única',
+                description: 'Escolha única entre várias opções que você define',
                 preview: '<div class="flex flex-col gap-1 opacity-70"><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Opção 2</span></label></div>'
             },
             {
                 name: 'CHECKBOX',
-                label: 'Checkbox (Opções Manuais)',
+                label: 'Múltipla Escolha',
+                description: 'Permite selecionar várias opções que você define',
                 preview: '<div class="flex flex-col gap-1 opacity-70"><label class="label cursor-pointer justify-start gap-2"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="checkbox" class="checkbox checkbox-sm" disabled /><span class="label-text text-xs">Opção 2</span></label></div>'
             },
             {
                 name: 'REFERENCE_SELECT',
-                label: 'Select (Referência)',
+                label: 'Relacionamento (Lista)',
+                description: 'Conecta com outro módulo do sistema',
                 preview: '<select class="select select-sm select-bordered w-full opacity-70" disabled><option>Ref: Outro Módulo...</option></select>'
             },
             {
                 name: 'REFERENCE_RADIO',
-                label: 'Radio (Referência)',
+                label: 'Relacionamento (Opções)',
+                description: 'Conecta com outro módulo mostrando opções',
                 preview: '<div class="flex flex-col gap-1 opacity-70"><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Ref: Opção 1</span></label><label class="label cursor-pointer justify-start gap-2"><input type="radio" class="radio radio-sm" disabled /><span class="label-text text-xs">Ref: Opção 2</span></label></div>'
             },
             {
-                name: 'DECIMAL',
-                label: 'Decimal',
-                preview: '<input type="number" step="0.01" class="input input-sm input-bordered opacity-70 w-full" placeholder="0.00" disabled />'
-            },
-            {
                 name: 'FILE',
-                label: 'File Upload',
+                label: 'Enviar Arquivo',
+                description: 'Upload de arquivos e imagens',
                 preview: '<input type="file" class="file-input file-input-sm file-input-bordered w-full opacity-70" disabled />'
             },
             {
                 name: 'COLOR',
-                label: 'Color Picker',
+                label: 'Seletor de Cor',
+                description: 'Escolha de cores com paleta visual',
                 preview: '<div class="flex gap-2 opacity-70"><input type="color" class="w-10 h-8 rounded border-2" disabled /><input type="text" class="input input-sm input-bordered flex-1" placeholder="#000000" disabled /></div>'
             },
             {
                 name: 'WYSIWYG',
-                label: 'Rich Text (WYSIWYG)',
+                label: 'Editor de Texto Rico',
+                description: 'Editor visual com formatação (negrito, itálico, etc)',
                 preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-50">Rich Text Editor</div>'
             },
             {
                 name: 'MARKDOWN',
-                label: 'Markdown Editor',
+                label: 'Editor Markdown',
+                description: 'Editor de texto com sintaxe Markdown',
                 preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-50 font-mono"># Markdown</div>'
             },
             {
                 name: 'CODE',
-                label: 'Code Editor',
+                label: 'Editor de Código',
+                description: 'Editor para código de programação',
                 preview: '<div class="border border-base-300 rounded p-2 text-xs opacity-70 bg-base-900 text-green-400 font-mono">{ code }</div>'
             }
         ],
@@ -302,6 +374,7 @@ export default function formBuilderMixin() {
             const inputTypeMap = {
                 'VARCHAR': 'text', 'TEXT': 'textarea', 'INT': 'number', 'DATE': 'date',
                 'DATETIME': 'datetime-local', 'BOOLEAN': 'checkbox', 'TOGGLE': 'toggle',
+                'STATUS': 'status', 'TAGS': 'tags',
                 'SELECT': 'select', 'RADIO': 'radio', 'CHECKBOX': 'checkbox', 'ENUM': 'select',
                 'DECIMAL': 'number', 'JSON': 'textarea', 'TINYINT': 'number', 'FILE': 'file',
                 'COLOR': 'color', 'WYSIWYG': 'wysiwyg', 'MARKDOWN': 'markdown', 'CODE': 'code',
@@ -312,6 +385,8 @@ export default function formBuilderMixin() {
                 'FILE': 'VARCHAR',
                 'COLOR': 'VARCHAR',
                 'TOGGLE': 'TINYINT',
+                'STATUS': 'TINYINT',
+                'TAGS': 'VARCHAR',
                 'SELECT': 'VARCHAR',
                 'RADIO': 'VARCHAR',
                 'WYSIWYG': 'TEXT',
@@ -325,16 +400,20 @@ export default function formBuilderMixin() {
             const actualInputType = inputTypeMap[type] || 'text';
 
             let defaultLength = null;
-            if (['VARCHAR', 'FILE', 'COLOR', 'RADIO'].includes(type)) {
+            if (['VARCHAR', 'FILE', 'COLOR', 'RADIO', 'TAGS'].includes(type)) {
                 defaultLength = '255';
             } else if (['REFERENCE_SELECT', 'REFERENCE_RADIO', 'INT'].includes(type)) {
                 defaultLength = '11';
+            } else if (['TINYINT', 'STATUS'].includes(type)) {
+                defaultLength = '1';
             }
+
+            const fieldNumber = this.getTotalFieldsCount() + 1;
 
             const field = {
                 id: `field_${++this.fieldCounter}`,
                 itemType: 'field',
-                display_name: `Campo ${this.fieldCounter}`,
+                display_name: `Campo ${fieldNumber}`,
                 type: type,
                 length: defaultLength,
                 is_nullable: false,
@@ -484,15 +563,50 @@ export default function formBuilderMixin() {
             const placeholder = field.input_placeholder || '';
 
             const templates = {
-                'VARCHAR': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><label class="input input-bordered flex items-center gap-2 opacity-70">${prefix}<input type="text" class="grow" placeholder="${placeholder}" disabled />${suffix}</label>${helpText}</div>`,
-                'TEXT': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><textarea class="textarea textarea-bordered opacity-70" rows="3" placeholder="${placeholder}" disabled></textarea>${helpText}</div>`,
+                'VARCHAR': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><label class="input input-bordered flex items-center gap-2 opacity-70 w-full">${prefix}<input type="text" class="grow" placeholder="${placeholder}" disabled />${suffix}</label>${helpText}</div>`,
+                'TEXT': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><textarea class="textarea textarea-bordered opacity-70 w-full" rows="3" placeholder="${placeholder}" disabled></textarea>${helpText}</div>`,
                 'INT': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><input type="number" class="input input-bordered opacity-70 w-full" placeholder="${placeholder || '0'}" disabled />${helpText}</div>`,
                 'TINYINT': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><input type="number" class="input input-bordered opacity-70 w-full" placeholder="${placeholder || '0'}" disabled />${helpText}</div>`,
                 'DECIMAL': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><input type="number" step="0.01" class="input input-bordered opacity-70 w-full" placeholder="${placeholder || '0.00'}" disabled />${helpText}</div>`,
                 'DATE': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><input type="date" class="input input-bordered opacity-70 w-full" disabled />${helpText}</div>`,
                 'DATETIME': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><input type="datetime-local" class="input input-bordered opacity-70 w-full" disabled />${helpText}</div>`,
-                'BOOLEAN': `<div class="form-control"><label class="label cursor-pointer justify-start gap-4"><input type="checkbox" class="checkbox opacity-70" disabled /><span class="label-text font-medium">${field.display_name}</span></label>${helpText}</div>`,
-                'TOGGLE': `<div class="form-control"><label class="label cursor-pointer justify-start gap-4"><input type="checkbox" class="toggle opacity-70" disabled /><span class="label-text font-medium">${field.display_name}</span></label>${helpText}</div>`,
+                'BOOLEAN': `
+                    <div class="form-control w-full flex flex-col">
+                        <label class="label">
+                            <span class="label-text font-medium">${field.display_name}</span>
+                        </label>
+                        <label class="label cursor-pointer justify-start gap-4">
+                            <input type="checkbox" class="checkbox opacity-70" disabled />
+                            <span class="label-text">Sim/Não</span>
+                        </label>
+                        ${helpText}
+                    </div>
+                `,
+                'TOGGLE': `
+                    <div class="form-control w-full flex flex-col">
+                        <label class="label">
+                            <span class="label-text font-medium">${field.display_name}</span>
+                        </label>
+                        <label class="label cursor-pointer justify-start gap-4">
+                            <input type="checkbox" class="toggle opacity-70" disabled />
+                            <span class="label-text">Ativar</span>
+                        </label>
+                        ${helpText}
+                    </div>
+                `,
+                'STATUS': `
+                    <div class="form-control w-full flex flex-col">
+                        <label class="label">
+                            <span class="label-text font-medium">${field.display_name}</span>
+                        </label>
+                        <label class="label cursor-pointer justify-start gap-4">
+                            <input type="checkbox" class="toggle toggle-success opacity-70" disabled />
+                            <span class="label-text">Ativo</span>
+                        </label>
+                        ${helpText}
+                    </div>
+                `,
+                'TAGS': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="flex flex-wrap gap-2 p-3 border-2 border-base-300 rounded-lg min-h-[48px] opacity-70 w-full"><span class="badge badge-primary badge-sm">Tag 1</span><span class="badge badge-primary badge-sm">Tag 2</span></div>${helpText}</div>`,
                 'SELECT': (() => {
                     const opts = field.manual_options || [];
                     const optionsHtml = opts.map(opt => '<option>' + (opt.label || 'Opção') + '</option>').join('');
@@ -511,12 +625,12 @@ export default function formBuilderMixin() {
                 'REFERENCE_SELECT': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><select class="select select-bordered w-full opacity-70" disabled><option>${field.foreign_table ? 'Ref: ' + field.foreign_table : placeholder || 'Selecione...'}</option></select>${helpText}</div>`,
                 'REFERENCE_RADIO': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="flex flex-col gap-2 opacity-70"><label class="label cursor-pointer justify-start gap-3"><input type="radio" name="radio_${field.name}" class="radio" disabled /><span class="label-text">${field.foreign_table ? 'Ref: Opção 1' : 'Opção 1'}</span></label><label class="label cursor-pointer justify-start gap-3"><input type="radio" name="radio_${field.name}" class="radio" disabled /><span class="label-text">${field.foreign_table ? 'Ref: Opção 2' : 'Opção 2'}</span></label></div>${helpText}</div>`,
                 'ENUM': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><select class="select select-bordered w-full opacity-70" disabled><option>${placeholder || 'Selecione...'}</option></select>${helpText}</div>`,
-                'JSON': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><textarea class="textarea textarea-bordered font-mono opacity-70" rows="3" placeholder='${placeholder || '{"key": "value"}'}' disabled></textarea>${helpText}</div>`,
+                'JSON': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><textarea class="textarea textarea-bordered font-mono opacity-70 w-full" rows="3" placeholder='${placeholder || '{"key": "value"}'}' disabled></textarea>${helpText}</div>`,
                 'FILE': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><input type="file" class="file-input file-input-bordered w-full opacity-70" disabled />${helpText}</div>`,
-                'COLOR': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="flex items-center gap-3 opacity-70"><input type="color" class="w-16 h-12 rounded border-2 border-base-300" disabled /><input type="text" placeholder="${placeholder || '#000000'}" class="input input-bordered flex-1" disabled /></div>${helpText}</div>`,
-                'WYSIWYG': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="border-2 border-base-300 rounded-lg p-4 bg-base-50 opacity-70 min-h-[120px] flex items-center justify-center"><span class="text-base-content/50">Rich Text Editor (WYSIWYG)</span></div>${helpText}</div>`,
-                'MARKDOWN': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="border-2 border-base-300 rounded-lg p-4 bg-base-50 opacity-70 min-h-[120px] font-mono flex items-center justify-center"><span class="text-base-content/50"># Markdown Editor</span></div>${helpText}</div>`,
-                'CODE': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="border-2 border-base-300 rounded-lg p-4 bg-base-900 opacity-70 min-h-[120px] font-mono flex items-center justify-center"><span class="text-green-400">{ code editor }</span></div>${helpText}</div>`
+                'COLOR': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="flex items-center gap-3 opacity-70 w-full"><input type="color" class="w-16 h-12 rounded border-2 border-base-300" disabled /><input type="text" placeholder="${placeholder || '#000000'}" class="input input-bordered flex-1" disabled /></div>${helpText}</div>`,
+                'WYSIWYG': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="border-2 border-base-300 rounded-lg p-4 bg-base-50 opacity-70 min-h-[120px] w-full flex items-center justify-center"><span class="text-base-content/50">Rich Text Editor (WYSIWYG)</span></div>${helpText}</div>`,
+                'MARKDOWN': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="border-2 border-base-300 rounded-lg p-4 bg-base-50 opacity-70 min-h-[120px] w-full font-mono flex items-center justify-center"><span class="text-base-content/50"># Markdown Editor</span></div>${helpText}</div>`,
+                'CODE': `<div class="form-control w-full"><label class="label"><span class="label-text font-medium">${field.display_name}</span></label><div class="border-2 border-base-300 rounded-lg p-4 bg-base-900 opacity-70 min-h-[120px] w-full font-mono flex items-center justify-center"><span class="text-green-400">{ code editor }</span></div>${helpText}</div>`
             };
 
             return templates[field.type] || templates['VARCHAR'];
@@ -555,6 +669,8 @@ export default function formBuilderMixin() {
                 'FILE': 'VARCHAR',
                 'COLOR': 'VARCHAR',
                 'TOGGLE': 'TINYINT',
+                'STATUS': 'TINYINT',
+                'TAGS': 'VARCHAR',
                 'SELECT': 'VARCHAR',
                 'RADIO': 'VARCHAR',
                 'WYSIWYG': 'TEXT',
@@ -667,6 +783,12 @@ export default function formBuilderMixin() {
             if (!field || !field.manual_options) return;
 
             field.manual_options.splice(index, 1);
+        },
+
+        getFieldLabel(type) {
+            if (!type) return '';
+            const upperType = type.toUpperCase();
+            return this.typeLabels[type] || this.typeLabels[upperType] || type;
         },
 
         async loadModuleColumns(field) {

@@ -156,27 +156,31 @@
             
             <div class="lg:col-span-1">
                 
-                <div class="card mb-4">
+                <div class="card card-border mb-4">
                     <div class="card-body">
                         <h2 class="card-title text-base">Informações</h2>
 
                         <div class="space-y-2 text-sm">
                             <div>
-                                <span class="font-semibold">Tabela física:</span>
-                                <code class="badge badge-ghost badge-sm font-mono ml-2">{$module['name']}</code>
-                            </div>
-                            <div>
-                                <span class="font-semibold">ID:</span>
-                                <span class="ml-2">#{$module['id']}</span>
-                            </div>
-                            <div>
                                 <span class="font-semibold">Criado em:</span>
                                 <span class="ml-2">{$module['created_at']|date:'d/m/Y H:i'}</span>
                             </div>
+                            {if $createdByUser}
+                                <div>
+                                    <span class="font-semibold">Criado por:</span>
+                                    <span class="ml-2">{$createdByUser['name']}</span>
+                                </div>
+                            {/if}
                             {if $module['updated_at']}
                                 <div>
                                     <span class="font-semibold">Atualizado em:</span>
                                     <span class="ml-2">{$module['updated_at']|date:'d/m/Y H:i'}</span>
+                                </div>
+                            {/if}
+                            {if $updatedByUser}
+                                <div>
+                                    <span class="font-semibold">Atualizado por:</span>
+                                    <span class="ml-2">{$updatedByUser['name']}</span>
                                 </div>
                             {/if}
                         </div>
@@ -234,10 +238,7 @@
                                             <div class="flex-1">
                                                 <div class="font-semibold text-sm">{$column['display_name']}</div>
                                                 <div class="text-xs text-base-content/60">
-                                                    <code class="font-mono">{$column['name']}</code>
-                                                    <span class="mx-1">•</span>
-                                                    {$column['type']}
-                                                    {if $column['length']}({$column['length']}){/if}
+                                                    <span x-text="getFieldLabel('{$column['input_type'] ?? $column['type']}')"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -315,17 +316,44 @@
                     const systemFields = ['id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
                     const userFields = this.fields.filter(f => !systemFields.includes(f.name));
 
-                    this.items = userFields.map((field, index) => ({
-                        id: `field_${ field.id || index }`,
-                        itemType: 'field',
-                        ...field,
-                        is_nullable: Boolean(field.is_nullable),
-                        is_unique: Boolean(field.is_unique),
-                        is_editable: Boolean(field.is_editable),
-                        is_searchable: Boolean(field.is_searchable),
-                        is_visible_list: Boolean(field.is_visible_list),
-                        is_visible_form: Boolean(field.is_visible_form)
-                    }));
+                    const inputTypeToCanvasType = {
+                        'text': 'VARCHAR',
+                        'textarea': 'TEXT',
+                        'number': 'INT',
+                        'date': 'DATE',
+                        'datetime': 'DATETIME',
+                        'datetime-local': 'DATETIME',
+                        'checkbox': 'BOOLEAN',
+                        'toggle': 'TOGGLE',
+                        'status': 'STATUS',
+                        'tags': 'TAGS',
+                        'select': 'SELECT',
+                        'radio': 'RADIO',
+                        'file': 'FILE',
+                        'color': 'COLOR',
+                        'wysiwyg': 'WYSIWYG',
+                        'markdown': 'MARKDOWN',
+                        'code': 'CODE'
+                    };
+
+                    this.items = userFields.map((field, index) => {
+                        const canvasType = field.input_type && inputTypeToCanvasType[field.input_type] 
+                            ? inputTypeToCanvasType[field.input_type] 
+                            : field.type;
+
+                        return {
+                            id: `field_${ field.id || index }`,
+                            itemType: 'field',
+                            ...field,
+                            type: canvasType,
+                            is_nullable: Boolean(field.is_nullable),
+                            is_unique: Boolean(field.is_unique),
+                            is_editable: Boolean(field.is_editable),
+                            is_searchable: Boolean(field.is_searchable),
+                            is_visible_list: Boolean(field.is_visible_list),
+                            is_visible_form: Boolean(field.is_visible_form)
+                        };
+                    });
 
                     this.fieldCounter = this.items.length;
                 },

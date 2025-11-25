@@ -4,21 +4,20 @@
 
 <div class="flex flex-col gap-6 pb-16 py-4">
     <!-- Saudação com horário -->
-    <div class="card bg-gradient-to-r from-primary to-secondary text-primary-content border border-primary">
+    <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 border border-base-200">
         <div class="card-body">
-            <h1 class="text-3xl font-bold" id="greeting">Olá!</h1>
-            <p class="text-lg opacity-90">Seja bem-vindo(a) de volta ao painel administrativo</p>
+            <h1 class="text-3xl font-bold text-primary" id="greeting">Olá!</h1>
+            <p class="text-lg text-base-content/70">Seja bem-vindo(a) de volta ao painel administrativo</p>
         </div>
     </div>
 
     <!-- Grid de estatísticas -->
     {if count($stats) > 0}
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div class="stats stats-vertical lg:stats-horizontal border border-base-200">
         {if isset($stats['users'])}
-        <!-- Card: Total de Usuários -->
-        <div class="stat bg-base-200 rounded-box border border-base-200">
+        <div class="stat">
             <div class="stat-figure text-primary">
-                <i class="ti ti-users text-5xl"></i>
+                <span class="material-symbols-outlined text-4xl">group</span>
             </div>
             <div class="stat-title">Usuários</div>
             <div class="stat-value text-primary">{$stats['users']}</div>
@@ -27,10 +26,9 @@
         {/if}
 
         {if isset($stats['modules'])}
-        <!-- Card: Módulos Ativos -->
-        <div class="stat bg-base-200 rounded-box border border-base-200">
+        <div class="stat">
             <div class="stat-figure text-secondary">
-                <i class="ti ti-components text-5xl"></i>
+                <span class="material-symbols-outlined text-4xl">table_chart</span>
             </div>
             <div class="stat-title">Módulos</div>
             <div class="stat-value text-secondary">{$stats['modules']}</div>
@@ -39,10 +37,9 @@
         {/if}
 
         {if isset($stats['uploads'])}
-        <!-- Card: Uploads -->
-        <div class="stat bg-base-200 rounded-box border border-base-200">
+        <div class="stat">
             <div class="stat-figure text-accent">
-                <i class="ti ti-cloud-upload text-5xl"></i>
+                <span class="material-symbols-outlined text-4xl">cloud_upload</span>
             </div>
             <div class="stat-title">Arquivos</div>
             <div class="stat-value text-accent">{$stats['uploads']}</div>
@@ -51,10 +48,9 @@
         {/if}
 
         {if isset($stats['todayActions'])}
-        <!-- Card: Atividade -->
-        <div class="stat bg-base-200 rounded-box border border-base-200">
+        <div class="stat">
             <div class="stat-figure text-success">
-                <i class="ti ti-chart-bar text-5xl"></i>
+                <span class="material-symbols-outlined text-4xl">bar_chart</span>
             </div>
             <div class="stat-title">Atividade Hoje</div>
             <div class="stat-value text-success">{$stats['todayActions']}</div>
@@ -68,7 +64,7 @@
     <div>
         <h2 class="mb-4 text-2xl font-bold">Atalhos Rápidos</h2>
         <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            <a href="/panel/user" class="btn btn-outline btn-primary flex-col gap-2 h-24">
+            <a href="/administration/user" class="btn btn-outline btn-primary flex-col gap-2 h-24">
                 <i class="ti ti-user text-2xl"></i>
                 <span class="text-xs">Usuários</span>
             </a>
@@ -104,16 +100,13 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Atividades Recentes -->
         {if count($recentActivities) > 0}
-        <div class="card bg-base-200 border border-base-200">
+        <div class="card card-border">
             <div class="card-body">
-                <h2 class="card-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 stroke-current">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                <h2 class="card-title text-base flex items-center gap-2">
+                    <span class="material-symbols-outlined">schedule</span>
                     Atividades Recentes
                 </h2>
-                <div class="divider my-0"></div>
-                <ul class="space-y-3">
+                <ul class="space-y-3 mt-4">
                     {foreach $recentActivities as $index => $activity}
                     <li class="flex items-start gap-3">
                         {if $activity['action'] === 'create'}
@@ -152,20 +145,15 @@
         {/if}
 
         <!-- Dicas Rápidas -->
-        <div class="card bg-base-200 border border-base-200">
+        <div class="card card-border">
             <div class="card-body">
-                <h2 class="card-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 stroke-current">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                    </svg>
+                <h2 class="card-title text-base flex items-center gap-2">
+                    <span class="material-symbols-outlined">lightbulb</span>
                     Dicas e Recursos
                 </h2>
-                <div class="divider my-0"></div>
-                <div class="space-y-4">
+                <div class="space-y-4 mt-4">
                     <div class="alert alert-info">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <span class="material-symbols-outlined">api</span>
                         <div>
                             <h3 class="font-bold text-sm">API Documentada</h3>
                             <div class="text-xs">Acesse a <a href="/developer/swagger" class="link">documentação Swagger</a> para integrar com a API</div>
@@ -173,9 +161,7 @@
                     </div>
 
                     <div class="alert alert-success">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                        <span class="material-symbols-outlined">verified_user</span>
                         <div>
                             <h3 class="font-bold text-sm">Controle Total</h3>
                             <div class="text-xs">Configure permissões granulares para cada módulo e usuário</div>
@@ -183,9 +169,7 @@
                     </div>
 
                     <div class="alert alert-warning">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
+                        <span class="material-symbols-outlined">assignment</span>
                         <div>
                             <h3 class="font-bold text-sm">Auditoria Ativa</h3>
                             <div class="text-xs">Todas as ações são registradas para segurança e conformidade</div>
