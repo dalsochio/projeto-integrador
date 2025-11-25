@@ -206,6 +206,10 @@
                             <div class="space-y-4">
                                 <template x-for="item in items" :key="item.id">
                                     <div>
+                                        <template x-if="item.itemType === 'divider'">
+                                            <div x-html="getDividerPreviewHtml(item)"></div>
+                                        </template>
+
                                         <template x-if="item.itemType === 'field'">
                                             <div x-html="getFieldPreviewHtml(item)"></div>
                                         </template>
@@ -215,7 +219,12 @@
                                                 <template x-for="col in (item.columns || [])" :key="col.id">
                                                     <div class="flex-1 space-y-4" x-bind:style="'flex: ' + col.width">
                                                         <template x-for="field in (col.fields || [])" :key="field.id">
-                                                            <div x-html="getFieldPreviewHtml(field)"></div>
+                                                            <template x-if="field.itemType === 'divider'">
+                                                                <div x-html="getDividerPreviewHtml(field)"></div>
+                                                            </template>
+                                                            <template x-if="field.itemType === 'field'">
+                                                                <div x-html="getFieldPreviewHtml(field)"></div>
+                                                            </template>
                                                         </template>
                                                     </div>
                                                 </template>
@@ -491,20 +500,6 @@
                     }
                 },
 
-                getTotalFieldsCount() {
-                    let count = 0;
-                    this.items.forEach(item => {
-                        if (item.itemType === 'field') {
-                            count++;
-                        } else if (item.itemType === 'row' && item.columns) {
-                            item.columns.forEach(col => {
-                                count += (col.fields?.length || 0);
-                            });
-                        }
-                    });
-                    return count;
-                },
-
                 async confirmCreate() {
                     // Preparar dados completos
                     const modulePayload = {
@@ -555,148 +550,6 @@
                             confirmBtn.disabled = false;
                             confirmBtn.innerHTML = '<span translate="no" class="material-symbols-outlined">check_circle</span> Confirmar e Criar';
                         }
-                    }
-                },
-
-                generateFieldsArray() {
-                    const output = [];
-
-                    // Mapear tipos especiais para tipos SQL válidos
-                    const sqlTypeMap = {
-                        'FILE': 'VARCHAR',
-                        'COLOR': 'VARCHAR',
-                        'TOGGLE': 'TINYINT',
-                        'SELECT': 'VARCHAR',
-                        'RADIO': 'VARCHAR',
-                        'WYSIWYG': 'TEXT',
-                        'MARKDOWN': 'TEXT',
-                        'CODE': 'TEXT',
-                        'REFERENCE_SELECT': 'INT',
-                        'REFERENCE_RADIO': 'INT'
-                    };
-
-                    this.items.forEach(item => {
-                        if (item.itemType === 'field') {
-                            const { id, itemType, ...fieldData } = item;
-
-                            // Preservar manual_options convertendo array para JSON normal
-                            if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
-                                fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
-                            }
-
-                            // Marcar como foreign key se for REFERENCE_*
-                            if (fieldData.type === 'REFERENCE_SELECT' || fieldData.type === 'REFERENCE_RADIO') {
-                                fieldData.is_foreign_key = true;
-                                fieldData.is_nullable = 1; // FK fields must be nullable for ON DELETE SET NULL
-                            }
-
-                            // Converter tipo especial para tipo SQL válido
-                            if (sqlTypeMap[fieldData.type]) {
-                                fieldData.type = sqlTypeMap[fieldData.type];
-                            }
-
-                            output.push(fieldData);
-                        } else if (item.itemType === 'row' && item.columns) {
-                            item.columns.forEach(col => {
-                                if (col.fields) {
-                                    col.fields.forEach(field => {
-                                        const { id, itemType, ...fieldData } = field;
-
-                                        // Preservar manual_options
-                                        if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
-                                            fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
-                                        }
-
-                                        // Marcar como foreign key se for REFERENCE_*
-                                        if (fieldData.type === 'REFERENCE_SELECT' || fieldData.type === 'REFERENCE_RADIO') {
-                                            fieldData.is_foreign_key = true;
-                                            fieldData.is_nullable = 1; // FK fields must be nullable for ON DELETE SET NULL
-                                        }
-
-                                        // Converter tipo especial para tipo SQL válido
-                                        if (sqlTypeMap[fieldData.type]) {
-                                            fieldData.type = sqlTypeMap[fieldData.type];
-                                        }
-                                        fieldData.column_width = col.width;
-                                        output.push(fieldData);
-                                    });
-                                }
-                            });
-                        }
-                    });
-
-                    return output;
-                },
-
-                // Limpar tudo
-                clearAll() {
-                    showConfirmModal({
-                        title: 'Limpar Formulário',
-                        message: 'Tem certeza que deseja limpar todo o formulário?',
-                        confirmText: 'Sim, Limpar Tudo',
-                        cancelText: 'Cancelar',
-                        type: 'warning',
-                        onConfirm: () => {
-                            this.items = [];
-                            this.selectedItemId = null;
-                            this.selectedItemType = null;
-                        }
-                    });
-                },
-
-                // Adicionar opção manual
-                addOption(fieldId) {
-                    const field = this.findField(fieldId);
-                    if (!field) return;
-
-                    if (!field.manual_options) {
-                        field.manual_options = [];
-                    }
-
-                    field.manual_options.push({
-                        label: '',
-                        value: ''
-                    });
-                },
-
-                // Remover opção manual
-                removeOption(fieldId, index) {
-                    const field = this.findField(fieldId);
-                    if (!field || !field.manual_options) return;
-
-                    field.manual_options.splice(index, 1);
-                },
-
-                // Carregar colunas de um módulo
-                async loadModuleColumns(field) {
-                    if (!field || !field.foreign_table) {
-                        return;
-                    }
-
-                    // Se já carregamos as colunas deste módulo, não fazer novamente
-                    if (this.moduleColumns[field.foreign_table]) {
-                        return;
-                    }
-
-                    const url = `/panel/module/columns/${ field.foreign_table }`;
-
-                    try {
-                        const response = await fetch(url);
-
-                        if (response.ok) {
-                            const data = await response.json();
-
-                            // Forçar reatividade do Alpine
-                            this.moduleColumns = {
-                                ...this.moduleColumns,
-                                [field.foreign_table]: data.columns || []
-                            };
-                        }
-                    } catch (error) {
-                        this.moduleColumns = {
-                            ...this.moduleColumns,
-                            [field.foreign_table]: []
-                        };
                     }
                 }
             }));

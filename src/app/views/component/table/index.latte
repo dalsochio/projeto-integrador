@@ -4,7 +4,7 @@
 'results' => []
 ]}
 
-<div id="table" class="container py-4">
+<div id="table" class="w-full">
     {if count($table['records']) === 0}
         
         <div class="flex flex-col items-center justify-center p-12 text-center card card-border">
@@ -159,7 +159,10 @@
                         </td>
                         <td>
                             {if !empty($row['created_by_name'])}
-                                <span class="text-sm">{$row['created_by_name']}</span>
+                                <div class="text-sm">{$row['created_by_name']}</div>
+                                {if !empty($row['created_by_email'])}
+                                    <div class="text-xs text-base-content/50">{$row['created_by_email']}</div>
+                                {/if}
                             {elseif !empty($row['created_by'])}
                                 <code class="text-xs text-base-content/60">ID: {$row['created_by']}</code>
                             {else}
@@ -180,7 +183,10 @@
                         </td>
                         <td>
                             {if !empty($row['updated_by_name'])}
-                                <span class="text-sm">{$row['updated_by_name']}</span>
+                                <div class="text-sm">{$row['updated_by_name']}</div>
+                                {if !empty($row['updated_by_email'])}
+                                    <div class="text-xs text-base-content/50">{$row['updated_by_email']}</div>
+                                {/if}
                             {elseif !empty($row['updated_by'])}
                                 <code class="text-xs text-base-content/60">ID: {$row['updated_by']}</code>
                             {else}

@@ -13,7 +13,7 @@
             {$field['display_name'] ?? $field['name']}
             {if $isRequired}<span class="text-error ml-1">*</span>{/if}
         </span>
-        {if $field['tooltip']}
+        {if $field['tooltip'] ?? null ?? null}
             <span class="label-text-alt tooltip tooltip-left" data-tip="{$field['tooltip']}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -23,7 +23,7 @@
     </label>
 
     <label class="input input-bordered flex items-center gap-2 w-full">
-        {if $field['input_prefix']}
+        {if $field['input_prefix'] ?? null}
             <span class="text-base-content/70">{$field['input_prefix']}</span>
         {/if}
 
@@ -34,16 +34,16 @@
                placeholder="{$field['input_placeholder'] ?? ''}"
                {if $isRequired}required{/if}
                {if $isReadonly}readonly{/if}
-               {if $field['input_mask']}data-mask="{$field['input_mask']}"{/if}
+               {if $field['input_mask'] ?? null}data-mask="{$field['input_mask']}"{/if}
                n:attr="$attributes"
                class="grow" />
 
-        {if $field['input_suffix']}
+        {if $field['input_suffix'] ?? null}
             <span class="text-base-content/70">{$field['input_suffix']}</span>
         {/if}
     </label>
 
-    {if $field['help_text']}
+    {if $field['help_text'] ?? null}
         <label class="label">
             <span class="label-text-alt">{$field['help_text']}</span>
         </label>

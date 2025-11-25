@@ -37,106 +37,130 @@
     
     {if $layout === 'single' || count($fieldsByTab) === 1}
         <div class="space-y-4">
-            {* Agrupar campos por row_index *}
-            {var $fieldsByRow = []}
-            {foreach $visibleFields as $field}
-                {var $rowIdx = $field['row_index'] ?? 0}
-                {if !isset($fieldsByRow[$rowIdx])}
-                    {var $fieldsByRow[$rowIdx] = []}
+            {* Verificar se algum campo tem row_index (vem do form builder) *}
+            {var $hasFormLayout = false}
+            {foreach $visibleFields as $f}
+                {if array_key_exists('row_index', $f)}
+                    {var $hasFormLayout = true}
+                    {breakIf true}
                 {/if}
-                {var $fieldsByRow[$rowIdx][] = $field}
             {/foreach}
-            {do ksort($fieldsByRow)}
             
-            {foreach $fieldsByRow as $rowIdx => $rowFields}
-                {if $rowIdx > 0}
-                {* Campos com row_index: renderizar em grid *}
-                <div class="grid grid-cols-12 gap-4">
-                    {foreach $rowFields as $field}
-                        {var $colSize = (int)($field['column_size'] ?? 12)}
-                        <div class="col-span-12 md:col-span-{$colSize}">
-                            {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
-                                {var $filePath = $data[$field['name']]}
-                                {var $fileUrl = '/upload/' . $filePath}
-                                <div class="mb-3 p-3 bg-base-200 rounded">
-                                    <p class="text-xs font-medium mb-2">Arquivo atual:</p>
-                                    {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
-                                    {if file_exists($absolutePath)}
-                                        {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
-                                        {if $isImage}
-                                            {var $pathInfo = pathinfo($filePath)}
-                                            {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
-                                            {var $thumbUrl = '/upload/' . $thumbPath}
-                                            <a href="{$fileUrl}" target="_blank">
-                                                <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
-                                            </a>
-                                        {else}
-                                            <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
-                                                <span translate="no" class="material-symbols-outlined text-sm align-middle">download</span>
-                                                {basename($filePath)}
-                                            </a>
-                                        {/if}
+            {if $hasFormLayout}
+                {* Layout com form builder - agrupar por row_index *}
+                {var $fieldsByRow = []}
+                {foreach $visibleFields as $field}
+                    {var $rowIdx = $field['row_index']}
+                    {if !isset($fieldsByRow[$rowIdx])}
+                        {var $fieldsByRow[$rowIdx] = []}
+                    {/if}
+                    {var $fieldsByRow[$rowIdx][] = $field}
+                {/foreach}
+                {do ksort($fieldsByRow)}
+                
+                {foreach $fieldsByRow as $rowIdx => $rowFields}
+                    <div class="grid grid-cols-12 gap-4">
+                        {foreach $rowFields as $field}
+                            {if isset($field['component_type']) && str_starts_with($field['component_type'], 'divider')}
+                                {* Renderizar divisor *}
+                                {var $colorClass = !empty($field['divider_color']) ? 'divider-' . $field['divider_color'] : ''}
+                                {var $alignClass = !empty($field['divider_align']) ? 'divider-' . $field['divider_align'] : ''}
+                                {var $dividerText = $field['divider_text'] ?? ''}
+                                {var $colSize = (int)($field['column_size'] ?? 12)}
+                                
+                                <div style="grid-column: span {$colSize} / span {$colSize}" class="{if $field['divider_type'] === 'vertical'}flex items-center justify-center{/if}">
+                                    {if $field['divider_type'] === 'vertical'}
+                                        <div class="divider divider-horizontal h-full {$colorClass}">{$dividerText}</div>
+                                    {else}
+                                        <div class="divider {$colorClass} {$alignClass}">{$dividerText}</div>
                                     {/if}
-                                    <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+                                </div>
+                            {else}
+                                {var $colSize = (int)($field['column_size'] ?? 12)}
+                                <div style="grid-column: span {$colSize} / span {$colSize}">
+                                    {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
+                                        {var $filePath = $data[$field['name']]}
+                                        {var $fileUrl = '/upload/' . $filePath}
+                                        <div class="mb-3 p-3 bg-base-200 rounded">
+                                            <p class="text-xs font-medium mb-2">Arquivo atual:</p>
+                                            {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+                                            {if file_exists($absolutePath)}
+                                                {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+                                                {if $isImage}
+                                                    {var $pathInfo = pathinfo($filePath)}
+                                                    {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                                    {var $thumbUrl = '/upload/' . $thumbPath}
+                                                    <a href="{$fileUrl}" target="_blank">
+                                                        <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
+                                                    </a>
+                                                {else}
+                                                    <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
+                                                        <span translate="no" class="material-symbols-outlined text-sm align-middle">download</span>
+                                                        {basename($filePath)}
+                                                    </a>
+                                                {/if}
+                                            {/if}
+                                            <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+                                        </div>
+                                    {/if}
+                                    
+                                    {include '../input/field.latte',
+                                        field: $field,
+                                        name: $field['name'],
+                                        value: $data[$field['name']] ?? null
+                                    }
+                                    
+                                    {if !empty($errors[$field['name']])}
+                                        <span class="text-error text-sm">{$errors[$field['name']]}</span>
+                                    {/if}
                                 </div>
                             {/if}
-                            
-                            {include '../input/field.latte',
-                                field: $field,
-                                name: $field['name'],
-                                value: $data[$field['name']] ?? null
-                            }
-                            
-                            {if !empty($errors[$field['name']])}
-                                <span class="text-error text-sm">{$errors[$field['name']]}</span>
-                            {/if}
-                        </div>
-                    {/foreach}
-                </div>
-                {else}
-                    {* Campos sem row_index (legado): renderizar full-width *}
-                    {foreach $rowFields as $field}
-                        <div class="w-full">
-                            {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
-                                {var $filePath = $data[$field['name']]}
-                                {var $fileUrl = '/upload/' . $filePath}
-                                <div class="mb-3 p-3 bg-base-200 rounded">
-                                    <p class="text-xs font-medium mb-2">Arquivo atual:</p>
-                                    {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
-                                    {if file_exists($absolutePath)}
-                                        {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
-                                        {if $isImage}
-                                            {var $pathInfo = pathinfo($filePath)}
-                                            {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
-                                            {var $thumbUrl = '/upload/' . $thumbPath}
-                                            <a href="{$fileUrl}" target="_blank">
-                                                <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
-                                            </a>
-                                        {else}
-                                            <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
-                                                <span translate="no" class="material-symbols-outlined text-sm align-middle">download</span>
-                                                {basename($filePath)}
-                                            </a>
-                                        {/if}
+                        {/foreach}
+                    </div>
+                {/foreach}
+            {else}
+                {* Fallback: campos sem form builder - renderizar full-width *}
+                {foreach $visibleFields as $field}
+                    <div class="w-full">
+                        {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
+                            {var $filePath = $data[$field['name']]}
+                            {var $fileUrl = '/upload/' . $filePath}
+                            <div class="mb-3 p-3 bg-base-200 rounded">
+                                <p class="text-xs font-medium mb-2">Arquivo atual:</p>
+                                {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+                                {if file_exists($absolutePath)}
+                                    {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+                                    {if $isImage}
+                                        {var $pathInfo = pathinfo($filePath)}
+                                        {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                        {var $thumbUrl = '/upload/' . $thumbPath}
+                                        <a href="{$fileUrl}" target="_blank">
+                                            <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
+                                        </a>
+                                    {else}
+                                        <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
+                                            <span translate="no" class="material-symbols-outlined text-sm align-middle">download</span>
+                                            {basename($filePath)}
+                                        </a>
                                     {/if}
-                                    <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
-                                </div>
-                            {/if}
-                            
-                            {include '../input/field.latte',
-                                field: $field,
-                                name: $field['name'],
-                                value: $data[$field['name']] ?? null
-                            }
-                            
-                            {if !empty($errors[$field['name']])}
-                                <span class="text-error text-sm">{$errors[$field['name']]}</span>
-                            {/if}
-                        </div>
-                    {/foreach}
-                {/if}
-            {/foreach}
-    </div>
+                                {/if}
+                                <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+                            </div>
+                        {/if}
+                        
+                        {include '../input/field.latte',
+                            field: $field,
+                            name: $field['name'],
+                            value: $data[$field['name']] ?? null
+                        }
+                        
+                        {if !empty($errors[$field['name']])}
+                            <span class="text-error text-sm">{$errors[$field['name']]}</span>
+                        {/if}
+                    </div>
+                {/foreach}
+            {/if}
+        </div>
 
         
     {elseif $layout === 'tabs'}

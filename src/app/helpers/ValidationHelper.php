@@ -12,6 +12,11 @@ class ValidationHelper
         $errors = [];
 
         foreach ($fields as $field) {
+            // Ignorar componentes sem name (dividers, spacers, etc)
+            if (!isset($field['name']) || empty($field['name'])) {
+                continue;
+            }
+            
             $fieldName = $field['name'];
 
             if ($fieldName == 'id') continue;

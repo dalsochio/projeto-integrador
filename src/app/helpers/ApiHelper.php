@@ -235,10 +235,42 @@ class ApiHelper extends Api
             return [];
         }
 
+        $tableId = $table['id'];
+        
+        // Buscar dados de layout/renderização de panel_table_form
+        $formRecord = new \App\Records\TableFormRecord();
+        $formData = $formRecord
+            ->equal('table_id', $tableId)
+            ->orderBy('position ASC')
+            ->findAllToArray();
+        
+        // Mapear column_id para dados do form
+        $formDataByColumnId = [];
+        foreach ($formData as $form) {
+            if (!empty($form['column_id'])) {
+                $formDataByColumnId[$form['column_id']] = $form;
+            }
+        }
+
         $columnRecord = new ColumnRecord();
-        $fields = $columnRecord->equal('table_id', $table['id'])->orderBy('position')->findAllToArray();
+        $fields = $columnRecord->equal('table_id', $tableId)->orderBy('id ASC')->findAllToArray();
         
         foreach ($fields as &$field) {
+            // Mesclar dados de panel_table_form
+            if (isset($formDataByColumnId[$field['id']])) {
+                $formItem = $formDataByColumnId[$field['id']];
+                $field['input_type'] = $formItem['input_type'] ?? 'text';
+                $field['input_options'] = $formItem['input_options'] ?? $field['input_options'] ?? null;
+                $field['input_placeholder'] = $formItem['input_placeholder'] ?? null;
+                $field['input_prefix'] = $formItem['input_prefix'] ?? null;
+                $field['input_suffix'] = $formItem['input_suffix'] ?? null;
+                $field['help_text'] = $formItem['help_text'] ?? null;
+                $field['row_index'] = $formItem['row_index'] ?? 0;
+                $field['row_size'] = $formItem['row_size'] ?? 1;
+                $field['column_size'] = $formItem['column_size'] ?? 12;
+                $field['position'] = $formItem['position'] ?? 0;
+            }
+            
             if (!empty($field['foreign_table']) && !empty($field['foreign_column'])) {
                 $field['input_options'] = $this->getForeignTableOptions(
                     $field['foreign_table'], 
@@ -343,6 +375,10 @@ class ApiHelper extends Api
     }
     public function get(): array
     {
+        // Enriquecer registros com dados do usuário
+        if (!empty($this->data['records'])) {
+            $this->data['records'] = $this->enrichWithUserData($this->data['records']);
+        }
         return $this->data;
     }
 
@@ -357,7 +393,74 @@ class ApiHelper extends Api
         $body = (string)$response->getBody();
         $data = json_decode($body, true);
 
+        if ($data) {
+            $enriched = $this->enrichWithUserData([$data]);
+            return $enriched[0] ?? $data;
+        }
+
         return $data ?? null;
+    }
+    
+    /**
+     * Enriquece registros com dados do usuário (username, email) para created_by e updated_by
+     */
+    private function enrichWithUserData(array $records): array
+    {
+        if (empty($records)) {
+            return $records;
+        }
+        
+        // Coletar IDs únicos de usuários
+        $userIds = [];
+        foreach ($records as $record) {
+            if (!empty($record['created_by'])) {
+                $userIds[] = (int)$record['created_by'];
+            }
+            if (!empty($record['updated_by'])) {
+                $userIds[] = (int)$record['updated_by'];
+            }
+        }
+        
+        if (empty($userIds)) {
+            return $records;
+        }
+        
+        $userIds = array_unique($userIds);
+        
+        // Buscar dados dos usuários
+        $usersMap = [];
+        try {
+            $userRecord = new \App\Records\UserRecord();
+            $users = $userRecord
+                ->select('id', 'username', 'email')
+                ->findAll();
+            
+            foreach ($users as $user) {
+                if (in_array((int)$user->id, $userIds)) {
+                    $usersMap[$user->id] = [
+                        'username' => $user->username,
+                        'email' => $user->email
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            // Se falhar, retorna os registros sem enriquecimento
+            return $records;
+        }
+        
+        // Enriquecer registros
+        foreach ($records as &$record) {
+            if (!empty($record['created_by']) && isset($usersMap[$record['created_by']])) {
+                $record['created_by_name'] = $usersMap[$record['created_by']]['username'];
+                $record['created_by_email'] = $usersMap[$record['created_by']]['email'];
+            }
+            if (!empty($record['updated_by']) && isset($usersMap[$record['updated_by']])) {
+                $record['updated_by_name'] = $usersMap[$record['updated_by']]['username'];
+                $record['updated_by_email'] = $usersMap[$record['updated_by']]['email'];
+            }
+        }
+        
+        return $records;
     }
 
     

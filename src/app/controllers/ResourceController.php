@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Helpers\ApiHelper;
 use App\Helpers\ValidationHelper;
+use App\Records\TableFormRecord;
+use App\Records\ColumnRecord;
 use Flight;
 use flight\Engine;
 class ResourceController extends ApiHelper
@@ -27,11 +29,12 @@ class ResourceController extends ApiHelper
         $this->resourceName = $resourceName;
 
         if ($this->resourceName) {
-            $this->resource = $this->resourceByUrlPath($this->resourceName);
+            $resource = $this->resourceByUrlPath($this->resourceName);
 
-            if ($this->resource) {
+            if ($resource) {
+                $this->resource = $resource;
                 $this->tableName = $this->resource['name'];
-                $this->fields = $this->fields($this->tableName);
+                $this->fields = $this->getFieldsWithLayout($this->resource['id']);
             } else {
                 $this->resource = [];
                 $this->tableName = '';
@@ -70,6 +73,91 @@ class ResourceController extends ApiHelper
         ]);
     }
 
+    private function getFieldsWithLayout(int $tableId): array
+    {
+        $formRecords = (new TableFormRecord())
+            ->equal('table_id', $tableId)
+            ->orderBy('position ASC')
+            ->findAll();
+        
+        if (empty($formRecords)) {
+            return $this->fields($this->tableName);
+        }
+        
+        $fields = [];
+        
+        foreach ($formRecords as $formRecord) {
+            $componentType = $formRecord->component_type ?? 'field';
+            
+            if ($componentType === 'field' && !empty($formRecord->column_id)) {
+                $column = (new ColumnRecord())
+                    ->equal('id', $formRecord->column_id)
+                    ->find();
+                
+                if ($column->isHydrated()) {
+                    // Dados da coluna (definição do campo)
+                    $fieldData = [
+                        'id' => $column->id,
+                        'table_id' => $column->table_id,
+                        'name' => $column->name,
+                        'display_name' => $column->display_name,
+                        'type' => $column->type,
+                        'length' => $column->length,
+                        'is_nullable' => $column->is_nullable,
+                        'default_value' => $column->default_value,
+                        'is_unique' => $column->is_unique,
+                        'is_primary' => $column->is_primary,
+                        'auto_increment' => $column->auto_increment,
+                        'foreign_table' => $column->foreign_table,
+                        'foreign_column' => $column->foreign_column,
+                        'is_visible_list' => $column->is_visible_list,
+                        'is_visible_form' => $column->is_visible_form,
+                        'is_visible_detail' => $column->is_visible_detail,
+                        'is_editable' => $column->is_editable,
+                        'is_searchable' => $column->is_searchable,
+                        'display_format' => $column->display_format,
+                        'list_template' => $column->list_template,
+                    ];
+                    
+                    // Mesclar dados de layout/renderização de panel_table_form
+                    $fieldData['row_index'] = $formRecord->row_index;
+                    $fieldData['row_size'] = $formRecord->row_size;
+                    $fieldData['column_size'] = $formRecord->column_size;
+                    $fieldData['position'] = $formRecord->position;
+                    $fieldData['input_type'] = $formRecord->input_type ?? 'text';
+                    $fieldData['input_options'] = $formRecord->input_options;
+                    $fieldData['input_placeholder'] = $formRecord->input_placeholder;
+                    $fieldData['input_prefix'] = $formRecord->input_prefix;
+                    $fieldData['input_suffix'] = $formRecord->input_suffix;
+                    $fieldData['input_mask'] = $formRecord->input_mask;
+                    $fieldData['validation_rules'] = $formRecord->validation_rules;
+                    $fieldData['validation_message'] = $formRecord->validation_message;
+                    $fieldData['help_text'] = $formRecord->help_text;
+                    $fieldData['tooltip'] = $formRecord->tooltip;
+                    
+                    $fields[] = $fieldData;
+                }
+            } elseif (in_array($componentType, ['divider_horizontal', 'divider_vertical'])) {
+                $config = !empty($formRecord->config) ? json_decode($formRecord->config, true) : [];
+                $fields[] = [
+                    'component_type' => $componentType,
+                    'divider_type' => $componentType === 'divider_horizontal' ? 'horizontal' : 'vertical',
+                    'divider_text' => $config['text'] ?? '',
+                    'divider_color' => $config['color'] ?? '',
+                    'divider_align' => $config['align'] ?? '',
+                    'row_index' => $formRecord->row_index,
+                    'row_size' => $formRecord->row_size,
+                    'column_size' => $formRecord->column_size,
+                    'position' => $formRecord->position,
+                    'is_visible_form' => true,
+                    'is_visible_list' => false
+                ];
+            }
+        }
+        
+        return $fields;
+    }
+    
     public function create(): void
     {
         $formFields = [];

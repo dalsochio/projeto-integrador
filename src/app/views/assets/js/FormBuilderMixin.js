@@ -846,14 +846,28 @@ export default function formBuilderMixin() {
 
             const output = [];
             let currentRowIndex = 1;
+            let globalPosition = 0;
 
             this.items.forEach(item => {
                 if (item.itemType === 'divider') {
+                    const dividerData = {
+                        itemType: 'divider',
+                        divider_type: item.divider_type,
+                        divider_text: item.divider_text || '',
+                        divider_color: item.divider_color || '',
+                        divider_align: item.divider_align || '',
+                        row_index: currentRowIndex,
+                        row_size: 1,
+                        column_size: 12,
+                        position: globalPosition++
+                    };
+                    output.push(dividerData);
+                    currentRowIndex++;
                     return;
                 }
                 
                 if (item.itemType === 'field') {
-                    const { id, itemType, ...fieldData } = item;
+                    const { id, ...fieldData } = item;
 
                     if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
                         fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
@@ -882,6 +896,7 @@ export default function formBuilderMixin() {
                     fieldData.row_index = currentRowIndex;
                     fieldData.row_size = 1;
                     fieldData.column_size = 12;
+                    fieldData.position = globalPosition++;
 
                     output.push(fieldData);
                     currentRowIndex++;
@@ -890,10 +905,22 @@ export default function formBuilderMixin() {
                         if (col.fields) {
                             col.fields.forEach(field => {
                                 if (field.itemType === 'divider') {
+                                    const dividerData = {
+                                        itemType: 'divider',
+                                        divider_type: field.divider_type,
+                                        divider_text: field.divider_text || '',
+                                        divider_color: field.divider_color || '',
+                                        divider_align: field.divider_align || '',
+                                        row_index: currentRowIndex,
+                                        row_size: item.columns.length,
+                                        column_size: col.width,
+                                        position: globalPosition++
+                                    };
+                                    output.push(dividerData);
                                     return;
                                 }
                                 
-                                const {id, itemType, ...fieldData} = field;
+                                const {id, ...fieldData} = field;
 
                                 if (fieldData.manual_options && Array.isArray(fieldData.manual_options)) {
                                     fieldData.manual_options = JSON.parse(JSON.stringify(fieldData.manual_options));
@@ -922,6 +949,7 @@ export default function formBuilderMixin() {
                                 fieldData.row_index = currentRowIndex;
                                 fieldData.row_size = item.columns.length;
                                 fieldData.column_size = col.width;
+                                fieldData.position = globalPosition++;
 
                                 output.push(fieldData);
                             });

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Records\CategoryRecord;
 use App\Records\ColumnRecord;
 use App\Records\TableRecord;
+use App\Records\TableFormRecord;
 use App\Services\ModuleService;
 use flight\Engine;
 use Flight;
@@ -86,7 +87,12 @@ class ModulesController
     public function store(): void
     {
         try {
-            $data = Flight::request()->data->getData();
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $data = Flight::request()->data->getData();
+            }
             
             if (empty($data['category_id']) || empty($data['name']) || empty($data['url'])) {
                 Flight::json([
@@ -130,8 +136,23 @@ class ModulesController
             
             $fields = [];
             $foreignKeys = [];
+            $formBuilderData = [];
             
-            foreach ($data['fields'] as $field) {
+            foreach ($data['fields'] as $originalField) {
+                // Pular divisores - adicionar direto ao formBuilderData
+                if (isset($originalField['itemType']) && $originalField['itemType'] === 'divider') {
+                    $formBuilderData[] = $originalField;
+                    continue;
+                }
+                
+                // Pular se não tiver display_name (componente inválido)
+                if (empty($originalField['display_name'])) {
+                    continue;
+                }
+                
+                // Trabalhar com cópia
+                $field = $originalField;
+                
                 $isForeignKey = !empty($field['is_foreign_key']) || 
                                !empty($field['foreign_table']) && !empty($field['foreign_column']);
 
@@ -162,6 +183,8 @@ class ModulesController
                     $field['is_nullable'] = 1; // FK columns must be nullable for ON DELETE SET NULL
                 } else {
                     $field['name'] = $this->slugify->slugify($field['display_name']);
+                    
+                    $originalType = $field['type'] ?? '';
 
                     if (in_array($field['input_type'] ?? '', ['select', 'radio', 'checkbox']) && 
                         !in_array($originalType, ['REFERENCE_SELECT', 'REFERENCE_RADIO'])) {
@@ -188,9 +211,13 @@ class ModulesController
                         'FILE' => 'VARCHAR',
                         'COLOR' => 'VARCHAR',
                         'TOGGLE' => 'TINYINT',
+                        'STATUS' => 'TINYINT',
+                        'TAGS' => 'VARCHAR',
                         'WYSIWYG' => 'TEXT',
                         'MARKDOWN' => 'TEXT',
-                        'CODE' => 'TEXT'
+                        'CODE' => 'TEXT',
+                        'REFERENCE_SELECT' => 'INT',
+                        'REFERENCE_RADIO' => 'INT'
                     ];
 
                     if (isset($typeMapping[$field['type']])) {
@@ -204,10 +231,13 @@ class ModulesController
                     }
                 }
                 
+                // Adicionar campo processado (com name) ao formBuilderData e fields
+                $formBuilderData[] = $field;
                 $fields[] = $field;
             }
             
-            $moduleId = $this->moduleService->createModule($moduleData, $fields, $foreignKeys);
+            // Sempre usar createModuleWithForm - ele processa campos + divisores
+            $moduleId = $this->moduleService->createModuleWithForm($moduleData, $formBuilderData, $foreignKeys);
             
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_table', 'create', $moduleId, $moduleData);
             
@@ -333,8 +363,46 @@ class ModulesController
         $columnRecord = new ColumnRecord();
         $columns = $columnRecord
             ->equal('table_id', (int)$id)
+            ->orderBy('id ASC')
+            ->findAllToArray();
+        
+        // Carregar dados de layout do form builder (panel_table_form)
+        $formRecord = new TableFormRecord();
+        $formData = $formRecord
+            ->equal('table_id', (int)$id)
             ->orderBy('position ASC')
             ->findAllToArray();
+        
+        // Mesclar dados de layout nos campos
+        $columnIdToFormData = [];
+        $dividers = [];
+        foreach ($formData as $formItem) {
+            if (!empty($formItem['column_id'])) {
+                $columnIdToFormData[$formItem['column_id']] = $formItem;
+            } else {
+                // É um divisor ou componente sem column_id
+                $dividers[] = $formItem;
+            }
+        }
+        
+        // Adicionar dados de layout aos campos
+        foreach ($columns as &$col) {
+            if (isset($columnIdToFormData[$col['id']])) {
+                $formItem = $columnIdToFormData[$col['id']];
+                $col['row_index'] = $formItem['row_index'];
+                $col['row_size'] = $formItem['row_size'];
+                $col['column_size'] = $formItem['column_size'];
+                $col['position'] = $formItem['position'];
+                // Dados de input também vêm do form
+                $col['input_type'] = $formItem['input_type'] ?? $col['input_type'] ?? 'text';
+                $col['input_options'] = $formItem['input_options'] ?? $col['input_options'] ?? null;
+                $col['input_placeholder'] = $formItem['input_placeholder'] ?? $col['input_placeholder'] ?? null;
+                $col['input_prefix'] = $formItem['input_prefix'] ?? $col['input_prefix'] ?? null;
+                $col['input_suffix'] = $formItem['input_suffix'] ?? $col['input_suffix'] ?? null;
+                $col['help_text'] = $formItem['help_text'] ?? $col['help_text'] ?? null;
+            }
+        }
+        unset($col);
         
         // Carregar modulos disponiveis para referencias
         $tableRecordForModules = new TableRecord();
@@ -371,6 +439,7 @@ class ModulesController
             'module' => $module->toArray(),
             'categories' => $categories,
             'columns' => $columns,
+            'dividers' => $dividers,
             'availableModules' => $availableModules,
             'createdByUser' => $createdByUser ? $createdByUser->toArray() : null,
             'updatedByUser' => $updatedByUser ? $updatedByUser->toArray() : null
@@ -497,7 +566,18 @@ class ModulesController
                 }
             }
 
-            $allFieldIds = array_column($data['fields'], 'id');
+            // Separar campos e divisores
+            $fieldsOnly = [];
+            $dividersOnly = [];
+            foreach ($data['fields'] as $item) {
+                if (isset($item['itemType']) && $item['itemType'] === 'divider') {
+                    $dividersOnly[] = $item;
+                } else {
+                    $fieldsOnly[] = $item;
+                }
+            }
+
+            $allFieldIds = array_column($fieldsOnly, 'id');
             $frontendFieldIds = [];
             foreach ($allFieldIds as $fieldId) {
                 if (!empty($fieldId)) {
@@ -517,8 +597,9 @@ class ModulesController
 
             $updatedCount = 0;
             $createdCount = 0;
+            $columnIdMap = []; // Mapear IDs antigos para novos
 
-            foreach ($data['fields'] as $index => $fieldData) {
+            foreach ($fieldsOnly as $index => $fieldData) {
                 $columnRecord = new ColumnRecord();
 
                 if (!empty($fieldData['id'])) {
@@ -529,15 +610,6 @@ class ModulesController
                         if (isset($fieldData['display_name']) && $fieldData['display_name'] !== $column->display_name) {
                             $column->name = $this->slugify->slugify($fieldData['display_name']);
                         }
-                        $column->column_size = $fieldData['column_size'] ?? $column->column_size ?? 12;
-                        $column->row_index = $fieldData['row_index'] ?? $column->row_index ?? null;
-                        $column->row_size = $fieldData['row_size'] ?? $column->row_size ?? 1;
-                        $column->position = $fieldData['position'] ?? $index;
-                        $column->input_type = $fieldData['input_type'] ?? $column->input_type;
-                        $column->input_placeholder = $fieldData['input_placeholder'] ?? null;
-                        $column->input_prefix = $fieldData['input_prefix'] ?? null;
-                        $column->input_suffix = $fieldData['input_suffix'] ?? null;
-                        $column->help_text = $fieldData['help_text'] ?? null;
                         $column->is_visible_list = !empty($fieldData['is_visible_list']) ? 1 : 0;
                         $column->is_visible_form = !empty($fieldData['is_visible_form']) ? 1 : 0;
                         $column->is_editable = !empty($fieldData['is_editable']) ? 1 : 0;
@@ -546,6 +618,7 @@ class ModulesController
                         $column->is_unique = !empty($fieldData['is_unique']) ? 1 : 0;
 
                         $column->save();
+                        $columnIdMap[$fieldData['id']] = $column->id;
                         $updatedCount++;
                     }
                 } else {
@@ -569,30 +642,69 @@ class ModulesController
                     $newColumn->is_searchable = !empty($fieldData['is_searchable']) ? 1 : 0;
                     $newColumn->is_sortable = 1;
                     $newColumn->is_filterable = 0;
-                    $newColumn->input_type = $fieldData['input_type'] ?? 'text';
-                    $newColumn->input_placeholder = $fieldData['input_placeholder'] ?? null;
-                    $newColumn->input_prefix = $fieldData['input_prefix'] ?? null;
-                    $newColumn->input_suffix = $fieldData['input_suffix'] ?? null;
-                    $newColumn->help_text = $fieldData['help_text'] ?? null;
-                    $newColumn->position = $fieldData['position'] ?? $index;
-                    $newColumn->column_size = $fieldData['column_size'] ?? 12;
-                    $newColumn->row_index = $fieldData['row_index'] ?? null;
-                    $newColumn->row_size = $fieldData['row_size'] ?? 1;
 
                     $newColumn->save();
+                    $columnIdMap['new_' . $index] = $newColumn->id;
                     $createdCount++;
                 }
             }
 
-            foreach ($data['fields'] as &$field) {
+            // Atualizar panel_table_form com layout e dados de input
+            // Primeiro, limpar registros antigos
+            $pdo = Flight::db();
+            $prefix = $_ENV['DB_TABLE_PREFIX'] ?? 'panel_';
+            $pdo->exec("DELETE FROM {$prefix}table_form WHERE table_id = {$moduleId}");
+
+            // Inserir novos registros em panel_table_form
+            $position = 0;
+            foreach ($data['fields'] as $index => $fieldData) {
+                $formRecord = new TableFormRecord();
+                $formRecord->table_id = $moduleId;
+                $formRecord->position = $fieldData['position'] ?? $position++;
+                $formRecord->row_index = $fieldData['row_index'] ?? 1;
+                $formRecord->row_size = $fieldData['row_size'] ?? 1;
+                $formRecord->column_size = $fieldData['column_size'] ?? 12;
+
+                if (isset($fieldData['itemType']) && $fieldData['itemType'] === 'divider') {
+                    // Divisor
+                    $formRecord->column_id = null;
+                    $formRecord->component_type = $fieldData['divider_type'] === 'horizontal' ? 'divider_horizontal' : 'divider_vertical';
+                    $formRecord->config = json_encode([
+                        'text' => $fieldData['divider_text'] ?? '',
+                        'color' => $fieldData['divider_color'] ?? '',
+                        'align' => $fieldData['divider_align'] ?? ''
+                    ]);
+                } else {
+                    // Campo
+                    $columnId = null;
+                    if (!empty($fieldData['id'])) {
+                        $columnId = $columnIdMap[$fieldData['id']] ?? $fieldData['id'];
+                    } else {
+                        $columnId = $columnIdMap['new_' . $index] ?? null;
+                    }
+                    
+                    $formRecord->column_id = $columnId;
+                    $formRecord->component_type = 'field';
+                    $formRecord->input_type = $fieldData['input_type'] ?? 'text';
+                    $formRecord->input_options = $fieldData['input_options'] ?? null;
+                    $formRecord->input_placeholder = $fieldData['input_placeholder'] ?? null;
+                    $formRecord->input_prefix = $fieldData['input_prefix'] ?? null;
+                    $formRecord->input_suffix = $fieldData['input_suffix'] ?? null;
+                    $formRecord->help_text = $fieldData['help_text'] ?? null;
+                }
+
+                $formRecord->save();
+            }
+
+            // Sincronizar colunas físicas da tabela
+            foreach ($fieldsOnly as &$field) {
                 if (empty($field['id']) && !isset($field['name'])) {
                     $field['name'] = $this->slugify->slugify($field['display_name']);
                 }
             }
             unset($field);
 
-            $pdo = Flight::db();
-            $this->syncPhysicalTableColumns($pdo, $module->name, $data['fields'], $currentUserColumns);
+            $this->syncPhysicalTableColumns($pdo, $module->name, $fieldsOnly, $currentUserColumns);
 
             $message = [];
             if ($createdCount > 0) $message[] = "$createdCount campo(s) criado(s)";

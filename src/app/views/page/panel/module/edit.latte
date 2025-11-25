@@ -216,77 +216,131 @@
                         </div>
 
                         <div class="space-y-2">
-                            {if count($userColumns) === 0}
+                            {var $totalItems = count($userColumns) + count($dividers ?? [])}
+                            {if $totalItems === 0}
                                 <div class="text-center text-base-content/50 py-4">
                                     <span translate="no" class="material-symbols-outlined text-4xl block mb-2 opacity-30">inbox</span>
                                     <p class="text-sm">Nenhum campo personalizado</p>
                                     <p class="text-xs mt-1">Clique em "Editar" para adicionar campos</p>
                                 </div>
                             {else}
-                                {* Agrupar campos por row_index *}
-                                {var $fieldsByRow = []}
+                                {* Combinar campos e divisores, agrupar por row_index *}
+                                {var $allItems = []}
                                 {foreach $columns as $col}
                                     {if !in_array($col['name'], ['id', 'created_at', 'created_by', 'updated_at', 'updated_by'])}
-                                        {var $rowIdx = $col['row_index'] ?? 0}
-                                        {if !isset($fieldsByRow[$rowIdx])}
-                                            {var $fieldsByRow[$rowIdx] = []}
-                                        {/if}
-                                        {var $fieldsByRow[$rowIdx][] = $col}
+                                        {var $col['_type'] = 'field'}
+                                        {var $allItems[] = $col}
                                     {/if}
                                 {/foreach}
-                                {do ksort($fieldsByRow)}
+                                {foreach $dividers ?? [] as $div}
+                                    {var $div['_type'] = 'divider'}
+                                    {var $allItems[] = $div}
+                                {/foreach}
                                 
-                                {foreach $fieldsByRow as $rowIdx => $rowFields}
-                                    {if $rowIdx > 0 && count($rowFields) > 1}
-                                        {* Colunas *}
+                                {* Ordenar por position *}
+                                {do usort($allItems, fn($a, $b) => ($a['position'] ?? 0) <=> ($b['position'] ?? 0))}
+                                
+                                {* Agrupar por row_index *}
+                                {var $itemsByRow = []}
+                                {foreach $allItems as $item}
+                                    {var $rowIdx = $item['row_index'] ?? 0}
+                                    {if !isset($itemsByRow[$rowIdx])}
+                                        {var $itemsByRow[$rowIdx] = []}
+                                    {/if}
+                                    {var $itemsByRow[$rowIdx][] = $item}
+                                {/foreach}
+                                {do ksort($itemsByRow)}
+                                
+                                {foreach $itemsByRow as $rowIdx => $rowItems}
+                                    {if count($rowItems) > 1}
+                                        {* Múltiplos itens = Colunas *}
                                         <div class="p-2 rounded border border-secondary/30 bg-secondary/5">
                                             <div class="flex items-center gap-2 mb-2">
                                                 <span class="material-symbols-outlined text-xs text-secondary">view_column</span>
-                                                <span class="text-xs font-medium text-secondary">Colunas ({count($rowFields)})</span>
+                                                <span class="text-xs font-medium text-secondary">Colunas ({count($rowItems)})</span>
                                             </div>
                                             <div class="flex gap-2">
-                                                {foreach $rowFields as $column}
-                                                    <div class="flex-1 flex items-start gap-2 p-2 rounded border border-base-200 bg-base-100">
-                                                        <span class="material-symbols-outlined text-xs text-base-content/50">
-                                                            {if $column['is_primary']}key
-                                                            {elseif $column['type'] === 'VARCHAR' || $column['type'] === 'TEXT'}text_fields
-                                                            {elseif $column['type'] === 'INT' || $column['type'] === 'DECIMAL'}numbers
-                                                            {elseif $column['type'] === 'DATE' || $column['type'] === 'DATETIME'}calendar_today
-                                                            {elseif $column['type'] === 'BOOLEAN'}toggle_on
-                                                            {else}label
-                                                            {/if}
-                                                        </span>
-                                                        <div class="flex-1 min-w-0">
-                                                            <div class="font-semibold text-xs truncate">{$column['display_name']}</div>
-                                                            <div class="text-xs text-base-content/60">
-                                                                <span x-text="getFieldLabel('{$column['input_type'] ?? $column['type']}')"></span>
+                                                {foreach $rowItems as $item}
+                                                    {if ($item['_type'] ?? '') === 'divider'}
+                                                        {* Divisor dentro de colunas *}
+                                                        {var $configInner = $item['config'] ? json_decode($item['config'], true) : []}
+                                                        {var $dividerTextInner = $configInner['text'] ?? ''}
+                                                        <div class="flex-1 flex items-center gap-2 p-2 rounded border border-base-200 bg-base-100">
+                                                            <span class="material-symbols-outlined text-xs text-base-content/50 {if ($item['component_type'] ?? '') === 'divider_vertical'}rotate-90{/if}">
+                                                                horizontal_rule
+                                                            </span>
+                                                            <div class="flex-1 min-w-0">
+                                                                <div class="font-semibold text-xs truncate text-base-content/70">
+                                                                    {if $dividerTextInner}{$dividerTextInner}{else}Divisor{/if}
+                                                                </div>
+                                                                <div class="text-xs text-base-content/60">
+                                                                    {if ($item['component_type'] ?? '') === 'divider_vertical'}Vertical{else}Horizontal{/if}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    {else}
+                                                        {* Campo dentro de colunas *}
+                                                        <div class="flex-1 flex items-start gap-2 p-2 rounded border border-base-200 bg-base-100">
+                                                            <span class="material-symbols-outlined text-xs text-base-content/50">
+                                                                {if $item['is_primary'] ?? false}key
+                                                                {elseif ($item['type'] ?? '') === 'VARCHAR' || ($item['type'] ?? '') === 'TEXT'}text_fields
+                                                                {elseif ($item['type'] ?? '') === 'INT' || ($item['type'] ?? '') === 'DECIMAL'}numbers
+                                                                {elseif ($item['type'] ?? '') === 'DATE' || ($item['type'] ?? '') === 'DATETIME'}calendar_today
+                                                                {elseif ($item['type'] ?? '') === 'BOOLEAN'}toggle_on
+                                                                {else}label
+                                                                {/if}
+                                                            </span>
+                                                            <div class="flex-1 min-w-0">
+                                                                <div class="font-semibold text-xs truncate">{$item['display_name']}</div>
+                                                                <div class="text-xs text-base-content/60">
+                                                                    <span x-text="getFieldLabel('{$item['input_type'] ?? $item['type']}')"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {/if}
                                                 {/foreach}
                                             </div>
                                         </div>
                                     {else}
-                                        {* Campo solo *}
-                                        {foreach $rowFields as $column}
+                                        {* Item solo *}
+                                        {var $item = $rowItems[0]}
+                                        {if ($item['_type'] ?? '') === 'divider'}
+                                            {* Divisor solo *}
+                                            {var $config = $item['config'] ? json_decode($item['config'], true) : []}
+                                            {var $dividerText = $config['text'] ?? ''}
+                                            <div class="flex items-center gap-2 p-2 rounded border border-base-200 bg-base-100/50">
+                                                <span class="material-symbols-outlined text-sm text-base-content/50 {if ($item['component_type'] ?? '') === 'divider_vertical'}rotate-90{/if}">
+                                                    horizontal_rule
+                                                </span>
+                                                <div class="flex-1">
+                                                    <div class="font-semibold text-sm text-base-content/70">
+                                                        {if $dividerText}{$dividerText}{else}Divisor{/if}
+                                                    </div>
+                                                    <div class="text-xs text-base-content/60">
+                                                        {if ($item['component_type'] ?? '') === 'divider_vertical'}Vertical{else}Horizontal{/if}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {else}
+                                            {* Campo solo *}
                                             <div class="flex items-center gap-2 p-2 rounded border border-base-200">
                                                 <span class="material-symbols-outlined text-sm text-base-content/50">
-                                                    {if $column['is_primary']}key
-                                                    {elseif $column['type'] === 'VARCHAR' || $column['type'] === 'TEXT'}text_fields
-                                                    {elseif $column['type'] === 'INT' || $column['type'] === 'DECIMAL'}numbers
-                                                    {elseif $column['type'] === 'DATE' || $column['type'] === 'DATETIME'}calendar_today
-                                                    {elseif $column['type'] === 'BOOLEAN'}toggle_on
+                                                    {if $item['is_primary'] ?? false}key
+                                                    {elseif ($item['type'] ?? '') === 'VARCHAR' || ($item['type'] ?? '') === 'TEXT'}text_fields
+                                                    {elseif ($item['type'] ?? '') === 'INT' || ($item['type'] ?? '') === 'DECIMAL'}numbers
+                                                    {elseif ($item['type'] ?? '') === 'DATE' || ($item['type'] ?? '') === 'DATETIME'}calendar_today
+                                                    {elseif ($item['type'] ?? '') === 'BOOLEAN'}toggle_on
                                                     {else}label
                                                     {/if}
                                                 </span>
                                                 <div class="flex-1">
-                                                    <div class="font-semibold text-sm">{$column['display_name']}</div>
+                                                    <div class="font-semibold text-sm">{$item['display_name']}</div>
                                                     <div class="text-xs text-base-content/60">
-                                                        <span x-text="getFieldLabel('{$column['input_type'] ?? $column['type']}')"></span>
+                                                        <span x-text="getFieldLabel('{$item['input_type'] ?? $item['type']}')"></span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        {/foreach}
+                                        {/if}
                                     {/if}
                                 {/foreach}
                             {/if}
@@ -329,6 +383,7 @@
                 categories: {json_encode($categories)|noescape},
                 module: {json_encode($module)|noescape},
                 fields: {json_encode($columns)|noescape},
+                dividers: {json_encode($dividers ?? [])|noescape},
                 availableModules: {json_encode($availableModules ?? [])|noescape},
                 selectedCategoryUrlPath: '',
                 saving: false,
@@ -381,84 +436,143 @@
                         'code': 'CODE'
                     };
 
-                    // Agrupar campos por row_index
-                    const fieldsByRow = {};
+                    // Combinar campos + divisores e ordenar por position
+                    const allItems = [];
+                    
+                    // Adicionar campos
                     userFields.forEach(field => {
-                        const rowIdx = field.row_index || 0;
-                        if (!fieldsByRow[rowIdx]) {
-                            fieldsByRow[rowIdx] = [];
+                        allItems.push({
+                            ...field,
+                            _type: 'field',
+                            position: field.position || 0
+                        });
+                    });
+                    
+                    // Adicionar divisores
+                    (this.dividers || []).forEach(divider => {
+                        const config = divider.config ? JSON.parse(divider.config) : {};
+                        allItems.push({
+                            ...divider,
+                            _type: 'divider',
+                            divider_type: divider.component_type === 'divider_horizontal' ? 'horizontal' : 'vertical',
+                            divider_text: config.text || '',
+                            divider_color: config.color || '',
+                            divider_align: config.align || '',
+                            position: divider.position || 0
+                        });
+                    });
+                    
+                    // Ordenar por position
+                    allItems.sort((a, b) => (a.position || 0) - (b.position || 0));
+                    
+                    // Agrupar por row_index
+                    const itemsByRow = {};
+                    allItems.forEach(item => {
+                        const rowIdx = item.row_index || 0;
+                        if (!itemsByRow[rowIdx]) {
+                            itemsByRow[rowIdx] = [];
                         }
-                        fieldsByRow[rowIdx].push(field);
+                        itemsByRow[rowIdx].push(item);
                     });
 
                     this.items = [];
-                    const rowIndices = Object.keys(fieldsByRow).sort((a, b) => parseInt(a) - parseInt(b));
+                    const rowIndices = Object.keys(itemsByRow).sort((a, b) => parseInt(a) - parseInt(b));
 
                     rowIndices.forEach(rowIdx => {
-                        const fieldsInRow = fieldsByRow[rowIdx];
+                        const itemsInRow = itemsByRow[rowIdx];
                         
-                        // Se row_index > 0 E tem mais de 1 campo = é um layout row
-                        if (parseInt(rowIdx) > 0 && fieldsInRow.length > 1) {
+                        // Se tem mais de 1 item na row = é um layout row
+                        if (itemsInRow.length > 1) {
                             // Criar row item
                             const columns = [];
                             
-                            fieldsInRow.forEach(field => {
-                                const canvasType = field.input_type && inputTypeToCanvasType[field.input_type] 
-                                    ? inputTypeToCanvasType[field.input_type] 
-                                    : field.type;
+                            itemsInRow.forEach(item => {
+                                if (item._type === 'divider') {
+                                    // Divisor dentro de row
+                                    const dividerItem = {
+                                        id: 'divider_' + (item.id || ++this.fieldCounter),
+                                        itemType: 'divider',
+                                        divider_type: item.divider_type,
+                                        divider_text: item.divider_text || '',
+                                        divider_color: item.divider_color || '',
+                                        divider_align: item.divider_align || ''
+                                    };
+                                    columns.push({
+                                        id: 'col_' + rowIdx + '_' + columns.length,
+                                        width: item.column_size || Math.floor(12 / itemsInRow.length),
+                                        fields: [dividerItem]
+                                    });
+                                } else {
+                                    // Campo dentro de row
+                                    const canvasType = item.input_type && inputTypeToCanvasType[item.input_type] 
+                                        ? inputTypeToCanvasType[item.input_type] 
+                                        : item.type;
 
-                                const fieldItem = {
-                                    id: `field_${ field.id}`,
-                                    itemType: 'field',
-                                    ...field,
-                                    type: canvasType,
-                                    is_nullable: Boolean(field.is_nullable),
-                                    is_unique: Boolean(field.is_unique),
-                                    is_editable: Boolean(field.is_editable),
-                                    is_searchable: Boolean(field.is_searchable),
-                                    is_visible_list: Boolean(field.is_visible_list),
-                                    is_visible_form: Boolean(field.is_visible_form)
-                                };
+                                    const fieldItem = {
+                                        id: 'field_' + item.id,
+                                        itemType: 'field',
+                                        ...item,
+                                        type: canvasType,
+                                        is_nullable: Boolean(item.is_nullable),
+                                        is_unique: Boolean(item.is_unique),
+                                        is_editable: Boolean(item.is_editable),
+                                        is_searchable: Boolean(item.is_searchable),
+                                        is_visible_list: Boolean(item.is_visible_list),
+                                        is_visible_form: Boolean(item.is_visible_form)
+                                    };
 
-                                // Criar coluna para este campo
-                                columns.push({
-                                    id: `col_${ rowIdx}_${ columns.length}`,
-                                    width: field.column_size || 12,
-                                    fields: [fieldItem]
-                                });
+                                    columns.push({
+                                        id: 'col_' + rowIdx + '_' + columns.length,
+                                        width: item.column_size || Math.floor(12 / itemsInRow.length),
+                                        fields: [fieldItem]
+                                    });
+                                }
                             });
 
                             // Adicionar row ao canvas
                             this.items.push({
-                                id: `row_${ rowIdx}`,
+                                id: 'row_' + rowIdx,
                                 itemType: 'row',
                                 columns: columns
                             });
                         } else {
-                            // Campos solo (row_index = 0 ou único campo no row)
-                            fieldsInRow.forEach(field => {
-                                const canvasType = field.input_type && inputTypeToCanvasType[field.input_type] 
-                                    ? inputTypeToCanvasType[field.input_type] 
-                                    : field.type;
+                            // Item solo
+                            const item = itemsInRow[0];
+                            
+                            if (item._type === 'divider') {
+                                // Divisor solo
+                                this.items.push({
+                                    id: 'divider_' + (item.id || ++this.fieldCounter),
+                                    itemType: 'divider',
+                                    divider_type: item.divider_type,
+                                    divider_text: item.divider_text || '',
+                                    divider_color: item.divider_color || '',
+                                    divider_align: item.divider_align || ''
+                                });
+                            } else {
+                                // Campo solo
+                                const canvasType = item.input_type && inputTypeToCanvasType[item.input_type] 
+                                    ? inputTypeToCanvasType[item.input_type] 
+                                    : item.type;
 
                                 this.items.push({
-                                    id: `field_${ field.id}`,
+                                    id: 'field_' + item.id,
                                     itemType: 'field',
-                                    ...field,
+                                    ...item,
                                     type: canvasType,
-                                    is_nullable: Boolean(field.is_nullable),
-                                    is_unique: Boolean(field.is_unique),
-                                    is_editable: Boolean(field.is_editable),
-                                    is_searchable: Boolean(field.is_searchable),
-                                    is_visible_list: Boolean(field.is_visible_list),
-                                    is_visible_form: Boolean(field.is_visible_form)
+                                    is_nullable: Boolean(item.is_nullable),
+                                    is_unique: Boolean(item.is_unique),
+                                    is_editable: Boolean(item.is_editable),
+                                    is_searchable: Boolean(item.is_searchable),
+                                    is_visible_list: Boolean(item.is_visible_list),
+                                    is_visible_form: Boolean(item.is_visible_form)
                                 });
-                            });
+                            }
                         }
                     });
 
-                    this.fieldCounter = userFields.length;
-                    this.rowCounter = Math.max(...rowIndices.map(r => parseInt(r)), 0);
+                    this.fieldCounter = Math.max(userFields.length, this.dividers?.length || 0) + 1;
+                    this.rowCounter = Math.max(...rowIndices.map(r => parseInt(r)), 0) + 1;
                 },
 
                 
