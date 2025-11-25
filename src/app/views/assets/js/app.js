@@ -272,6 +272,9 @@ document.body.addEventListener('toast', (e) => {
         warn: genericStyle + ' !bg-yellow-500 border-yellow-700',
     };
 
+    // Verificar se há um dialog/modal aberto e usar como container
+    const openDialog = document.querySelector('dialog[open]');
+    
     Toastify({
         text: toast.text,
         duration: 4000,
@@ -282,8 +285,10 @@ document.body.addEventListener('toast', (e) => {
         position: "center",
         stopOnFocus: true,
         className: toastStyle[toast.type] ?? toastStyle.error,
+        selector: openDialog || undefined,
         style: {
-            background: 'none'
+            background: 'none',
+            zIndex: '2147483647'
         },
         onClick: function () {
         }

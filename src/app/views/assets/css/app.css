@@ -6,6 +6,29 @@
 
 @import "gridjs/dist/theme/mermaid.css";
 
+/* Toast sempre no topo - acima de modals nativos */
+.toastify {
+    z-index: 2147483647 !important;
+    position: fixed !important;
+}
+
+.toastify-center {
+    z-index: 2147483647 !important;
+}
+
+.toastify-top {
+    z-index: 2147483647 !important;
+}
+
+/* Dialog tem z-index padrão altíssimo, garantir que toast fique acima */
+dialog {
+    z-index: 2147483646 !important;
+}
+
+dialog::backdrop {
+    z-index: 2147483645 !important;
+}
+
 @import 'tailwindcss';
 
 @plugin "daisyui" {

@@ -1,11 +1,12 @@
-<div class="grid grid-cols-12 gap-4 h-full">
+<div class="grid grid-cols-5 gap-4 h-full min-h-0">
 
-    <div class="col-span-3 flex flex-col h-full min-h-0">
-        <h3 class="font-semibold mb-4 flex-shrink-0">Componentes</h3>
-        <div class="flex-1 overflow-y-auto border-2 border-base-300 rounded p-4 bg-base-100 min-h-0">
-            <div class="flex flex-col gap-3">
+    <div class="flex flex-col min-h-0">
+        <h3 class="font-semibold mb-2 flex-shrink-0">Componentes</h3>
+        <div class="card card-border flex-1 overflow-y-auto bg-base-100 min-h-0">
+            <div class="card-body p-4">
+                <div class="flex flex-col gap-3">
             
-            <div class="border border-secondary rounded cursor-move hover:bg-base-200 overflow-hidden"
+            <div class="card card-border border-secondary cursor-move hover:shadow-md transition-shadow overflow-hidden"
                  draggable="true"
                  @dragstart="handlePaletteDragStart($event, 'ROW')">
                 <div class="p-2 bg-secondary/10 border-b border-secondary/30">
@@ -24,7 +25,7 @@
 
             
             <template x-for="type in fieldTypes" :key="type.name">
-                <div class="border border-primary rounded cursor-move hover:bg-base-200 overflow-hidden"
+                <div class="card card-border border-primary cursor-move hover:shadow-md transition-shadow overflow-hidden"
                      draggable="true"
                      @dragstart="handlePaletteDragStart($event, type.name)">
                     <div class="p-2 bg-primary/10 border-b border-primary/20">
@@ -34,13 +35,14 @@
                     <div class="p-2 pointer-events-none scale-90 origin-top-left" x-html="type.preview"></div>
                 </div>
             </template>
+                </div>
             </div>
         </div>
     </div>
 
     
-    <div class="col-span-6 flex flex-col h-full min-h-0">
-        <div class="flex justify-between items-center mb-4 flex-shrink-0">
+    <div class="col-span-3 flex flex-col min-h-0">
+        <div class="flex justify-between items-center mb-2 flex-shrink-0">
             <h3 class="font-semibold">Canvas do Formulário</h3>
             <button @click="clearAll()" class="btn btn-ghost btn-sm" x-show="items.length > 0">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,7 +52,7 @@
             </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto border-2 border-dashed border-base-300 rounded p-4 bg-base-50 min-h-0"
+        <div class="card card-border flex-1 overflow-y-auto border-2 border-dashed bg-base-100 min-h-0 p-4"
              @dragover.prevent
              @drop="handleCanvasDrop($event)"
              x-sort="items"
@@ -64,13 +66,13 @@
                 <div x-sort:item="item" class="mb-3" :data-item-id="item.id">
                     
                     <template x-if="item.itemType === 'field'">
-                        <div class="border-2 rounded-lg bg-base-100 cursor-pointer hover:border-primary transition-all"
-                             x-bind:class="selectedItemId === item.id ? 'border-primary bg-primary/10' : ''"
+                        <div class="card card-border cursor-pointer hover:border-primary transition-all"
+                             x-bind:class="selectedItemId === item.id ? 'border-primary bg-primary/5' : ''"
                              @click="selectItem(item.id, 'field')"
                              draggable="true"
                              @dragstart="handleFieldDragStart($event, item.id, true)">
 
-                            <div class="flex justify-between items-start p-2 bg-base-200/50 border-b border-base-300">
+                            <div class="flex justify-between items-start p-2 bg-base-200/50 border-b rounded-t-[var(--radius-box)]">
                                 <div class="flex items-center gap-2 flex-1">
                                     <svg class="h-4 w-4 drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
@@ -104,12 +106,12 @@
                     </template>
 
                     
-                    <template x-if="item.itemType === 'row'">
-                        <div class="border-2 rounded-lg bg-base-100 cursor-pointer hover:border-secondary transition-all"
-                             x-bind:class="selectedItemId === item.id ? 'border-secondary bg-secondary/10' : ''"
-                             @click="selectItem(item.id, 'row')">
+                        <template x-if="item.itemType === 'row'">
+                            <div class="card card-border cursor-pointer hover:border-secondary transition-all"
+                                 x-bind:class="selectedItemId === item.id ? 'border-secondary bg-secondary/5' : ''">
 
-                            <div class="flex justify-between items-start p-2 bg-secondary/10 border-b border-secondary/20">
+                            <div class="flex justify-between items-start p-2 bg-secondary/10 border-b rounded-t-[var(--radius-box)]"
+                                 @click="selectItem(item.id, 'row')">
                                 <div class="flex items-center gap-2">
                                     <svg class="h-4 w-4 drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
@@ -138,10 +140,11 @@
                             
                             <div class="p-3 flex gap-2"
                                  x-sort="item.columns || []"
-                                 x-sort:config="columnSortConfig">
+                                 x-sort:config="columnSortConfig"
+                                     >
                                 <template x-for="(col, colIndex) in (item.columns || [])" :key="col.id">
                                     <div x-sort:item="col"
-                                         class="border-2 border-dashed border-base-300 rounded-lg p-3 min-h-[150px] flex-1 flex flex-col transition-colors"
+                                         class="card card-border border-2 border-dashed rounded-lg p-3 min-h-[150px] flex-1 flex flex-col transition-colors"
                                          x-bind:style="'flex: ' + col.width"
                                          @dragover="$el.classList.add('bg-primary/5', 'border-primary/30')"
                                          @dragleave="$el.classList.remove('bg-primary/5', 'border-primary/30')"
@@ -163,13 +166,13 @@
 
                                             <template x-for="(field, fieldIndex) in (col.fields || [])" :key="field.id">
                                                 <div x-sort:item="field" :data-item-id="field.id">
-                                                    <div class="border-2 rounded-lg bg-base-100 cursor-pointer hover:border-primary transition-all"
-                                                         x-bind:class="selectedItemId === field.id ? 'border-primary bg-primary/10' : ''"
-                                                         @click="selectItem(field.id, 'field')"
+                                                    <div class="card card-border cursor-pointer hover:border-primary transition-all"
+                                                         x-bind:class="selectedItemId === field.id ? 'border-primary bg-primary/5' : ''"
+                                                         @click.stop="selectItem(field.id, 'field')"
                                                          draggable="true"
                                                          @dragstart="handleFieldDragStart($event, field.id, false)">
 
-                                                        <div class="flex justify-between items-start p-2 bg-base-200/50 border-b border-base-300">
+                                                        <div class="flex justify-between items-start p-2 bg-base-200/50 border-b rounded-t-[var(--radius-box)]">
                                                             <div class="flex items-center gap-2 flex-1">
                                                                 <svg class="h-4 w-4 field-drag-handle cursor-move opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
@@ -219,9 +222,10 @@
     </div>
 
     
-    <div class="col-span-3 flex flex-col h-full min-h-0">
-        <h3 class="font-semibold mb-4 flex-shrink-0">Propriedades</h3>
-        <div class="border border-base-300 rounded p-4 bg-base-100 flex-1 overflow-y-auto min-h-0">
+    <div class="flex flex-col min-h-0">
+        <h3 class="font-semibold mb-2 flex-shrink-0">Propriedades</h3>
+        <div class="card card-border bg-base-100 flex-1 overflow-y-auto min-h-0">
+            <div class="card-body p-4">
             
             <div x-show="!selectedItemId" class="text-center text-base-content/50">
                 Selecione um campo
@@ -433,6 +437,7 @@
                     </template>
                 </div>
             </template>
+            </div>
         </div>
     </div>
 </div>
