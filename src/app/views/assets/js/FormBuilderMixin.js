@@ -316,9 +316,21 @@ export default function formBuilderMixin() {
             event.preventDefault();
             event.stopPropagation();
 
+            const row = this.items.find(i => i.id === rowId);
+            if (row && row.columns) {
+                const col = row.columns.find(c => c.id === columnId);
+                if (col && col.fields && col.fields.length > 0) {
+                    flash('Cada coluna pode ter apenas 1 campo. Remova o campo existente primeiro.', 'warn');
+                    this.draggedType = null;
+                    this.draggedFieldId = null;
+                    this.draggedFromCanvas = false;
+                    return;
+                }
+            }
+
             if (this.draggedType) {
                 if (this.draggedType === 'ROW') {
-                    flash('Não é possível adicionar Layout Row dentro de colunas!', 'warn');
+                    flash('Não é possível adicionar Colunas dentro de colunas!', 'warn');
                     this.draggedType = null;
                     return;
                 }
@@ -330,7 +342,7 @@ export default function formBuilderMixin() {
                     const field = this.items[fieldIndex];
 
                     if (field.itemType === 'row') {
-                        flash('Não é possível adicionar Layout Row dentro de colunas!', 'warn');
+                        flash('Não é possível adicionar Colunas dentro de colunas!', 'warn');
                         this.draggedFieldId = null;
                         this.draggedFromCanvas = false;
                         return;
@@ -681,7 +693,7 @@ export default function formBuilderMixin() {
             };
 
             const output = [];
-            let globalRowIndex = 0;
+            let currentRowIndex = 1;
 
             this.items.forEach(item => {
                 if (item.itemType === 'field') {
@@ -710,15 +722,13 @@ export default function formBuilderMixin() {
                     fieldData.is_editable = fieldData.is_editable ? 1 : 0;
                     fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
 
-                    // Campos órfãos (fora de row) não tem row_index
-                    fieldData.row_index = null;
-                    fieldData.column_size = 12;
+                    fieldData.row_index = currentRowIndex;
                     fieldData.row_size = 1;
+                    fieldData.column_size = 12;
 
                     output.push(fieldData);
+                    currentRowIndex++;
                 } else if (item.itemType === 'row' && item.columns) {
-                    const currentRowIndex = globalRowIndex++;
-                    
                     item.columns.forEach(col => {
                         if (col.fields) {
                             col.fields.forEach(field => {
@@ -747,15 +757,15 @@ export default function formBuilderMixin() {
                                 fieldData.is_editable = fieldData.is_editable ? 1 : 0;
                                 fieldData.is_searchable = fieldData.is_searchable ? 1 : 0;
 
-                                // Campos dentro de row recebem row_index, column_size e row_size
                                 fieldData.row_index = currentRowIndex;
+                                fieldData.row_size = item.columns.length;
                                 fieldData.column_size = col.width;
-                                fieldData.row_size = 1;
 
                                 output.push(fieldData);
                             });
                         }
                     });
+                    currentRowIndex++;
                 }
             });
 

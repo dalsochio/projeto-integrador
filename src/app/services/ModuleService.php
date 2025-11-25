@@ -88,6 +88,9 @@ class ModuleService
                 $columnRecord->is_visible_form = $field['is_visible_form'] ?? 1;
                 $columnRecord->is_visible_detail = 1;
                 $columnRecord->position = $columnIndex++;
+                $columnRecord->column_size = $field['column_size'] ?? 12;
+                $columnRecord->row_index = $field['row_index'] ?? null;
+                $columnRecord->row_size = $field['row_size'] ?? 1;
                 
                 if (!empty($field['foreign_table'])) {
                     $columnRecord->foreign_table = $field['foreign_table'];
