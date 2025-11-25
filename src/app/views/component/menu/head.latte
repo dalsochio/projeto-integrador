@@ -11,7 +11,7 @@
         <h2 class="hidden lg:block text-xs text-base-content/70">{$env['config']['system_short_name'] ?? 'Painel'}</h2>
     </div>
     <div class="tooltip tooltip-left absolute top-4 right-0" data-tip="Tema: Claro" id="theme-tooltip">
-        <button class="btn btn-ghost btn-xs" id="theme-toggle" onclick="event.stopPropagation();">
+        <button class="btn btn-ghost border-none btn-xs" id="theme-toggle" onclick="event.stopPropagation();">
             <span class="material-symbols-outlined" id="theme-icon">light_mode</span>
         </button>
     </div>
@@ -39,7 +39,12 @@
         themeTooltip.setAttribute('data-tip', tooltips[theme] || 'Tema: Sistema');
     }
 
-    updateThemeIcon(window.global?.theme || 'system');
+    function syncThemeIcon() {
+        updateThemeIcon(window.global?.theme || 'system');
+    }
+
+    document.addEventListener('globalVarsReady', syncThemeIcon);
+    document.addEventListener('DOMContentLoaded', syncThemeIcon);
 
     themeToggle.addEventListener('click', function(e) {
         e.preventDefault();

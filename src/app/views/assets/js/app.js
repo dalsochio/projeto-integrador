@@ -138,6 +138,8 @@ function getGlobalVars() {
     if (window.Alpine && window.Alpine.store) {
         Alpine.store('global', window.global);
     }
+
+    document.dispatchEvent(new CustomEvent('globalVarsReady'));
 }
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {

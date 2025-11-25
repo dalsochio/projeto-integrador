@@ -5,7 +5,7 @@
         <div class="flex flex-row justify-between items-center py-4">
             <div>
                 <p class="text-xl font-semibold">Minha Conta</p>
-                <p class="text-sm text-base-content/70">Gerencie suas informações pessoais e preferências</p>
+                <p class="text-sm text-base-content/70">Gerencie informações pessoais e preferências</p>
             </div>
         </div>
 
@@ -45,18 +45,17 @@
                             </div>
 
                             
-                            <div class="form-control opacity-50">
+                            <div class="form-control">
                                 <label class="label">
                                     <span class="label-text">Tema</span>
-                                    <span class="label-text-alt badge badge-sm">Em breve</span>
                                 </label>
 
-                                <div class="flex flex-col gap-2 pointer-events-none">
-                                    <label class="label cursor-not-allowed justify-start gap-3 border border-base-200 rounded-lg p-3 bg-base-200/30">
+                                <div class="flex flex-col gap-2">
+                                    <label class="label cursor-pointer justify-start gap-3 border border-base-200 rounded-lg p-3 hover:bg-base-200/30 transition-colors">
                                         <input type="radio"
                                                name="theme"
                                                value="light"
-                                               disabled
+                                               {if ($user['theme'] ?? 'system') === 'light'}checked{/if}
                                                class="radio radio-primary" />
                                         <div class="flex items-center gap-2">
                                             <span class="material-symbols-outlined">light_mode</span>
@@ -64,11 +63,11 @@
                                         </div>
                                     </label>
 
-                                    <label class="label cursor-not-allowed justify-start gap-3 border border-base-200 rounded-lg p-3 bg-base-200/30">
+                                    <label class="label cursor-pointer justify-start gap-3 border border-base-200 rounded-lg p-3 hover:bg-base-200/30 transition-colors">
                                         <input type="radio"
                                                name="theme"
                                                value="dark"
-                                               disabled
+                                               {if ($user['theme'] ?? 'system') === 'dark'}checked{/if}
                                                class="radio radio-primary" />
                                         <div class="flex items-center gap-2">
                                             <span class="material-symbols-outlined">dark_mode</span>
@@ -76,12 +75,11 @@
                                         </div>
                                     </label>
 
-                                    <label class="label cursor-not-allowed justify-start gap-3 border border-base-200 rounded-lg p-3 bg-base-200/30">
+                                    <label class="label cursor-pointer justify-start gap-3 border border-base-200 rounded-lg p-3 hover:bg-base-200/30 transition-colors">
                                         <input type="radio"
                                                name="theme"
                                                value="system"
-                                               checked
-                                               disabled
+                                               {if ($user['theme'] ?? 'system') === 'system'}checked{/if}
                                                class="radio radio-primary" />
                                         <div class="flex items-center gap-2">
                                             <span class="material-symbols-outlined">computer</span>
@@ -103,7 +101,7 @@
                 </div>
 
                 
-                <div class="card mt-4">
+                <div class="card card-border mt-4">
                     <div class="card-body">
                         <h2 class="card-title text-base flex items-center gap-2">
                             <span class="material-symbols-outlined">lock</span>

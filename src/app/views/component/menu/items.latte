@@ -14,9 +14,13 @@
         <details {if $categoryActive}open{/if}>
             <summary class="font-medium text-base">
                 {if $category['icon_type'] === 'text'}
-                    <span class="material-symbols-outlined !text-xl">{$category['icon']}</span>
+                    {if $category['icon']}
+                        <span class="material-symbols-outlined !text-2xl">{$category['icon']}</span>
+                    {else}
+                        <i class="ti ti-menu-2 !text-2xl"></i>
+                    {/if}
                 {else}
-                    <img src="{$category['icon']}" alt="{$category['name']} icon" class="w-5 h-5"/>
+                    <img src="{$category['icon']}" alt="{$category['name']} icon" class="w-6 h-6"/>
                 {/if}
                 {$category['display_name']}
             </summary>
@@ -28,9 +32,13 @@
                     <li>
                         <a href="{$itemUrl}" class="{if $isActive}menu-active{/if} text-sm">
                             {if $item['icon_type'] === 'text'}
-                                <span class="material-symbols-outlined !text-lg">{$item['icon']}</span>
+                                {if $item['icon']}
+                                    <span class="material-symbols-outlined !text-xl">{$item['icon']}</span>
+                                {else}
+                                    <i class="ti ti-point !text-xl"></i>
+                                {/if}
                             {else}
-                                <img src="{$item['icon']}" alt="{$item['name']} icon" class="w-[1.125rem] h-[1.125rem]"/>
+                                <img src="{$item['icon']}" alt="{$item['name']} icon" class="w-5 h-5"/>
                             {/if}
                             {$item['display_name']}
                         </a>
