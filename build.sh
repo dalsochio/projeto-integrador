@@ -42,6 +42,14 @@ rsync -av --exclude='node_modules' \
           --exclude='app/views/assets/css' \
           "$SRC_DIR/" "$BUILD_DIR/"
 
+echo ">> Copiando .env para o build..."
+if [ -f "$SRC_DIR/.env" ]; then
+    cp "$SRC_DIR/.env" "$BUILD_DIR/.env"
+    echo "   .env copiado com sucesso"
+else
+    echo "   AVISO: .env não encontrado em $SRC_DIR/"
+fi
+
 echo ">> Instalando dependências Composer (produção)..."
 cd "$BUILD_DIR"
 composer install --no-dev --optimize-autoloader --no-interaction
