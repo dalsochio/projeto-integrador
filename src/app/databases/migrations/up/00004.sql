@@ -1,59 +1,36 @@
--- @description Create panel_column table and insert default data
+-- @description Create panel_table table and insert default data
 
-CREATE TABLE IF NOT EXISTS `panel_column`
-(
-    `id`                 int(11)                                                                                     NOT NULL AUTO_INCREMENT,
-    `table_id`           int(11)                                                                                     NOT NULL,
-    `name`               varchar(64)                                                                                 NOT NULL COMMENT 'Nome da coluna no banco',
-    `display_name`       varchar(255)                                                                                     DEFAULT NULL COMMENT 'Nome exibido na UI',
-    `type`               enum ('INT','VARCHAR','TEXT','DATE','DATETIME','DECIMAL','TINYINT','JSON','ENUM','BOOLEAN') NOT NULL,
-    `length`             varchar(20)                                                                                      DEFAULT NULL,
-    `is_nullable`        tinyint(1)                                                                                       DEFAULT 0,
-    `default_value`      varchar(255)                                                                                     DEFAULT NULL,
-    `is_unique`          tinyint(1)                                                                                       DEFAULT 0,
-    `is_primary`         tinyint(1)                                                                                       DEFAULT 0,
-    `auto_increment`     tinyint(1)                                                                                       DEFAULT 0,
-    `comment`            text                                                                                             DEFAULT NULL COMMENT 'Comentário do banco (pode conter key:value)',
-    `foreign_table`      varchar(64)                                                                                      DEFAULT NULL,
-    `foreign_column`     varchar(64)                                                                                      DEFAULT NULL,
-    `foreign_on_delete`  enum ('CASCADE','SET NULL','RESTRICT','NO ACTION')                                               DEFAULT NULL,
-    `foreign_on_update`  enum ('CASCADE','SET NULL','RESTRICT','NO ACTION')                                               DEFAULT NULL,
-    `is_visible_list`    tinyint(1)                                                                                       DEFAULT 1 COMMENT 'Visível na listagem',
-    `is_visible_form`    tinyint(1)                                                                                       DEFAULT 1 COMMENT 'Visível no formulário',
-    `is_visible_detail`  tinyint(1)                                                                                       DEFAULT 1 COMMENT 'Visível na visualização detalhada',
-    `is_editable`        tinyint(1)                                                                                       DEFAULT 1 COMMENT 'Editável (readonly se 0)',
-    `is_searchable`      tinyint(1)                                                                                       DEFAULT 0 COMMENT 'Aparece no campo de busca',
-    `is_sortable`        tinyint(1)                                                                                       DEFAULT 1 COMMENT 'Permite ordenação na listagem',
-    `is_filterable`      tinyint(1)                                                                                       DEFAULT 0 COMMENT 'Permite filtros na listagem',
-    `input_type`         varchar(32)                                                                                      DEFAULT 'text' COMMENT 'text, textarea, select, radio, checkbox, date, datetime, file, color, wysiwyg, markdown, code',
-    `input_options`      text                                                                                             DEFAULT NULL COMMENT 'Opções para select/radio (JSON): [{"value":"1","label":"Ativo"}]',
-    `input_placeholder`  varchar(255)                                                                                     DEFAULT NULL,
-    `input_prefix`       varchar(32)                                                                                      DEFAULT NULL COMMENT 'Prefixo visual (ex: R$, @)',
-    `input_suffix`       varchar(32)                                                                                      DEFAULT NULL COMMENT 'Sufixo visual (ex: kg, %)',
-    `input_mask`         varchar(64)                                                                                      DEFAULT NULL COMMENT 'Máscara de input (ex: (99) 99999-9999)',
-    `validation_rules`   text                                                                                             DEFAULT NULL COMMENT 'Regras (JSON): {"required":true,"min":3,"max":100,"regex":"^[A-Z]"}',
-    `validation_message` text                                                                                             DEFAULT NULL COMMENT 'Mensagens customizadas (JSON): {"required":"Campo obrigatório"}',
-    `help_text`          varchar(500)                                                                                     DEFAULT NULL COMMENT 'Texto de ajuda abaixo do campo',
-    `tooltip`            varchar(255)                                                                                     DEFAULT NULL COMMENT 'Tooltip ao passar mouse',
-    `display_format`     varchar(64)                                                                                      DEFAULT NULL COMMENT 'Formato de exibição: date:d/m/Y, number:2, currency:BRL',
-    `list_template`      text                                                                                             DEFAULT NULL COMMENT 'Template customizado na listagem (HTML/Twig)',
-    `position`           int(11)                                                                                          DEFAULT 0 COMMENT 'Ordem de exibição',
-    `tab_group`          varchar(64)                                                                                      DEFAULT NULL COMMENT 'Grupo/aba do campo',
-    `column_width`       int(11)                                                                                          DEFAULT 12 COMMENT 'Largura em grid 12 colunas',
-    `created_at`         timestamp                                                                                   NULL DEFAULT current_timestamp(),
-    `created_by`         int(11)                                                                                          DEFAULT NULL,
+CREATE TABLE IF NOT EXISTS `panel_table` (
+    `id`           int(11)      NOT NULL AUTO_INCREMENT,
+    `category_id`  int(11)      NOT NULL,
+    `url_path`     varchar(255) NOT NULL,
+    `name`         varchar(64)  NOT NULL COMMENT 'Nome da tabela no banco',
+    `display_name` varchar(255)                                DEFAULT NULL COMMENT 'Nome exibido na UI',
+    `description`  text                                        DEFAULT NULL,
+    `icon`         varchar(255)                                DEFAULT NULL,
+    `icon_type`    enum('text','url')                          DEFAULT 'text',
+    `internal`     tinyint(1)   NOT NULL                       DEFAULT 0,
+    `form_layout`  enum('single','tabs','accordion','wizard')  DEFAULT 'single' COMMENT 'Layout do formulário',
+    `is_active`    tinyint(1)                                  DEFAULT 1,
+    `menu_order`   int(11)                                     DEFAULT NULL,
+    `created_at`   timestamp    NULL                           DEFAULT current_timestamp(),
+    `created_by`   int(11)                                     DEFAULT NULL,
+    `updated_at`   timestamp    NULL                           DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    `updated_by`   int(11)                                     DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `table_column` (`table_id`, `name`),
-    KEY `table_id` (`table_id`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 356
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+    UNIQUE KEY `name` (`name`),
+    UNIQUE KEY `url_path` (`url_path`),
+    KEY `category_id` (`category_id`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `panel_column`
-VALUES (263, 1, 'username', 'Nome de usuário', 'VARCHAR', '255', 1, NULL, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 1, 1,
-        1, 1, 1, 1, 0, 'text', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 12,
-        '2025-11-24 06:00:52', NULL),
-       (264, 1, 'email', 'E-mail', 'VARCHAR', '255', 0, NULL, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, 1, 1, 1,
-        0, 'text', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 12, '2025-11-24 06:00:52',
-        NULL);
+INSERT INTO `panel_table` (`id`, `category_id`, `url_path`, `name`, `display_name`, `description`, `icon`, `icon_type`, `internal`, `form_layout`, `is_active`, `menu_order`, `created_at`, `created_by`, `updated_at`, `updated_by`)
+VALUES
+    (1, 1, 'user', 'user', 'Usuários', 'Gerenciar usuários do sistema', 'group', 'text', 1, 'single', 1, 0, NOW(), NULL, NOW(), NULL),
+    (6, 2, 'module', 'panel_table', 'Módulos', 'Gerenciar módulos do sistema', 'table_chart', 'text', 1, 'single', 1, 0, NOW(), NULL, NOW(), NULL),
+    (7, 2, 'category', 'panel_category', 'Categorias', 'Gerenciar categorias de módulos', 'category', 'text', 1, 'single', 1, 2, NOW(), NULL, NOW(), NULL),
+    (8, 2, 'role', 'panel_role_info', 'Permissões', 'Gerenciar roles e permissões do sistema', 'badge', 'text', 1, 'single', 1, 3, NOW(), NULL, NOW(), NULL),
+    (21, 2, 'uploads', 'uploads', 'Uploads', 'Gerenciar uploads gerais do sistema (imagens e arquivos públicos)', 'upload_file', 'text', 1, 'single', 1, 4, NOW(), NULL, NOW(), NULL),
+    (49, 2, 'audit', 'panel_log', 'Auditoria', 'Visualizar logs de auditoria do sistema', 'shield', 'text', 1, 'single', 1, 100, NOW(), NULL, NOW(), NULL),
+    (50, 2, 'config', 'panel_config', 'Configurações', 'Configurações gerais do sistema', 'settings', 'text', 1, 'single', 1, 999, NOW(), NULL, NOW(), NULL);

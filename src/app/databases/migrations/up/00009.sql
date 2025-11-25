@@ -1,25 +1,21 @@
--- @description Create user table and insert default admin user
+-- @description Create panel_role table (Casbin) and insert default data
 
-CREATE TABLE IF NOT EXISTS `user`
-(
-    `id`         int(11)                        NOT NULL AUTO_INCREMENT,
-    `username`   varchar(255)                            DEFAULT NULL,
-    `email`      varchar(255)                   NOT NULL,
-    `password`   varchar(255)                   NOT NULL,
-    `theme`      enum ('light','dark','system') NOT NULL DEFAULT 'system',
-    `is_active`  tinyint(1)                     NOT NULL DEFAULT 1,
-    `created_at` timestamp                      NULL     DEFAULT current_timestamp(),
-    `created_by` int(11)                                 DEFAULT NULL,
-    `updated_at` timestamp                      NULL     DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-    `updated_by` int(11)                                 DEFAULT NULL,
+CREATE TABLE IF NOT EXISTS `panel_role` (
+    `id`    int(11)      NOT NULL AUTO_INCREMENT,
+    `ptype` varchar(255) NOT NULL,
+    `v0`    varchar(255)          DEFAULT NULL,
+    `v1`    varchar(255)          DEFAULT NULL,
+    `v2`    varchar(255)          DEFAULT NULL,
+    `v3`    varchar(255)          DEFAULT NULL,
+    `v4`    varchar(255)          DEFAULT NULL,
+    `v5`    varchar(255)          DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `email` (`email`),
-    UNIQUE KEY `username` (`username`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 8
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+    UNIQUE KEY `idx_casbin_unique` (`ptype`, `v0`(191), `v1`(191), `v2`(191), `v3`(191)) USING HASH
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `user`
-VALUES (1, 'admin', 'contato@example.com', '$2y$12$vFywywrdrBHtV8ijXYD9OO9IbOzXQoljGzVDdSMyCTdPKI9c1PUxi', 'system', 1,
-        '2025-10-13 03:10:55', NULL, '2025-11-24 13:37:11', NULL);
+INSERT INTO `panel_role` (`id`, `ptype`, `v0`, `v1`, `v2`, `v3`, `v4`, `v5`)
+VALUES
+    (1, 'p', 'admin', '*', '*', '*', NULL, NULL),
+    (2, 'g', 'user:1', 'admin', NULL, NULL, NULL, NULL);
