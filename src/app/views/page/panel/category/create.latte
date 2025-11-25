@@ -21,23 +21,6 @@
                     
                     <div class="form-control">
                         <label class="label">
-                            <span class="label-text">Nome técnico <span class="text-error">*</span></span>
-                        </label>
-                        <input type="text"
-                               name="name"
-                               id="category-name"
-                               placeholder="Ex: administration"
-                               class="input input-bordered w-full"
-                               oninput="updateUrlPath(this.value)"
-                               required />
-                        <label class="label">
-                            <span class="label-text-alt">Nome usado internamente no sistema</span>
-                        </label>
-                    </div>
-
-                    
-                    <div class="form-control">
-                        <label class="label">
                             <span class="label-text">Nome de exibição <span class="text-error">*</span></span>
                         </label>
                         <input type="text"
@@ -45,7 +28,11 @@
                                id="display-name"
                                placeholder="Ex: Administração"
                                class="input input-bordered w-full"
+                               oninput="updateUrlPath(this.value)"
                                required />
+                        <label class="label">
+                            <span class="label-text-alt">O nome técnico será gerado automaticamente</span>
+                        </label>
                     </div>
 
                     
@@ -141,21 +128,16 @@
     </div>
 
     <script>
-        function updateUrlPath(name) {
+        function updateUrlPath(displayName) {
             const urlInput = document.getElementById('url-path');
-            const displayNameInput = document.getElementById('display-name');
 
             if (!urlInput.value || urlInput.dataset.generated === 'true') {
-                const urlPath = name
+                const urlPath = displayName
                     .toLowerCase()
                     .replace(/[^a-z0-9]+/g, '-')
                     .replace(/^-+|-+$/g, '');
                 urlInput.value = urlPath;
                 urlInput.dataset.generated = 'true';
-            }
-
-            if (!displayNameInput.value) {
-                displayNameInput.value = name;
             }
         }
 

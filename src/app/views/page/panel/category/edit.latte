@@ -34,23 +34,6 @@
                             
                             <div class="form-control">
                                 <label class="label">
-                                    <span class="label-text">Nome técnico <span class="text-error">*</span></span>
-                                </label>
-                                <input type="text"
-                                       name="name"
-                                       value="{$category['name']}"
-                                       placeholder="Ex: administration"
-                                       class="input input-bordered w-full"
-                                       {if $category['internal']}disabled{/if}
-                                       required />
-                                <label class="label">
-                                    <span class="label-text-alt">{if $category['internal']}Campo bloqueado em categorias internas{else}Nome usado internamente no sistema{/if}</span>
-                                </label>
-                            </div>
-
-
-                            <div class="form-control">
-                                <label class="label">
                                     <span class="label-text">Nome de exibição <span class="text-error">*</span></span>
                                 </label>
                                 <input type="text"
@@ -58,7 +41,11 @@
                                        value="{$category['display_name']}"
                                        placeholder="Ex: Administração"
                                        class="input input-bordered w-full"
+                                       {if $category['internal']}disabled{/if}
                                        required />
+                                <label class="label">
+                                    <span class="label-text-alt">{if $category['internal']}Campo bloqueado em categorias internas{else}O nome técnico será gerado automaticamente{/if}</span>
+                                </label>
                             </div>
 
 

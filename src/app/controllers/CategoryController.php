@@ -7,14 +7,17 @@ use App\Records\TableRecord;
 use flight\Engine;
 use Flight;
 use Exception;
+use Cocur\Slugify\Slugify;
 
 class CategoryController
 {
     private Engine $flight;
+    private Slugify $slugify;
 
     public function __construct(Engine $flight)
     {
         $this->flight = $flight;
+        $this->slugify = new Slugify(['separator' => '_', 'lowercase' => true]);
     }
 
     public function index(): void
@@ -66,16 +69,16 @@ class CategoryController
         try {
             $data = Flight::request()->data->getData();
 
-            if (empty($data['name']) || empty($data['url_path'])) {
-                Flight::flash()->error('Campos obrigatórios não preenchidos: nome e URL são necessários.');
+            if (empty($data['display_name']) || empty($data['url_path'])) {
+                Flight::flash()->error('Campos obrigatórios não preenchidos: nome de exibição e URL são necessários.');
                 Flight::redirect('/panel/category/create');
                 return;
             }
 
             $categoryRecord = new CategoryRecord();
-            $categoryRecord->name = $data['name'];
+            $categoryRecord->name = $this->slugify->slugify($data['display_name']);
             $categoryRecord->url_path = trim($data['url_path'], '/');
-            $categoryRecord->display_name = $data['display_name'] ?? $data['name'];
+            $categoryRecord->display_name = $data['display_name'];
             $categoryRecord->description = $data['description'] ?? null;
             $categoryRecord->icon = $data['icon'] ?? null;
             $categoryRecord->icon_type = 'text';
@@ -122,8 +125,8 @@ class CategoryController
         try {
             $data = Flight::request()->data->getData();
 
-            if (empty($data['name']) || empty($data['url_path'])) {
-                Flight::flash()->error('Campos obrigatórios não preenchidos: nome e URL são necessários.');
+            if (empty($data['display_name']) || empty($data['url_path'])) {
+                Flight::flash()->error('Campos obrigatórios não preenchidos: nome de exibição e URL são necessários.');
                 Flight::redirect("/panel/category/{$id}/edit");
                 return;
             }
@@ -143,9 +146,9 @@ class CategoryController
                 return;
             }
 
-            $category->name = $data['name'];
+            $category->name = $this->slugify->slugify($data['display_name']);
             $category->url_path = trim($data['url_path'], '/');
-            $category->display_name = $data['display_name'] ?? $data['name'];
+            $category->display_name = $data['display_name'];
             $category->description = $data['description'] ?? null;
             $category->icon = $data['icon'] ?? null;
             $category->is_active = $data['is_active'] ?? 1;
