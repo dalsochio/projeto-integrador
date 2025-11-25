@@ -36,42 +36,79 @@
 
     
     {if $layout === 'single' || count($fieldsByTab) === 1}
-        <div class="grid grid-cols-12 gap-4">
+        <div class="space-y-4">
             {foreach $visibleFields as $field}
                 {var $colWidth = $field['column_width'] ?? 12}
-                <div class="col-span-12 md:col-span-{$colWidth}">
-                    
-                    {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
-                        {var $filePath = $data[$field['name']]}
-                        {var $fileUrl = '/upload/' . $filePath}
-                        <div class="mb-3 p-3 bg-base-200 rounded">
-                            <p class="text-xs font-medium mb-2">Arquivo atual:</p>
-                            {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
-                            {if file_exists($absolutePath)}
-                                {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
-                                {if $isImage}
-                                    {var $pathInfo = pathinfo($filePath)}
-                                    {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
-                                    {var $thumbUrl = '/upload/' . $thumbPath}
-                                    <a href="{$fileUrl}" target="_blank">
-                                        <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
-                                    </a>
-                                {else}
-                                    <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
-                                        <span class="material-symbols-outlined text-sm align-middle">download</span>
-                                        {basename($filePath)}
-                                    </a>
+                <div class="{if $colWidth === 12}w-full{else}grid grid-cols-12 gap-4{/if}">
+                    {if $colWidth === 12}
+                        
+                        {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
+                            {var $filePath = $data[$field['name']]}
+                            {var $fileUrl = '/upload/' . $filePath}
+                            <div class="mb-3 p-3 bg-base-200 rounded">
+                                <p class="text-xs font-medium mb-2">Arquivo atual:</p>
+                                {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+                                {if file_exists($absolutePath)}
+                                    {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+                                    {if $isImage}
+                                        {var $pathInfo = pathinfo($filePath)}
+                                        {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                        {var $thumbUrl = '/upload/' . $thumbPath}
+                                        <a href="{$fileUrl}" target="_blank">
+                                            <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
+                                        </a>
+                                    {else}
+                                        <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
+                                            <span class="material-symbols-outlined text-sm align-middle">download</span>
+                                            {basename($filePath)}
+                                        </a>
+                                    {/if}
                                 {/if}
+                                <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+                            </div>
+                        {/if}
+
+                        {include '../input/field.latte',
+                        field: $field,
+                        name: $field['name'],
+                        value: $data[$field['name']] ?? null
+                        }
+                    {else}
+                        <div class="col-span-12 md:col-span-{$colWidth}">
+                            
+                            {if ($field['input_type'] ?? '') === 'file' && !empty($data[$field['name']])}
+                                {var $filePath = $data[$field['name']]}
+                                {var $fileUrl = '/upload/' . $filePath}
+                                <div class="mb-3 p-3 bg-base-200 rounded">
+                                    <p class="text-xs font-medium mb-2">Arquivo atual:</p>
+                                    {var $absolutePath = \App\Helpers\FileUploadHelper::getAbsolutePath($filePath)}
+                                    {if file_exists($absolutePath)}
+                                        {var $isImage = str_starts_with(mime_content_type($absolutePath), 'image/')}
+                                        {if $isImage}
+                                            {var $pathInfo = pathinfo($filePath)}
+                                            {var $thumbPath = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '_thumb.' . $pathInfo['extension']}
+                                            {var $thumbUrl = '/upload/' . $thumbPath}
+                                            <a href="{$fileUrl}" target="_blank">
+                                                <img src="{$thumbUrl}" alt="Preview" class="rounded border border-base-300 max-w-[200px] hover:opacity-80 transition" />
+                                            </a>
+                                        {else}
+                                            <a href="{$fileUrl}" target="_blank" class="link link-primary text-sm">
+                                                <span class="material-symbols-outlined text-sm align-middle">download</span>
+                                                {basename($filePath)}
+                                            </a>
+                                        {/if}
+                                    {/if}
+                                    <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+                                </div>
                             {/if}
-                            <p class="text-xs text-base-content/60 mt-1">Envie um novo arquivo para substituir</p>
+
+                            {include '../input/field.latte',
+                            field: $field,
+                            name: $field['name'],
+                            value: $data[$field['name']] ?? null
+                            }
                         </div>
                     {/if}
-
-                    {include '../input/field.latte',
-                    field: $field,
-                    name: $field['name'],
-                    value: $data[$field['name']] ?? null
-                    }
                 </div>
                 {if !empty($errors[$field['name']]) > 0}
                     <span class="text-error text-sm">Erro: {$errors[$field['name']]}</span>
@@ -92,16 +129,28 @@
                        {if $tabIndex === 0}checked{/if} />
 
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                    <div class="grid grid-cols-12 gap-4">
+                    <div class="space-y-4">
                         {foreach $tabFields as $field}
                             {var $colWidth = $field['column_width'] ?? 12}
-                            <div class="col-span-12 md:col-span-{$colWidth}">
-                                {include '../input/field.latte',
-                                field: $field,
-                                name: $field['name'],
-                                value: $data[$field['name']] ?? null
-                                }
-                            </div>
+                            {if $colWidth === 12}
+                                <div class="w-full">
+                                    {include '../input/field.latte',
+                                    field: $field,
+                                    name: $field['name'],
+                                    value: $data[$field['name']] ?? null
+                                    }
+                                </div>
+                            {else}
+                                <div class="grid grid-cols-12 gap-4">
+                                    <div class="col-span-12 md:col-span-{$colWidth}">
+                                        {include '../input/field.latte',
+                                        field: $field,
+                                        name: $field['name'],
+                                        value: $data[$field['name']] ?? null
+                                        }
+                                    </div>
+                                </div>
+                            {/if}
                         {/foreach}
                     </div>
                 </div>
@@ -118,16 +167,28 @@
                     {$tabName}
                 </div>
                 <div class="collapse-content">
-                    <div class="grid grid-cols-12 gap-4 pt-4">
+                    <div class="space-y-4 pt-4">
                         {foreach $tabFields as $field}
                             {var $colWidth = $field['column_width'] ?? 12}
-                            <div class="col-span-12 md:col-span-{$colWidth}">
-                                {include '../input/field.latte',
-                                field: $field,
-                                name: $field['name'],
-                                value: $data[$field['name']] ?? null
-                                }
-                            </div>
+                            {if $colWidth === 12}
+                                <div class="w-full">
+                                    {include '../input/field.latte',
+                                    field: $field,
+                                    name: $field['name'],
+                                    value: $data[$field['name']] ?? null
+                                    }
+                                </div>
+                            {else}
+                                <div class="grid grid-cols-12 gap-4">
+                                    <div class="col-span-12 md:col-span-{$colWidth}">
+                                        {include '../input/field.latte',
+                                        field: $field,
+                                        name: $field['name'],
+                                        value: $data[$field['name']] ?? null
+                                        }
+                                    </div>
+                                </div>
+                            {/if}
                         {/foreach}
                     </div>
                 </div>
@@ -146,16 +207,28 @@
         {foreach $fieldsByTab as $tabName => $tabFields}
             <div class="wizard-step" data-step="{$stepIndex}" {if $stepIndex !== 0}style="display:none"{/if}>
                 <h3 class="text-2xl font-bold mb-4">{$tabName}</h3>
-                <div class="grid grid-cols-12 gap-4">
+                <div class="space-y-4">
                     {foreach $tabFields as $field}
                         {var $colWidth = $field['column_width'] ?? 12}
-                        <div class="col-span-12 md:col-span-{$colWidth}">
-                            {include '../input/field.latte',
-                            field: $field,
-                            name: $field['name'],
-                            value: $data[$field['name']] ?? null
-                            }
-                        </div>
+                        {if $colWidth === 12}
+                            <div class="w-full">
+                                {include '../input/field.latte',
+                                field: $field,
+                                name: $field['name'],
+                                value: $data[$field['name']] ?? null
+                                }
+                            </div>
+                        {else}
+                            <div class="grid grid-cols-12 gap-4">
+                                <div class="col-span-12 md:col-span-{$colWidth}">
+                                    {include '../input/field.latte',
+                                    field: $field,
+                                    name: $field['name'],
+                                    value: $data[$field['name']] ?? null
+                                    }
+                                </div>
+                            </div>
+                        {/if}
                     {/foreach}
                 </div>
 

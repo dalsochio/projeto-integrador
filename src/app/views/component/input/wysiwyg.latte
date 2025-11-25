@@ -58,7 +58,7 @@
         {/if}
     </label>
 
-    <div x-ref="editor" class="bg-white border border-base-300 rounded-lg min-h-[200px]">{$value}</div>
+    <div x-ref="editor" class="bg-base-100 border border-base-300 rounded-lg min-h-[200px] w-full">{$value}</div>
     <textarea x-ref="textarea" id="{$id}" name="{$name}" class="hidden" {if $isRequired}required{/if}>{$value}</textarea>
 
     {if $field['help_text']}

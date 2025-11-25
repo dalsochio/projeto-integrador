@@ -83,8 +83,7 @@ label > div:first-child:has(input:disabled):hover {
 }
 
 body {
-    
-    background-color: #f5f6f8;
+    @apply bg-base-200;
 }
 
 

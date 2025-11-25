@@ -48,7 +48,7 @@
         {/if}
     </label>
 
-    <textarea x-ref="textarea" id="{$id}" name="{$name}" {if $isRequired}required{/if}>{$value}</textarea>
+    <textarea x-ref="textarea" id="{$id}" name="{$name}" {if $isRequired}required{/if} class="w-full">{$value}</textarea>
 
     {if $field['help_text']}
         <label class="label">

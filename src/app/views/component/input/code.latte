@@ -9,30 +9,38 @@
 
 <div class="form-control w-full"
      x-data="{
-         codeMirror: null,
-         init() {
-             this.$nextTick(() => {
-                 this.codeMirror = CodeMirror.fromTextArea(this.$refs.textarea, {
-                     mode: 'javascript',
-                     theme: 'dracula',
-                     lineNumbers: true,
-                     readOnly: {if $isReadonly}true{else}false{/if},
-                     lineWrapping: true,
-                     placeholder: '{$field['input_placeholder'] ?? '// Digite seu código...'}',
-                     viewportMargin: Infinity
-                 });
-                 this.codeMirror.setSize(null, 300);
-                 
-                 // Garantir sincronização antes do submit
-                 const form = this.$el.closest('form');
-                 if (form) {
-                     form.addEventListener('submit', () => {
-                         this.codeMirror.save();
-                     });
-                 }
-             });
-         }
-     }">
+          codeMirror: null,
+          init() {
+              this.$nextTick(() => {
+                  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                  this.codeMirror = CodeMirror.fromTextArea(this.$refs.textarea, {
+                      mode: 'javascript',
+                      theme: isDark ? 'dracula' : 'default',
+                      lineNumbers: true,
+                      readOnly: {if $isReadonly}true{else}false{/if},
+                      lineWrapping: true,
+                      placeholder: '{$field['input_placeholder'] ?? '// Digite seu código...'}',
+                      viewportMargin: Infinity
+                  });
+                  this.codeMirror.setSize(null, 300);
+                  
+                  // Observar mudanças no tema
+                  const observer = new MutationObserver(() => {
+                      const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+                      this.codeMirror.setOption('theme', isDarkNow ? 'dracula' : 'default');
+                  });
+                  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+                  
+                  // Garantir sincronização antes do submit
+                  const form = this.$el.closest('form');
+                  if (form) {
+                      form.addEventListener('submit', () => {
+                          this.codeMirror.save();
+                      });
+                  }
+              });
+          }
+      }">
     <label for="{$id}" class="label">
         <span class="label-text">
             {$field['display_name'] ?? $field['name']}
@@ -47,7 +55,7 @@
         {/if}
     </label>
 
-    <textarea x-ref="textarea" id="{$id}" name="{$name}" {if $isRequired}required{/if}>{$value}</textarea>
+    <textarea x-ref="textarea" id="{$id}" name="{$name}" {if $isRequired}required{/if} class="w-full">{$value}</textarea>
 
     {if $field['help_text']}
         <label class="label">
