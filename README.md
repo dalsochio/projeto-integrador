@@ -123,6 +123,19 @@ Para hosts que só aceitam upload de arquivos (sem SSH/CLI).
 
 ### 1. Gerar o build
 
+**Antes de executar o build:**
+Configure o `.env` com os dados do ambiente de destino (banco de dados do host de produção):
+
+```env
+DB_HOST=localhost
+DB_NAME=seu_banco_producao
+DB_USER=seu_usuario_producao
+DB_PASS=sua_senha_producao
+
+APP_ENV=production
+APP_DEBUG=false
+```
+
 ```bash
 # Executa build completo e gera ZIP
 ./build.sh
