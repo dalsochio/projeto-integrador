@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Uploads (serão criados no container)
+storage/upload/*
+!storage/upload/.gitignore
+
+# Node modules (se houver)
+node_modules
+npm-debug.log
+
+# Composer
+vendor
+
+# Environment
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

@@ -1,0 +1,13 @@
+.env
+/.idea
+/src/vendor/
+/src/node_modules
+/src/public/assets/css
+/src/public/assets/js
+/src/app/storage/log/
+/src/app/storage/temp/
+/src/app/storage/upload/*
+!/src/app/storage/upload/.gitignore
+/db/
+/src/.pnpm-store/
+/.vscode/

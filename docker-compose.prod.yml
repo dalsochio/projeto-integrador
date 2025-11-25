@@ -1,0 +1,44 @@
+services:
+  methone-panel:
+    image: methone-panel-prod
+    build:
+      context: ./
+      dockerfile: docker/app/Dockerfile.prod
+    container_name: methone-panel-prod
+    hostname: methone-panel-prod
+    networks:
+      - default
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - APP_ENV=production
+    depends_on:
+      methone-panel-mariadb:
+        condition: service_healthy
+
+  methone-panel-mariadb:
+    image: mariadb
+    container_name: methone-panel-mariadb-prod
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    networks:
+      - default
+    volumes:
+      - mariadb_data:/var/lib/mysql/
+    restart: always
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: [ "CMD", "mariadb", "--user=root", "--password=${MARIADB_ROOT_PASSWORD}", "--execute", "SELECT 1;" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mariadb_data:
+
+networks:
+  default:
+    name: methone-panel-prod_default
