@@ -2,7 +2,7 @@
 
 {block panel}
     <div class="flex flex-col gap-4">
-        <div class="flex flex-row justify-between items-center">
+        <div class="flex flex-row justify-between items-center py-4">
             <div>
                 <p class="text-xl font-semibold">Detalhes do Log #{$log['id']}</p>
                 <p class="text-sm text-base-content/70">Informações detalhadas do registro de auditoria</p>
@@ -17,7 +17,7 @@
             
             <div class="lg:col-span-2 space-y-4">
                 
-                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                <div class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title text-base">
                             <span class="material-symbols-outlined">info</span>
@@ -115,7 +115,7 @@
 
             
             {if !empty($log['data_decoded'])}
-                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                <div class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title text-base">
                             <span class="material-symbols-outlined">data_object</span>
@@ -167,7 +167,7 @@
 
             
             {if !empty($log['changes_decoded'])}
-                <div class="card bg-base-100 shadow-sm border border-base-content/5">
+                <div class="card card-border">
                     <div class="card-body">
                         <h2 class="card-title text-base">
                             <span class="material-symbols-outlined">compare_arrows</span>
@@ -204,7 +204,7 @@
         
         <div class="space-y-4">
             
-            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card card-border">
                 <div class="card-body">
                     <h2 class="card-title text-base">
                         <span class="material-symbols-outlined">code</span>

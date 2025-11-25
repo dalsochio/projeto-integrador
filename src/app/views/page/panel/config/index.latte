@@ -2,7 +2,7 @@
 
 {block panel}
     <div class="flex flex-col gap-4">
-        <div class="flex flex-row justify-between items-center">
+        <div class="flex flex-row justify-between items-center py-4">
             <div>
                 <p class="text-xl font-semibold">Configurações do Sistema</p>
                 <p class="text-sm text-base-content/70">Personalize o painel administrativo</p>
@@ -11,7 +11,7 @@
 
         <div class="grid grid-cols-1 gap-4">
             
-            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card card-border">
                 <div class="card-body">
                     <h2 class="card-title text-base flex items-center gap-2">
                         <span class="material-symbols-outlined">badge</span>
@@ -58,7 +58,7 @@
                                    class="file-input file-input-bordered w-full"
                                    onchange="previewLogo(event)" />
                             <div id="logo-preview" class="mt-2 flex items-center gap-2">
-                                <img src="{$configs['logo_url'] ?? '/assets/img/methone.png'}" alt="Logo atual" class="w-12 h-12 object-contain border border-base-content/10 rounded">
+                                <img src="{$configs['logo_url'] ?? '/assets/img/methone.png'}" alt="Logo atual" class="w-12 h-12 object-contain border border-base-200 rounded">
                                 <span class="text-xs text-base-content/50">Logo atual</span>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                                    class="file-input file-input-bordered w-full"
                                    onchange="previewFavicon(event)" />
                             <div id="favicon-preview" class="mt-2 flex items-center gap-2">
-                                <img src="{$configs['favicon_url'] ?? '/assets/img/methone.png'}" alt="Favicon atual" class="w-8 h-8 object-contain border border-base-content/10 rounded">
+                                <img src="{$configs['favicon_url'] ?? '/assets/img/methone.png'}" alt="Favicon atual" class="w-8 h-8 object-contain border border-base-200 rounded">
                                 <span class="text-xs text-base-content/50">Favicon atual</span>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
             </div>
 
             
-            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card card-border">
                 <div class="card-body">
                     <h2 class="card-title text-base flex items-center gap-2">
                         <span class="material-symbols-outlined">palette</span>
@@ -161,7 +161,7 @@
             </div>
 
             
-            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card card-border">
                 <div class="card-body">
                     <h2 class="card-title text-base flex items-center gap-2">
                         <span class="material-symbols-outlined">login</span>
@@ -228,7 +228,7 @@
             </div>
 
             
-            <div class="card bg-base-100 shadow-sm border border-base-content/5">
+            <div class="card card-border">
                 <div class="card-body">
                     <h2 class="card-title text-base flex items-center gap-2">
                         <span class="material-symbols-outlined">settings</span>
@@ -338,7 +338,7 @@
             reader.onload = function(ev) {
                 const preview = document.getElementById('logo-preview');
                 preview.innerHTML = `
-                    <img src="${ ev.target.result }" alt="Preview" class="w-12 h-12 object-contain border border-base-content/10 rounded">
+                    <img src="${ ev.target.result }" alt="Preview" class="w-12 h-12 object-contain border border-base-200 rounded">
                     <span class="text-xs text-base-content/50">Novo logo (preview)</span>
                 `;
             };
@@ -353,7 +353,7 @@
             reader.onload = function(ev) {
                 const preview = document.getElementById('favicon-preview');
                 preview.innerHTML = `
-                    <img src="${ ev.target.result }" alt="Preview" class="w-8 h-8 object-contain border border-base-content/10 rounded">
+                    <img src="${ ev.target.result }" alt="Preview" class="w-8 h-8 object-contain border border-base-200 rounded">
                     <span class="text-xs text-base-content/50">Novo favicon (preview)</span>
                 `;
             };

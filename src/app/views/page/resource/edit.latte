@@ -2,7 +2,7 @@
 
 {block panel}
     <div class="flex flex-col gap-4">
-        <div class="flex flex-row items-center gap-4">
+        <div class="flex flex-row items-center gap-4 py-4">
             <a href="../" class="btn btn-ghost btn-sm">
                 <span class="material-symbols-outlined">arrow_back</span>
                 Voltar
@@ -12,7 +12,7 @@
                 <p class="text-sm text-base-content/70">{$resource['description'] ?? 'Editar registro existente'}</p>
             </div>
         </div>
-        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 p-4">
+        <div class="overflow-x-auto card card-border p-4">
             {include ../../component/shared/form.latte,
             resource: $resource,
             fields: $fields,

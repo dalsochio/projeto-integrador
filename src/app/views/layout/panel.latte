@@ -3,19 +3,50 @@
 {block content}
     <div id="panel" class="drawer lg:drawer-open bg-base-200">
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle"/>
-        <div class="drawer-content flex flex-col items-center justify-center p-2 h-screen overflow-hidden">
-            <div class="relative bg-base-100 shadow-main border border-base-200 w-full h-full rounded-selector p-4 flex flex-col gap-4">
-                <div class="flex flex-row md:gap-4 items-center">
+        <div class="drawer-content h-screen overflow-hidden p-2">
+            <div class="relative bg-base-100 border border-base-200 h-full rounded-selector flex flex-col overflow-hidden">
+                <div id="page-loading-bar" class="absolute top-0 left-0 right-0 h-1 opacity-0 transition-opacity duration-200 z-50 overflow-hidden">
+                    <div class="h-full w-full bg-primary loading-animation left-right"></div>
+                </div>
+                <div class="flex flex-row md:gap-4 items-center px-4 flex-shrink-0">
                     <label for="my-drawer-2" class="btn btn-ghost p-2 drawer-button lg:hidden">
                         <span class="material-symbols-outlined">space_dashboard</span>
                     </label>
                     
                 </div>
                 {include ../component/loading.latte}
-                <main class="max-h-full h-full min-h-full overflow-x-hidden scrollbar-thumb-rounded-box scrollbar-track-rounded-box scrollbar scrollbar-thumb-slate-500 scrollbar-hover:scrollbar-thumb-slate-700 scrollbar-track-base-100 overflow-y-auto">
+                <div 
+                    x-data="{ showTop: false, showBottom: true }"
+                    x-init="$nextTick(() => {
+                        const el = $refs.scroll;
+                        const update = () => {
+                            showTop = el.scrollTop > 10;
+                            showBottom = el.scrollTop < el.scrollHeight - el.clientHeight - 10;
+                        };
+                        el.addEventListener('scroll', update);
+                        update();
+                    })"
+                    class="relative flex-1 overflow-hidden"
+                >
+                    <div 
+                        x-show="showTop"
+                        class="absolute top-0 left-0 right-0 h-6 pointer-events-none z-10"
+                        style="background: radial-gradient(ellipse 100% 100% at 50% 0, rgba(0,0,0,.12), transparent);"
+                    ></div>
                     
-                    {block panel}{/block}
-                </main>
+                    <main 
+                        x-ref="scroll"
+                        class="h-full overflow-y-auto overflow-x-hidden px-4 pb-4 scrollbar-thumb-rounded-box scrollbar-track-rounded-box scrollbar scrollbar-thumb-slate-500 scrollbar-hover:scrollbar-thumb-slate-700 scrollbar-track-base-100"
+                    >
+                        {block panel}{/block}
+                    </main>
+                    
+                    <div 
+                        x-show="showBottom"
+                        class="absolute bottom-0 left-0 right-0 h-6 pointer-events-none z-10"
+                        style="background: radial-gradient(ellipse 100% 100% at 50% 100%, rgba(0,0,0,.12), transparent);"
+                    ></div>
+                </div>
             </div>
         </div>
         {include ../component/menu/index.latte}

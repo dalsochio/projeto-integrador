@@ -275,4 +275,78 @@ document.body.addEventListener('toast', (e) => {
     }).showToast();
 });
 
+// Page loading indicator - intercepta navegação de links
+(function() {
+    const loadingBar = document.getElementById('page-loading-bar');
+    if (!loadingBar) return;
+
+    let isNavigating = false;
+    let hideTimeout = null;
+
+    function showLoading() {
+        if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            hideTimeout = null;
+        }
+        isNavigating = true;
+        loadingBar.style.opacity = '1';
+    }
+
+    function hideLoading() {
+        hideTimeout = setTimeout(() => {
+            isNavigating = false;
+            loadingBar.style.opacity = '0';
+        }, 200);
+    }
+
+    // Intercepta cliques em links
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+        if (link.target === '_blank') return;
+        if (link.hasAttribute('download')) return;
+        
+        // Links externos
+        try {
+            const url = new URL(href, window.location.origin);
+            if (url.origin !== window.location.origin) return;
+        } catch (e) {
+            // URL relativo, continua
+        }
+
+        showLoading();
+    });
+
+    // Intercepta form submits
+    document.addEventListener('submit', (e) => {
+        if (e.target.hasAttribute('hx-post') || 
+            e.target.hasAttribute('hx-get') ||
+            e.target.hasAttribute('hx-put') ||
+            e.target.hasAttribute('hx-delete')) {
+            return; // HTMX cuida disso
+        }
+        showLoading();
+    });
+
+    // Intercepta popstate (botão voltar/avançar)
+    window.addEventListener('popstate', () => {
+        showLoading();
+    });
+
+    // Esconde quando página carrega
+    window.addEventListener('pageshow', () => {
+        hideLoading();
+    });
+
+    // Esconde se DOMContentLoaded disparar (navegação completa)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hideLoading);
+    } else {
+        hideLoading();
+    }
+})();
+
 Alpine.start()

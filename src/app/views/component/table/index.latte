@@ -7,7 +7,7 @@
 <div id="table" class="container py-4">
     {if count($table['records']) === 0}
         
-        <div class="flex flex-col items-center justify-center p-12 text-center rounded-box border border-base-content/5 bg-base-100">
+        <div class="flex flex-col items-center justify-center p-12 text-center card card-border">
             <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
             <p class="text-lg font-semibold mb-2">Nenhum registro encontrado</p>
             <p class="text-sm text-base-content/70 mb-4">Não há registros cadastrados até o momento</p>
@@ -17,7 +17,7 @@
             </a>
         </div>
     {else}
-        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <div class="overflow-x-auto card card-border">
             <table class="table">
                 <thead>
                 <tr>

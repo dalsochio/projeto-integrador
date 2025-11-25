@@ -2,18 +2,20 @@
 
 {block panel}
     <div class="flex flex-col gap-4">
-        <div class="flex flex-row justify-between">
-            <p class="text-xl font-semibold">Módulos</p>
+        <div class="flex flex-row justify-between py-4">
+            <div>
+                <p class="text-xl font-semibold">Módulos</p>
+                <p class="text-sm text-base-content/70">Gerencie os módulos e tabelas do sistema</p>
+            </div>
             <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/create" class="btn btn-primary">
                 <span class="material-symbols-outlined">add</span>
                 <p class="hidden lg:inline-block uppercase">Novo módulo</p>
             </a>
         </div>
-        <span class="text-base-content/70">Gerencie os módulos e tabelas do sistema</span>
 
         
         {if count($modules) > 0}
-            <div class="stats stats-vertical lg:stats-horizontal shadow">
+            <div class="stats stats-vertical lg:stats-horizontal border border-base-200">
                 <div class="stat">
                     <div class="stat-figure text-primary">
                         <span class="material-symbols-outlined text-4xl">table_chart</span>
@@ -47,7 +49,7 @@
             </div>
         {/if}
 
-        <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <div class="overflow-x-auto card card-border">
             {if count($modules) === 0}
                 <div class="flex flex-col items-center justify-center p-12 text-center">
                     <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>

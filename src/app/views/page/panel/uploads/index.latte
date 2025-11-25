@@ -2,7 +2,7 @@
 
 {block panel}
     <div class="flex flex-col gap-4">
-        <div class="flex flex-row justify-between">
+        <div class="flex flex-row justify-between py-4">
             <div>
                 <p class="text-xl font-semibold">Uploads Gerais</p>
                 <p class="text-sm text-base-content/70">Gerencie arquivos e uploads do sistema</p>
@@ -17,7 +17,7 @@
 
     
         {if empty($recentFiles)}
-            <div class="flex flex-col items-center justify-center p-12 text-center rounded-box border border-base-content/5 bg-base-100">
+            <div class="flex flex-col items-center justify-center p-12 text-center card card-border">
                 <span class="material-symbols-outlined text-6xl text-base-content/30 mb-4">inbox</span>
                 <p class="text-lg font-semibold mb-2">Nenhum arquivo encontrado</p>
                 <p class="text-sm text-base-content/70 mb-4">{if $canCreate}Faça o primeiro upload para começar!{/if}</p>
@@ -29,11 +29,11 @@
                 {/if}
             </div>
         {else}
-            <div class="rounded-box border border-base-content/5 bg-base-100 p-4">
+            <div class="card card-border p-4">
                 <h2 class="text-lg font-semibold mb-4">Recentes</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {foreach $recentFiles as $file}
-                    <div class="card bg-base-200 border border-base-content/5">
+                    <div class="card card-border">
                         <figure class="h-48 bg-base-300">
                             {if $file['isImage']}
                                 <img src="{$file['url']}" alt="{$file['filename']}" class="object-contain w-full h-full"/>
@@ -75,7 +75,7 @@
         {/if}
 
         
-        <div class="rounded-box border border-base-content/5 bg-base-100 p-4">
+        <div class="card card-border p-4">
             <h2 class="text-lg font-semibold mb-4">Navegar por Data</h2>
             <div id="folder-browser">
                 <p class="text-base-content/50">Carregando estrutura de pastas...</p>
@@ -167,10 +167,10 @@ browserEl.innerHTML = '<p class="text-error">Erro ao carregar estrutura de pasta
                 
                 monthData.days.forEach(dayData => {
                     html += '<button onclick="loadDayFiles(\'' + dayData.path + '\')" ';
-                    html += 'class="btn btn-sm btn-outline" ';
+                    html += 'class="btn btn-sm btn-ghost bg-base-100 hover:bg-base-200" ';
                     html += 'title="' + dayData.fileCount + ' arquivo(s)">';
                     html += dayData.day;
-                    html += '<span class="badge badge-xs">' + dayData.fileCount + '</span>';
+                    html += '<span class="badge badge-xs badge-primary">' + dayData.fileCount + '</span>';
                     html += '</button>';
                 });
                 
@@ -226,7 +226,7 @@ dayFilesEl.innerHTML = '<p class="text-error">Erro ao carregar arquivos.</p>';
         html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">';
         
         files.forEach(file => {
-            html += '<div class="card bg-base-200 border border-base-content/5">';
+            html += '<div class="card card-border">';
             html += '<figure class="h-48 bg-base-300">';
             
             if (file.isImage) {
