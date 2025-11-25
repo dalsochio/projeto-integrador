@@ -493,19 +493,30 @@
 
             
             <template x-if="selectedItemId && selectedItemType === 'field'">
-                <div class="flex flex-col gap-3" x-data="{ get selectedField() { return findField(selectedItemId) } }">
-                    <div class="form-control">
+                <div class="flex flex-col gap-3" x-data="{ 
+                    get selectedField() { return findField(selectedItemId) },
+                    get hideNameField() { return this.selectedField?.type === 'STATUS' },
+                    get hidePlaceholder() { return ['STATUS', 'TOGGLE', 'BOOLEAN', 'FILE', 'COLOR', 'DATE', 'DATETIME', 'CHECKBOX', 'RADIO', 'REFERENCE_RADIO', 'WYSIWYG', 'MARKDOWN', 'CODE'].includes(this.selectedField?.type) },
+                    get hidePrefixSuffix() { return ['STATUS', 'TOGGLE', 'BOOLEAN', 'FILE', 'COLOR', 'DATE', 'DATETIME', 'SELECT', 'RADIO', 'CHECKBOX', 'REFERENCE_SELECT', 'REFERENCE_RADIO', 'WYSIWYG', 'MARKDOWN', 'CODE', 'TAGS', 'TEXT'].includes(this.selectedField?.type) }
+                }">
+                    <div class="form-control" x-show="!hideNameField">
                         <label class="label"><span class="label-text font-medium">Nome de Exibição</span></label>
                         <input type="text" class="input input-sm input-bordered" x-model="selectedField.display_name">
                         <label class="label"><span class="label-text-alt">Nome que será exibido para o usuário</span></label>
                     </div>
 
-                    <div class="form-control">
+                    <div class="form-control" x-show="hideNameField">
+                        <label class="label"><span class="label-text font-medium">Nome de Exibição</span></label>
+                        <input type="text" class="input input-sm input-bordered" value="Status" disabled>
+                        <label class="label"><span class="label-text-alt">O campo Status tem nome fixo</span></label>
+                    </div>
+
+                    <div class="form-control" x-show="!hidePlaceholder">
                         <label class="label"><span class="label-text font-medium">Placeholder</span></label>
                         <input type="text" class="input input-sm input-bordered" x-model="selectedField.input_placeholder">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-2 gap-2" x-show="!hidePrefixSuffix">
                         <div class="form-control">
                             <label class="label"><span class="label-text font-medium">Prefixo</span></label>
                             <input type="text" class="input input-sm input-bordered" x-model="selectedField.input_prefix" placeholder="R$, @">

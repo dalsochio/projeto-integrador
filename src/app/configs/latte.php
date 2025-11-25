@@ -2,6 +2,7 @@
 
 namespace App\Configs;
 
+use App\Helpers\ConfigHelper;
 use App\Helpers\MenuHelper;
 use App\Helpers\Utility;
 use Dom\HTMLDocument;
@@ -34,6 +35,35 @@ Flight::app()->register('latte', LatteEngine::class, [], function (LatteEngine $
 
     $latte->addFilter('json', function ($value) {
         return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    });
+
+    // Filtro para formatar data usando config do sistema
+    $latte->addFilter('formatDate', function ($value) {
+        if (empty($value)) {
+            return '';
+        }
+        $format = ConfigHelper::get('date_format', 'd/m/Y');
+        $timestamp = is_numeric($value) ? $value : strtotime($value);
+        return date($format, $timestamp);
+    });
+
+    // Filtro para formatar data e hora usando config do sistema
+    $latte->addFilter('formatDateTime', function ($value) {
+        if (empty($value)) {
+            return '';
+        }
+        $format = ConfigHelper::get('date_format', 'd/m/Y') . ' H:i';
+        $timestamp = is_numeric($value) ? $value : strtotime($value);
+        return date($format, $timestamp);
+    });
+
+    // Filtro para formatar apenas hora
+    $latte->addFilter('formatTime', function ($value) {
+        if (empty($value)) {
+            return '';
+        }
+        $timestamp = is_numeric($value) ? $value : strtotime($value);
+        return date('H:i', $timestamp);
     });
 });
 

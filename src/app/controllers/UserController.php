@@ -25,6 +25,33 @@ class UserController
             ->orderBy('is_active DESC, username ASC')
             ->findAllToArray();
 
+        // Coletar IDs únicos de usuários para enriquecer created_by e updated_by
+        $userIds = [];
+        foreach ($users as $user) {
+            if (!empty($user['created_by'])) {
+                $userIds[] = (int)$user['created_by'];
+            }
+            if (!empty($user['updated_by'])) {
+                $userIds[] = (int)$user['updated_by'];
+            }
+        }
+        $userIds = array_unique($userIds);
+
+        // Buscar dados dos usuários para enriquecimento
+        $usersMap = [];
+        if (!empty($userIds)) {
+            $userRecordLookup = new UserRecord();
+            $lookupUsers = $userRecordLookup->select('id', 'username', 'email')->findAll();
+            foreach ($lookupUsers as $lookupUser) {
+                if (in_array((int)$lookupUser->id, $userIds)) {
+                    $usersMap[$lookupUser->id] = [
+                        'username' => $lookupUser->username,
+                        'email' => $lookupUser->email
+                    ];
+                }
+            }
+        }
+
         $enforcer = Flight::casbin();
         foreach ($users as &$user) {
             $roles = $enforcer->getRolesForUser("user:{$user['id']}");
@@ -34,6 +61,16 @@ class UserController
             }
             $user['roles'] = $cleanRoles;
             $user['roles_count'] = count($user['roles']);
+
+            // Enriquecer com dados do usuário criador/atualizador
+            if (!empty($user['created_by']) && isset($usersMap[$user['created_by']])) {
+                $user['created_by_name'] = $usersMap[$user['created_by']]['username'];
+                $user['created_by_email'] = $usersMap[$user['created_by']]['email'];
+            }
+            if (!empty($user['updated_by']) && isset($usersMap[$user['updated_by']])) {
+                $user['updated_by_name'] = $usersMap[$user['updated_by']]['username'];
+                $user['updated_by_email'] = $usersMap[$user['updated_by']]['email'];
+            }
         }
 
         Flight::render('page/user/index.latte', [
@@ -99,6 +136,8 @@ class UserController
             $user->email = $data['email'];
             $user->password = password_hash($data['password'], PASSWORD_DEFAULT);
             $user->is_active = $data['is_active'] ?? 1;
+            $user->created_by = $_SESSION['user']['id'] ?? null;
+            $user->updated_by = $_SESSION['user']['id'] ?? null;
             $user->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('user', 'create', $user->id, $data);
@@ -205,6 +244,7 @@ class UserController
             }
 
             $user->is_active = $data['is_active'] ?? 1;
+            $user->updated_by = $_SESSION['user']['id'] ?? null;
             $user->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('user', 'update', $user->id, $data);
@@ -238,6 +278,7 @@ class UserController
             }
 
             $user->is_active = $user->is_active ? 0 : 1;
+            $user->updated_by = $_SESSION['user']['id'] ?? null;
             $user->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('user', 'update', $user->id, ['is_active' => $user->is_active]);

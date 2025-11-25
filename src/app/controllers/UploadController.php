@@ -213,7 +213,7 @@ class UploadController
                     'size' => $file->getSize(),
                     'sizeFormatted' => $this->formatBytes($file->getSize()),
                     'date' => $file->getMTime(),
-                    'dateFormatted' => date('d/m/Y H:i', $file->getMTime()),
+                    'dateFormatted' => date(\App\Helpers\ConfigHelper::get('date_format', 'd/m/Y') . ' H:i', $file->getMTime()),
                     'extension' => $extension,
                     'isImage' => $isImage,
                 ];
@@ -295,7 +295,7 @@ class UploadController
                     'size' => $file->getSize(),
                     'sizeFormatted' => $this->formatBytes($file->getSize()),
                     'date' => $file->getMTime(),
-                    'dateFormatted' => date('d/m/Y H:i', $file->getMTime()),
+                    'dateFormatted' => date(\App\Helpers\ConfigHelper::get('date_format', 'd/m/Y') . ' H:i', $file->getMTime()),
                     'extension' => $extension,
                     'isImage' => $isImage,
                 ];

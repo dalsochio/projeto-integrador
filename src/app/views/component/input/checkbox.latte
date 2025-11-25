@@ -66,7 +66,7 @@
 {else}
     {* Checkbox simples (boolean) *}
     <div class="form-control w-full">
-        <label class="label">
+        <label for="{$id}" class="label">
             <span class="label-text">
                 {$field['display_name'] ?? $field['name']}
                 {if $field['tooltip'] ?? null}
@@ -79,7 +79,7 @@
             </span>
         </label>
 
-        <label for="{$id}" class="label cursor-pointer justify-start gap-4">
+        <div class="flex items-center gap-3">
             {if !$checked}
                 <input type="hidden" name="{$name}" value="0" class="checkbox-hidden-{$id}" />
             {/if}
@@ -106,7 +106,7 @@
                     "
                    class="checkbox" />
             <span class="label-text">Sim/Não</span>
-        </label>
+        </div>
 
         {if $field['help_text'] ?? null}
             <label class="label">

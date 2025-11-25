@@ -191,7 +191,7 @@ class ApiHelper extends Api
     {
         $this->tableName = $tableName;
 
-        $perPage = 10;
+        $perPage = (int) ConfigHelper::get('items_per_page', '10');
         $page = 1;
         $params = Flight::request()->query->getData();
 
@@ -282,7 +282,7 @@ class ApiHelper extends Api
         return $fields;
     }
     
-    private function getForeignTableOptions(string $tableName, string $displayColumn): string
+    protected function getForeignTableOptions(string $tableName, string $displayColumn): string
     {
         try {
             $apiUrl = '/api/records/' . $tableName;

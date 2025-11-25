@@ -31,13 +31,44 @@ class CategoryController
             ->orderBy('panel_category.menu_order ASC, panel_category.display_name ASC')
             ->findAllToArray();
 
+        // Coletar IDs únicos de usuários para enriquecer
+        $userIds = [];
+        foreach ($categories as $category) {
+            if (!empty($category['created_by'])) {
+                $userIds[] = (int)$category['created_by'];
+            }
+            if (!empty($category['updated_by'])) {
+                $userIds[] = (int)$category['updated_by'];
+            }
+        }
+        $userIds = array_unique($userIds);
+
+        // Buscar dados dos usuários
+        $usersMap = [];
+        if (!empty($userIds)) {
+            $userRecord = new \App\Records\UserRecord();
+            $users = $userRecord->select('id', 'username', 'email')->findAll();
+            foreach ($users as $user) {
+                if (in_array((int)$user->id, $userIds)) {
+                    $usersMap[$user->id] = [
+                        'username' => $user->username,
+                        'email' => $user->email
+                    ];
+                }
+            }
+        }
+
         foreach ($categories as &$category) {
             $canDelete = true;
             $deleteReason = '';
+            $canEdit = true;
+            $editReason = '';
 
             if ($category['internal']) {
                 $canDelete = false;
                 $deleteReason = 'Categorias internas não podem ser deletadas';
+                $canEdit = false;
+                $editReason = 'Categorias internas não podem ser editadas';
             } elseif ($category['module_count'] > 0) {
                 $canDelete = false;
                 $deleteReason = "Esta categoria possui {$category['module_count']} módulo" . ($category['module_count'] > 1 ? 's' : '');
@@ -45,6 +76,18 @@ class CategoryController
 
             $category['can_delete'] = $canDelete;
             $category['delete_reason'] = $deleteReason;
+            $category['can_edit'] = $canEdit;
+            $category['edit_reason'] = $editReason;
+
+            // Enriquecer com dados do usuário
+            if (!empty($category['created_by']) && isset($usersMap[$category['created_by']])) {
+                $category['created_by_name'] = $usersMap[$category['created_by']]['username'];
+                $category['created_by_email'] = $usersMap[$category['created_by']]['email'];
+            }
+            if (!empty($category['updated_by']) && isset($usersMap[$category['updated_by']])) {
+                $category['updated_by_name'] = $usersMap[$category['updated_by']]['username'];
+                $category['updated_by_email'] = $usersMap[$category['updated_by']]['email'];
+            }
         }
 
         Flight::render('page/panel/category/index.latte', [
@@ -84,6 +127,8 @@ class CategoryController
             $categoryRecord->icon_type = 'text';
             $categoryRecord->is_active = $data['is_active'] ?? 1;
             $categoryRecord->menu_order = $data['menu_order'] ?? 0;
+            $categoryRecord->created_by = $_SESSION['user']['id'] ?? null;
+            $categoryRecord->updated_by = $_SESSION['user']['id'] ?? null;
             $categoryRecord->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_category', 'create', $categoryRecord->id, $data);
@@ -107,6 +152,12 @@ class CategoryController
             return;
         }
 
+        if ($category->internal) {
+            Flight::flash()->error('Categorias internas não podem ser editadas.');
+            Flight::redirect('/');
+            return;
+        }
+
         $tableRecord = new TableRecord();
         $modules = $tableRecord
             ->equal('category_id', (int)$id)
@@ -123,14 +174,6 @@ class CategoryController
     public function update(string $id): void
     {
         try {
-            $data = Flight::request()->data->getData();
-
-            if (empty($data['display_name']) || empty($data['url_path'])) {
-                Flight::flash()->error('Campos obrigatórios não preenchidos: nome de exibição e URL são necessários.');
-                Flight::redirect("/panel/category/{$id}/edit");
-                return;
-            }
-
             $categoryRecord = new CategoryRecord();
             $category = $categoryRecord->equal('id', (int)$id)->find();
 
@@ -141,7 +184,15 @@ class CategoryController
             }
 
             if ($category->internal) {
-                Flight::flash()->error('Categorias internas não podem ter nome ou URL alterados.');
+                Flight::flash()->error('Categorias internas não podem ser editadas.');
+                Flight::redirect('/');
+                return;
+            }
+
+            $data = Flight::request()->data->getData();
+
+            if (empty($data['display_name']) || empty($data['url_path'])) {
+                Flight::flash()->error('Campos obrigatórios não preenchidos: nome de exibição e URL são necessários.');
                 Flight::redirect("/panel/category/{$id}/edit");
                 return;
             }
@@ -153,6 +204,7 @@ class CategoryController
             $category->icon = $data['icon'] ?? null;
             $category->is_active = $data['is_active'] ?? 1;
             $category->menu_order = $data['menu_order'] ?? 0;
+            $category->updated_by = $_SESSION['user']['id'] ?? null;
             $category->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_category', 'update', $category->id, $data);
@@ -191,8 +243,10 @@ class CategoryController
                 $module = $tableRecord->equal('id', (int)$moduleId)->find();
                 if ($module->isHydrated()) {
                     $module->menu_order = $order;
+                    $module->updated_by = $_SESSION['user']['id'] ?? null;
                     $module->save();
                 }
+                $tableRecord = new TableRecord();
             }
 
             Flight::flash()->success('Ordem dos módulos atualizada com sucesso!');

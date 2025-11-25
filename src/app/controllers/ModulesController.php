@@ -35,11 +35,51 @@ class ModulesController
             ->orderBy('panel_category.display_name ASC, panel_table.display_name ASC')
             ->findAllToArray();
 
+        // Coletar IDs únicos de usuários para enriquecer
+        $userIds = [];
+        foreach ($modules as $module) {
+            if (!empty($module['created_by'])) {
+                $userIds[] = (int)$module['created_by'];
+            }
+            if (!empty($module['updated_by'])) {
+                $userIds[] = (int)$module['updated_by'];
+            }
+        }
+        $userIds = array_unique($userIds);
+
+        // Buscar dados dos usuários
+        $usersMap = [];
+        if (!empty($userIds)) {
+            $userRecord = new \App\Records\UserRecord();
+            $users = $userRecord->select('id', 'username', 'email')->findAll();
+            foreach ($users as $user) {
+                if (in_array((int)$user->id, $userIds)) {
+                    $usersMap[$user->id] = [
+                        'username' => $user->username,
+                        'email' => $user->email
+                    ];
+                }
+            }
+        }
+
         foreach ($modules as &$module) {
             $canDelete = $this->canDeleteModule($module);
             $module['can_delete'] = $canDelete['can_delete'];
             $module['delete_reason'] = $canDelete['reason'];
             $module['record_count'] = $canDelete['record_count'];
+            
+            $module['can_edit'] = !$module['internal'];
+            $module['edit_reason'] = $module['internal'] ? 'Módulos internos não podem ser editados' : '';
+
+            // Enriquecer com dados do usuário
+            if (!empty($module['created_by']) && isset($usersMap[$module['created_by']])) {
+                $module['created_by_name'] = $usersMap[$module['created_by']]['username'];
+                $module['created_by_email'] = $usersMap[$module['created_by']]['email'];
+            }
+            if (!empty($module['updated_by']) && isset($usersMap[$module['updated_by']])) {
+                $module['updated_by_name'] = $usersMap[$module['updated_by']]['username'];
+                $module['updated_by_email'] = $usersMap[$module['updated_by']]['email'];
+            }
         }
 
         Flight::render('page/panel/module/index.latte', [
@@ -357,6 +397,12 @@ class ModulesController
             return;
         }
 
+        if ($module->internal) {
+            Flight::flash()->error('Módulos internos não podem ser editados.');
+            Flight::redirect('/');
+            return;
+        }
+
         $categoryRecord = new CategoryRecord();
         $categories = $categoryRecord->orderBy('display_name ASC')->findAllToArray();
 
@@ -449,17 +495,6 @@ class ModulesController
     public function update(string $id): void
     {
         try {
-            $input = file_get_contents('php://input');
-            $data = json_decode($input, true);
-
-            if (empty($data['category_id']) || empty($data['name']) || empty($data['url'])) {
-                Flight::json([
-                    'success' => false,
-                    'message' => 'Campos obrigatórios não preenchidos: categoria, nome e URL são necessários.'
-                ], 400);
-                return;
-            }
-
             $tableRecord = new TableRecord();
             $module = $tableRecord->equal('id', (int)$id)->find();
 
@@ -472,13 +507,20 @@ class ModulesController
             }
 
             if ($module->internal) {
-                if ((int)$data['category_id'] !== (int)$module->category_id || trim($data['url'], '/') !== $module->url_path) {
-                    Flight::json([
-                        'success' => false,
-                        'message' => 'Módulos internos não podem ter categoria ou URL alterados.'
-                    ], 403);
-                    return;
-                }
+                Flight::flash()->error('Módulos internos não podem ser editados.');
+                Flight::redirect('/');
+                return;
+            }
+
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+
+            if (empty($data['category_id']) || empty($data['name']) || empty($data['url'])) {
+                Flight::json([
+                    'success' => false,
+                    'message' => 'Campos obrigatórios não preenchidos: categoria, nome e URL são necessários.'
+                ], 400);
+                return;
             }
 
             $categoryRecord = new CategoryRecord();
@@ -503,6 +545,7 @@ class ModulesController
             $module->description = $data['description'] ?? null;
             $module->icon = $data['icon'] ?? 'table_chart';
             $module->is_active = $data['is_active'] ? 1 : 0;
+            $module->updated_by = $_SESSION['user']['id'] ?? null;
             $module->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_table', 'update', $id, $data);

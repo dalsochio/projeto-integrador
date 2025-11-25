@@ -165,15 +165,18 @@
                                 </td>
                                 <td>
                                     <div class="text-sm">
-                                        {$userItem['created_at']|date:'d/m/Y'}
+                                        {$userItem['created_at']|formatDate}
                                     </div>
                                     <div class="text-xs opacity-60">
-                                        {$userItem['created_at']|date:'H:i'}
+                                        {$userItem['created_at']|formatTime}
                                     </div>
                                 </td>
                                 <td>
                                     {if !empty($userItem['created_by_name'])}
-                                        <span class="text-sm">{$userItem['created_by_name']}</span>
+                                        <div class="text-sm">{$userItem['created_by_name']}</div>
+                                        {if !empty($userItem['created_by_email'])}
+                                            <div class="text-xs text-base-content/50">{$userItem['created_by_email']}</div>
+                                        {/if}
                                     {elseif !empty($userItem['created_by'])}
                                         <code class="text-xs text-base-content/60">ID: {$userItem['created_by']}</code>
                                     {else}
@@ -183,10 +186,10 @@
                                 <td>
                                     {if !empty($userItem['updated_at'])}
                                         <div class="text-sm">
-                                            {$userItem['updated_at']|date:'d/m/Y'}
+                                            {$userItem['updated_at']|formatDate}
                                         </div>
                                         <div class="text-xs opacity-60">
-                                            {$userItem['updated_at']|date:'H:i'}
+                                            {$userItem['updated_at']|formatTime}
                                         </div>
                                     {else}
                                         <span class="text-base-content/40">-</span>
@@ -194,7 +197,10 @@
                                 </td>
                                 <td>
                                     {if !empty($userItem['updated_by_name'])}
-                                        <span class="text-sm">{$userItem['updated_by_name']}</span>
+                                        <div class="text-sm">{$userItem['updated_by_name']}</div>
+                                        {if !empty($userItem['updated_by_email'])}
+                                            <div class="text-xs text-base-content/50">{$userItem['updated_by_email']}</div>
+                                        {/if}
                                     {elseif !empty($userItem['updated_by'])}
                                         <code class="text-xs text-base-content/60">ID: {$userItem['updated_by']}</code>
                                     {else}

@@ -8,7 +8,7 @@
 {var $isReadonly = !$field['is_editable']}
 
 <div class="form-control w-full">
-    <label class="label">
+    <label for="{$id}" class="label">
         <span class="label-text">
             {$field['display_name'] ?? $field['name']}
             {if $field['tooltip'] ?? null}
@@ -21,7 +21,7 @@
         </span>
     </label>
 
-    <label for="{$id}" class="label cursor-pointer justify-start gap-4">
+    <div class="flex items-center gap-3">
         <input type="hidden" name="{$name}" value="0" />
 
         <input type="checkbox"
@@ -33,7 +33,7 @@
                n:attr="$attributes"
                class="toggle toggle-primary" />
         <span class="label-text">Ativar</span>
-    </label>
+    </div>
 
     {if $field['help_text'] ?? null}
         <label class="label">

@@ -46,6 +46,8 @@ class ModuleService
             $tableRecord->is_active = $moduleData['is_active'] ?? 1;
             $tableRecord->internal = 0;
             $tableRecord->menu_order = $moduleData['menu_order'] ?? 0;
+            $tableRecord->created_by = $_SESSION['user']['id'] ?? null;
+            $tableRecord->updated_by = $_SESSION['user']['id'] ?? null;
             $tableRecord->insert();
             
             $moduleId = $tableRecord->id;
@@ -225,6 +227,8 @@ class ModuleService
             $tableRecord->is_active = $moduleData['is_active'] ?? 1;
             $tableRecord->internal = 0;
             $tableRecord->menu_order = $moduleData['menu_order'] ?? 0;
+            $tableRecord->created_by = $_SESSION['user']['id'] ?? null;
+            $tableRecord->updated_by = $_SESSION['user']['id'] ?? null;
             $tableRecord->insert();
             
             $moduleId = $tableRecord->id;

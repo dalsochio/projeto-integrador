@@ -509,11 +509,14 @@ export default function formBuilderMixin() {
             }
 
             const fieldNumber = this.getTotalFieldsCount() + 1;
+            
+            // Campo Status tem nome fixo
+            const displayName = type === 'STATUS' ? 'Status' : `Campo ${fieldNumber}`;
 
             const field = {
                 id: `field_${++this.fieldCounter}`,
                 itemType: 'field',
-                display_name: `Campo ${fieldNumber}`,
+                display_name: displayName,
                 type: type,
                 length: defaultLength,
                 is_nullable: true,

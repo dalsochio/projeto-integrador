@@ -202,9 +202,9 @@
                                             <span class="flex items-center gap-2">
                                                 <span translate="no" class="material-symbols-outlined text-base-content/50 text-sm">calendar_today</span>
                                                 {if $inputType === 'date'}
-                                                    {$fieldValue|date:'d/m/Y'}
+                                                    {$fieldValue|formatDate}
                                                 {else}
-                                                    {$fieldValue|date:'d/m/Y H:i'}
+                                                    {$fieldValue|formatDateTime}
                                                 {/if}
                                             </span>
                                         
@@ -263,7 +263,7 @@
                         <div class="flex items-center gap-1 mt-1">
                             <span translate="no" class="material-symbols-outlined text-base-content/40 text-sm">calendar_today</span>
                             {if $data['created_at'] ?? null}
-                                {$data['created_at']|date:'d/m/Y H:i'}
+                                {$data['created_at']|formatDateTime}
                             {else}
                                 <span class="text-base-content/40">-</span>
                             {/if}
@@ -292,7 +292,7 @@
                         <div class="flex items-center gap-1 mt-1">
                             <span translate="no" class="material-symbols-outlined text-base-content/40 text-sm">update</span>
                             {if $data['updated_at'] ?? null}
-                                {$data['updated_at']|date:'d/m/Y H:i'}
+                                {$data['updated_at']|formatDateTime}
                             {else}
                                 <span class="text-base-content/40">-</span>
                             {/if}

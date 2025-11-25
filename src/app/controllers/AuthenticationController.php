@@ -13,7 +13,10 @@ class AuthenticationController
     {
 
         Flight::render('page/login.latte', [
-            'title' => 'Login'
+            'title' => 'Login',
+            'configs' => [
+                'allow_registration' => \App\Helpers\ConfigHelper::get('allow_registration', '1')
+            ]
         ]);
 
     }
@@ -68,7 +71,10 @@ class AuthenticationController
 
                 Flight::render('component/login-form.latte', [
                     'error' => 'Credenciais inválidas! Verifique seu usuário e senha.',
-                    'login' => $login
+                    'login' => $login,
+                    'configs' => [
+                        'allow_registration' => \App\Helpers\ConfigHelper::get('allow_registration', '1')
+                    ]
                 ]);
                 return;
             }
@@ -84,7 +90,10 @@ class AuthenticationController
 
             Flight::render('component/login-form.latte', [
                 'error' => 'Credenciais inválidas! Verifique seu usuário e senha.',
-                'login' => $login
+                'login' => $login,
+                'configs' => [
+                    'allow_registration' => \App\Helpers\ConfigHelper::get('allow_registration', '1')
+                ]
             ]);
             return;
         }

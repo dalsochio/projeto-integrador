@@ -163,7 +163,7 @@
                         <div class="space-y-2 text-sm">
                             <div>
                                 <span class="font-semibold">Criado em:</span>
-                                <span class="ml-2">{$module['created_at']|date:'d/m/Y H:i'}</span>
+                                <span class="ml-2">{$module['created_at']|formatDateTime}</span>
                             </div>
                             {if $createdByUser}
                                 <div>
@@ -174,7 +174,7 @@
                             {if $module['updated_at']}
                                 <div>
                                     <span class="font-semibold">Atualizado em:</span>
-                                    <span class="ml-2">{$module['updated_at']|date:'d/m/Y H:i'}</span>
+                                    <span class="ml-2">{$module['updated_at']|formatDateTime}</span>
                                 </div>
                             {/if}
                             {if $updatedByUser}

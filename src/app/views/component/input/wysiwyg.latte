@@ -10,9 +10,16 @@
 <div class="form-control w-full" 
      x-data="{ 
          quillEditor: null,
+         decodeHtml(html) {
+             const txt = document.createElement('textarea');
+             txt.innerHTML = html;
+             return txt.value;
+         },
          init() {
              this.$nextTick(() => {
                  const editorDiv = this.$refs.editor;
+                 const initialHtml = this.$refs.textarea.value;
+                 
                  this.quillEditor = new Quill(editorDiv, {
                      theme: 'snow',
                      readOnly: {if $isReadonly}true{else}false{/if},
@@ -28,6 +35,12 @@
                          ]
                      }
                  });
+                 
+                 // Carregar conteúdo inicial decodificando HTML entities
+                 if (initialHtml && initialHtml.trim()) {
+                     const decodedHtml = this.decodeHtml(initialHtml);
+                     this.quillEditor.root.innerHTML = decodedHtml;
+                 }
                  
                  // Sincronizar com textarea hidden em tempo real
                  this.quillEditor.on('text-change', () => {
@@ -58,8 +71,8 @@
         {/if}
     </label>
 
-    <div x-ref="editor" class="bg-base-100 border border-base-300 rounded-lg min-h-[200px] w-full">{$value}</div>
-    <textarea x-ref="textarea" id="{$id}" name="{$name}" class="hidden" {if $isRequired}required{/if}>{$value}</textarea>
+    <div x-ref="editor" class="bg-base-100 border border-base-300 rounded-lg min-h-[200px] w-full"></div>
+    <textarea x-ref="textarea" id="{$id}" name="{$name}" class="hidden" {if $isRequired}required{/if}>{$value|noescape}</textarea>
 
     {if $field['help_text'] ?? null}
         <label class="label">

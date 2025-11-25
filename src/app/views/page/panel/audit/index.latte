@@ -138,7 +138,7 @@
                             {foreach $logs as $logItem}
                                 <tr class="hover">
                                     <td class="font-mono text-xs">
-                                        {$logItem['created_at']|date:'d/m/Y H:i:s'}
+                                        {$logItem['created_at']|formatDateTime}:{$logItem['created_at']|date:'s'}
                                     </td>
                                     <td>
                                         <div class="flex items-center gap-2">

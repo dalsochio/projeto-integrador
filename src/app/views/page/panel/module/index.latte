@@ -187,15 +187,18 @@
                                 </td>
                                 <td>
                                     <div class="text-sm">
-                                        {$module['created_at']|date:'d/m/Y'}
+                                        {$module['created_at']|formatDate}
                                     </div>
                                     <div class="text-xs opacity-60">
-                                        {$module['created_at']|date:'H:i'}
+                                        {$module['created_at']|formatTime}
                                     </div>
                                 </td>
                                 <td>
                                     {if !empty($module['created_by_name'])}
-                                        <span class="text-sm">{$module['created_by_name']}</span>
+                                        <div class="text-sm">{$module['created_by_name']}</div>
+                                        {if !empty($module['created_by_email'])}
+                                            <div class="text-xs text-base-content/50">{$module['created_by_email']}</div>
+                                        {/if}
                                     {elseif !empty($module['created_by'])}
                                         <code class="text-xs text-base-content/60">ID: {$module['created_by']}</code>
                                     {else}
@@ -205,10 +208,10 @@
                                 <td>
                                     {if !empty($module['updated_at'])}
                                         <div class="text-sm">
-                                            {$module['updated_at']|date:'d/m/Y'}
+                                            {$module['updated_at']|formatDate}
                                         </div>
                                         <div class="text-xs opacity-60">
-                                            {$module['updated_at']|date:'H:i'}
+                                            {$module['updated_at']|formatTime}
                                         </div>
                                     {else}
                                         <span class="text-base-content/40">-</span>
@@ -216,7 +219,10 @@
                                 </td>
                                 <td>
                                     {if !empty($module['updated_by_name'])}
-                                        <span class="text-sm">{$module['updated_by_name']}</span>
+                                        <div class="text-sm">{$module['updated_by_name']}</div>
+                                        {if !empty($module['updated_by_email'])}
+                                            <div class="text-xs text-base-content/50">{$module['updated_by_email']}</div>
+                                        {/if}
                                     {elseif !empty($module['updated_by'])}
                                         <code class="text-xs text-base-content/60">ID: {$module['updated_by']}</code>
                                     {else}
@@ -228,11 +234,21 @@
                                          <a href="{if $module['category_url_path']}/{$module['category_url_path']}/{$module['url_path']}{else}{if str_starts_with($module['url_path'], '/')}{$module['url_path']}{else}/{$module['url_path']}{/if}{/if}" class="btn btn-ghost btn-xs" title="Ir para o módulo">
                                             <span translate="no" class="material-symbols-outlined">visibility</span>
                                         </a>
-                                        <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$module['id']}/edit"
-                                           class="btn btn-ghost btn-xs"
-                                           title="Editar">
-                                            <span translate="no" class="material-symbols-outlined">edit</span>
-                                        </a>
+                                        {if $module['can_edit']}
+                                            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$module['id']}/edit"
+                                               class="btn btn-ghost btn-xs"
+                                               title="Editar">
+                                                <span translate="no" class="material-symbols-outlined">edit</span>
+                                            </a>
+                                        {else}
+                                            <div class="tooltip tooltip-left" data-tip="{$module['edit_reason']}">
+                                                <button class="btn btn-ghost btn-xs btn-disabled"
+                                                        disabled
+                                                        title="{$module['edit_reason']}">
+                                                    <span translate="no" class="material-symbols-outlined">edit</span>
+                                                </button>
+                                            </div>
+                                        {/if}
 
                                         {if $module['can_delete']}
                                             <button class="btn btn-ghost btn-xs text-error"

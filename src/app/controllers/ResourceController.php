@@ -135,6 +135,14 @@ class ResourceController extends ApiHelper
                     $fieldData['help_text'] = $formRecord->help_text;
                     $fieldData['tooltip'] = $formRecord->tooltip;
                     
+                    // Carregar opções de foreign key se existir
+                    if (!empty($column->foreign_table) && !empty($column->foreign_column)) {
+                        $fieldData['input_options'] = $this->getForeignTableOptions(
+                            $column->foreign_table,
+                            $column->foreign_column
+                        );
+                    }
+                    
                     $fields[] = $fieldData;
                 }
             } elseif (in_array($componentType, ['divider_horizontal', 'divider_vertical'])) {

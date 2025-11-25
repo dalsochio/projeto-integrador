@@ -31,6 +31,11 @@ class RolesController
             $role['permissions_count'] = count($permissions);
             $role['is_locked'] = (bool)$role['is_locked'];
             $role['is_system'] = (bool)$role['is_system'];
+            
+            $role['can_edit'] = !$role['is_system'];
+            $role['edit_reason'] = $role['is_system'] ? 'Roles de sistema não podem ser editadas' : '';
+            $role['can_delete'] = !$role['is_system'];
+            $role['delete_reason'] = $role['is_system'] ? 'Roles de sistema não podem ser deletadas' : '';
         }
 
         Flight::render('page/panel/role/index.latte', [
@@ -81,6 +86,8 @@ class RolesController
             $roleInfo->description = $data['description'] ?? null;
             $roleInfo->is_system = 0;
             $roleInfo->is_locked = 0;
+            $roleInfo->created_by = $_SESSION['user']['id'] ?? null;
+            $roleInfo->updated_by = $_SESSION['user']['id'] ?? null;
             $roleInfo->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_role_info', 'create', $roleInfo->id, $data);
@@ -106,6 +113,12 @@ class RolesController
 
         if (empty($role->id)) {
             Flight::redirect('/panel/role');
+            return;
+        }
+
+        if ($role->is_system) {
+            Flight::flash()->error('Roles de sistema não podem ser editadas.');
+            Flight::redirect('/');
             return;
         }
 
@@ -137,9 +150,6 @@ class RolesController
     public function update(string $id): void
     {
         try {
-            $input = file_get_contents('php://input');
-            $data = json_decode($input, true);
-
             $roleInfoRecord = new RoleInfoRecord();
             $role = $roleInfoRecord->equal('id', (int)$id)->find();
 
@@ -151,6 +161,15 @@ class RolesController
                 return;
             }
 
+            if ($role->is_system) {
+                Flight::flash()->error('Roles de sistema não podem ser editadas.');
+                Flight::redirect('/');
+                return;
+            }
+
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+
             if (empty($data['display_name'])) {
                 Flight::json([
                     'success' => false,
@@ -161,6 +180,7 @@ class RolesController
 
             $role->display_name = $data['display_name'];
             $role->description = $data['description'] ?? null;
+            $role->updated_by = $_SESSION['user']['id'] ?? null;
             $role->save();
 
             \App\Helpers\AuditLogger::logFromResourceRoute('panel_role_info', 'update', $role->id, $data);

@@ -38,8 +38,8 @@
                     {foreach $table['columns'] as $column}
                         {if $column['is_visible_list']}
                             {if $column['name'] === 'id'}
-                                <th>
-                                    <span class="flex items-center gap-2">
+                                <th class="text-center">
+                                    <span class="flex items-center justify-center gap-2">
                                         <span translate="no" class="material-symbols-outlined text-base">tag</span>
                                         {$column['display_name']}
                                     </span>
@@ -140,6 +140,8 @@
                                             <span class="text-base-content/40 text-xs">Sem tags</span>
                                         {/if}
                                     </td>
+                                {elseif $column['name'] === 'id'}
+                                    <td class="text-center">{$displayValue}</td>
                                 {else}
                                     <td class="max-w-xs truncate" title="{$displayValue}">{$displayValue}</td>
                                 {/if}
@@ -148,9 +150,9 @@
                         <td>
                             <div class="text-sm">
                                 {if !empty($row['created_at'])}
-                                    {$row['created_at']|date:'d/m/Y'}
+                                    {$row['created_at']|formatDate}
                                     <div class="text-xs opacity-60">
-                                        {$row['created_at']|date:'H:i'}
+                                        {$row['created_at']|formatTime}
                                     </div>
                                 {else}
                                     <span class="text-base-content/40">-</span>
@@ -172,9 +174,9 @@
                         <td>
                             <div class="text-sm">
                                 {if !empty($row['updated_at'])}
-                                    {$row['updated_at']|date:'d/m/Y'}
+                                    {$row['updated_at']|formatDate}
                                     <div class="text-xs opacity-60">
-                                        {$row['updated_at']|date:'H:i'}
+                                        {$row['updated_at']|formatTime}
                                     </div>
                                 {else}
                                     <span class="text-base-content/40">-</span>

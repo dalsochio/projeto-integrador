@@ -148,23 +148,32 @@
                             </td>
                             <td class="sticky right-0 bg-base-100">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$role['id']}/edit"
-                                       class="btn btn-ghost btn-xs"
-                                       title="Editar">
-                                        <span translate="no" class="material-symbols-outlined">edit</span>
-                                    </a>
-                                    {if !$role['is_system']}
+                                    {if $role['can_edit']}
+                                        <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$role['id']}/edit"
+                                           class="btn btn-ghost btn-xs"
+                                           title="Editar">
+                                            <span translate="no" class="material-symbols-outlined">edit</span>
+                                        </a>
+                                    {else}
+                                        <div class="tooltip tooltip-left" data-tip="{$role['edit_reason']}">
+                                            <button class="btn btn-ghost btn-xs btn-disabled"
+                                                    disabled
+                                                    title="{$role['edit_reason']}">
+                                                <span translate="no" class="material-symbols-outlined">edit</span>
+                                            </button>
+                                        </div>
+                                    {/if}
+                                    {if $role['can_delete']}
                                         <button class="btn btn-ghost btn-xs text-error"
                                                 onclick="confirmDelete({$role['id']}, '{$role['display_name']}')"
                                                 title="Deletar">
                                             <span translate="no" class="material-symbols-outlined">delete</span>
                                         </button>
                                     {else}
-                                        <div class="tooltip tooltip-left"
-                                             data-tip="Roles de sistema não podem ser deletadas">
+                                        <div class="tooltip tooltip-left" data-tip="{$role['delete_reason']}">
                                             <button class="btn btn-ghost btn-xs btn-disabled"
                                                     disabled
-                                                    title="Não é possível deletar">
+                                                    title="{$role['delete_reason']}">
                                                 <span translate="no" class="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>

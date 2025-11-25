@@ -26,7 +26,9 @@
         ENTRAR
     </button>
 
+    {if ($configs['allow_registration'] ?? '1') === '1'}
     <div class="text-center mt-2">
         <a href="/register" class="link link-hover text-sm">Não tem conta? Registre-se</a>
     </div>
+    {/if}
 </form>

@@ -170,15 +170,18 @@
                                 </td>
                                 <td>
                                     <div class="text-sm">
-                                        {$category['created_at']|date:'d/m/Y'}
+                                        {$category['created_at']|formatDate}
                                     </div>
                                     <div class="text-xs opacity-60">
-                                        {$category['created_at']|date:'H:i'}
+                                        {$category['created_at']|formatTime}
                                     </div>
                                 </td>
                                 <td>
                                     {if !empty($category['created_by_name'])}
-                                        <span class="text-sm">{$category['created_by_name']}</span>
+                                        <div class="text-sm">{$category['created_by_name']}</div>
+                                        {if !empty($category['created_by_email'])}
+                                            <div class="text-xs text-base-content/50">{$category['created_by_email']}</div>
+                                        {/if}
                                     {elseif !empty($category['created_by'])}
                                         <code class="text-xs text-base-content/60">ID: {$category['created_by']}</code>
                                     {else}
@@ -188,10 +191,10 @@
                                 <td>
                                     {if !empty($category['updated_at'])}
                                         <div class="text-sm">
-                                            {$category['updated_at']|date:'d/m/Y'}
+                                            {$category['updated_at']|formatDate}
                                         </div>
                                         <div class="text-xs opacity-60">
-                                            {$category['updated_at']|date:'H:i'}
+                                            {$category['updated_at']|formatTime}
                                         </div>
                                     {else}
                                         <span class="text-base-content/40">-</span>
@@ -199,7 +202,10 @@
                                 </td>
                                 <td>
                                     {if !empty($category['updated_by_name'])}
-                                        <span class="text-sm">{$category['updated_by_name']}</span>
+                                        <div class="text-sm">{$category['updated_by_name']}</div>
+                                        {if !empty($category['updated_by_email'])}
+                                            <div class="text-xs text-base-content/50">{$category['updated_by_email']}</div>
+                                        {/if}
                                     {elseif !empty($category['updated_by'])}
                                         <code class="text-xs text-base-content/60">ID: {$category['updated_by']}</code>
                                     {else}
@@ -208,11 +214,21 @@
                                 </td>
                                 <td class="sticky right-0 bg-base-100">
                                     <div class="flex justify-end gap-2">
-                                        <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$category['id']}/edit"
-                                           class="btn btn-ghost btn-xs"
-                                           title="Editar">
-                                            <span translate="no" class="material-symbols-outlined">edit</span>
-                                        </a>
+                                        {if $category['can_edit']}
+                                            <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$category['id']}/edit"
+                                               class="btn btn-ghost btn-xs"
+                                               title="Editar">
+                                                <span translate="no" class="material-symbols-outlined">edit</span>
+                                            </a>
+                                        {else}
+                                            <div class="tooltip tooltip-left" data-tip="{$category['edit_reason']}">
+                                                <button class="btn btn-ghost btn-xs btn-disabled"
+                                                        disabled
+                                                        title="{$category['edit_reason']}">
+                                                    <span translate="no" class="material-symbols-outlined">edit</span>
+                                                </button>
+                                            </div>
+                                        {/if}
 
                                         {if $category['can_delete']}
                                             <button class="btn btn-ghost btn-xs text-error"

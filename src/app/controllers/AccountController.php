@@ -80,6 +80,7 @@ class AccountController
             $userRecord->password = password_hash($data['new_password'], PASSWORD_BCRYPT);
         }
         
+        $userRecord->updated_by = $_SESSION['user']['id'] ?? null;
         $userRecord->save();
         
         $_SESSION['user']['username'] = $userRecord->username;
@@ -114,6 +115,7 @@ class AccountController
         }
         
         $userRecord->theme = $data['theme'];
+        $userRecord->updated_by = $_SESSION['user']['id'] ?? null;
         $userRecord->save();
         
         $_SESSION['user']['theme'] = $userRecord->theme;

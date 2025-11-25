@@ -4,6 +4,7 @@ namespace App\Configs;
 
 use App\Helpers\ApiHelper;
 use App\Helpers\CasbinHelper;
+use App\Helpers\ConfigHelper;
 use App\Helpers\FlashMessage;
 use App\Helpers\PdoDebuggerWrapper;
 use App\Helpers\PdoWrapper;
@@ -39,6 +40,10 @@ try {
         'environment' => $_ENV['APP_ENV'],
         'root' => __DIR__ . '/../../',
     ]);
+
+    // Configurar timezone do sistema
+    $timezone = ConfigHelper::get('timezone', 'America/Sao_Paulo');
+    date_default_timezone_set($timezone);
 } catch (\Exception $e) {
     throw new \Exception('Flight register errors: ' . $e->getMessage());
 }
