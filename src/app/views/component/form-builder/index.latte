@@ -2,8 +2,26 @@
 
     <div class="flex flex-col min-h-0">
         <h3 class="font-semibold mb-2 flex-shrink-0">Componentes</h3>
-        <div class="card card-border flex-1 overflow-y-auto bg-base-100 min-h-0">
-            <div class="card-body p-4">
+        <div 
+            x-data="{ showTop: false, showBottom: true }"
+            x-init="$nextTick(() => {
+                const el = $refs.scrollComponents;
+                const update = () => {
+                    showTop = el.scrollTop > 10;
+                    showBottom = el.scrollTop < el.scrollHeight - el.clientHeight - 10;
+                };
+                el.addEventListener('scroll', update);
+                update();
+            })"
+            class="relative card card-border flex-1 overflow-hidden bg-base-100 min-h-0"
+        >
+            <div 
+                x-show="showTop"
+                class="absolute top-0 left-0 right-0 h-6 pointer-events-none z-10"
+                style="background: radial-gradient(ellipse 100% 100% at 50% 0, rgba(0,0,0,.12), transparent);"
+            ></div>
+            
+            <div x-ref="scrollComponents" class="card-body p-4 overflow-y-auto h-full">
                 <div class="flex flex-col gap-3">
             
             <div class="card card-border border-secondary cursor-move hover:shadow-md transition-shadow overflow-hidden"
@@ -37,6 +55,12 @@
             </template>
                 </div>
             </div>
+            
+            <div 
+                x-show="showBottom"
+                class="absolute bottom-0 left-0 right-0 h-6 pointer-events-none z-10"
+                style="background: radial-gradient(ellipse 100% 100% at 50% 100%, rgba(0,0,0,.12), transparent);"
+            ></div>
         </div>
     </div>
 
@@ -52,11 +76,31 @@
             </button>
         </div>
 
-        <div class="card card-border flex-1 overflow-y-auto border-2 border-dashed bg-base-100 min-h-0 p-4"
-             @dragover.prevent
-             @drop="handleCanvasDrop($event)"
-             x-sort="items"
-             x-sort:config="canvasSortConfig">
+        <div 
+            x-data="{ showTopCanvas: false, showBottomCanvas: true }"
+            x-init="$nextTick(() => {
+                const el = $refs.scrollCanvas;
+                const update = () => {
+                    showTopCanvas = el.scrollTop > 10;
+                    showBottomCanvas = el.scrollTop < el.scrollHeight - el.clientHeight - 10;
+                };
+                el.addEventListener('scroll', update);
+                update();
+            })"
+            class="relative card card-border flex-1 overflow-hidden border-2 border-dashed bg-base-100 min-h-0"
+        >
+            <div 
+                x-show="showTopCanvas"
+                class="absolute top-0 left-0 right-0 h-6 pointer-events-none z-10"
+                style="background: radial-gradient(ellipse 100% 100% at 50% 0, rgba(0,0,0,.12), transparent);"
+            ></div>
+            
+            <div x-ref="scrollCanvas"
+                 class="overflow-y-auto h-full p-4"
+                 @dragover.prevent
+                 @drop="handleCanvasDrop($event)"
+                 x-sort="items"
+                 x-sort:config="canvasSortConfig">
 
             <p x-show="items.length === 0" class="text-center text-base-content/50 py-8 pointer-events-none">
                 Arraste componentes aqui
@@ -218,14 +262,39 @@
                     </template>
                 </div>
             </template>
+            </div>
+            
+            <div 
+                x-show="showBottomCanvas"
+                class="absolute bottom-0 left-0 right-0 h-6 pointer-events-none z-10"
+                style="background: radial-gradient(ellipse 100% 100% at 50% 100%, rgba(0,0,0,.12), transparent);"
+            ></div>
         </div>
     </div>
 
     
     <div class="flex flex-col min-h-0">
         <h3 class="font-semibold mb-2 flex-shrink-0">Propriedades</h3>
-        <div class="card card-border bg-base-100 flex-1 overflow-y-auto min-h-0">
-            <div class="card-body p-4">
+        <div 
+            x-data="{ showTopProps: false, showBottomProps: true }"
+            x-init="$nextTick(() => {
+                const el = $refs.scrollProps;
+                const update = () => {
+                    showTopProps = el.scrollTop > 10;
+                    showBottomProps = el.scrollTop < el.scrollHeight - el.clientHeight - 10;
+                };
+                el.addEventListener('scroll', update);
+                update();
+            })"
+            class="relative card card-border bg-base-100 flex-1 overflow-hidden min-h-0"
+        >
+            <div 
+                x-show="showTopProps"
+                class="absolute top-0 left-0 right-0 h-6 pointer-events-none z-10"
+                style="background: radial-gradient(ellipse 100% 100% at 50% 0, rgba(0,0,0,.12), transparent);"
+            ></div>
+            
+            <div x-ref="scrollProps" class="card-body p-4 overflow-y-auto h-full">
             
             <div x-show="!selectedItemId" class="text-center text-base-content/50">
                 Selecione um campo
@@ -440,6 +509,12 @@
                 </div>
             </template>
             </div>
+            
+            <div 
+                x-show="showBottomProps"
+                class="absolute bottom-0 left-0 right-0 h-6 pointer-events-none z-10"
+                style="background: radial-gradient(ellipse 100% 100% at 50% 100%, rgba(0,0,0,.12), transparent);"
+            ></div>
         </div>
     </div>
 </div>

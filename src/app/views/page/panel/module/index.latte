@@ -118,7 +118,12 @@
                                     Atualizado por
                                 </span>
                             </th>
-                            <th class="text-right sticky right-0 bg-base-100 z-10">Ações</th>
+                            <th class="text-center sticky right-0 bg-base-100 z-10">
+                                <span class="flex items-center justify-center gap-2">
+                                    <span translate="no" class="material-symbols-outlined text-base">more_horiz</span>
+                                    Ações
+                                </span>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -220,13 +225,7 @@
                                 </td>
                                 <td class="sticky right-0 bg-base-100">
                                     <div class="flex justify-end gap-2">
-                                        <a href="{if $module['category_url_path']}
-                                                    /{$module['category_url_path']}/{$module['url_path']}
-                                                {else}
-                                                    {if str_starts_with($module['url_path'], '/')}{$module['url_path']}{else}/{$module['url_path']}{/if}
-                                                {/if}"
-                                           class="btn btn-ghost btn-xs"
-                                           title="Ir para o módulo">
+                                         <a href="{if $module['category_url_path']}/{$module['category_url_path']}/{$module['url_path']}{else}{if str_starts_with($module['url_path'], '/')}{$module['url_path']}{else}/{$module['url_path']}{/if}{/if}" class="btn btn-ghost btn-xs" title="Ir para o módulo">
                                             <span translate="no" class="material-symbols-outlined">visibility</span>
                                         </a>
                                         <a href="{rtrim($_SERVER['REQUEST_URI'], '/')}/{$module['id']}/edit"
@@ -243,7 +242,7 @@
                                             </button>
                                         {else}
                                             <div class="tooltip tooltip-left" data-tip="{$module['delete_reason']}">
-                                                <button class="btn btn-ghost btn-xs btn-disabled opacity-30"
+                                                <button class="btn btn-ghost btn-xs btn-disabled"
                                                         disabled
                                                         title="{$module['delete_reason']}">
                                                     <span translate="no" class="material-symbols-outlined">delete</span>
