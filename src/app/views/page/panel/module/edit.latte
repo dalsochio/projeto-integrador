@@ -168,7 +168,7 @@
                             {if $createdByUser}
                                 <div>
                                     <span class="font-semibold">Criado por:</span>
-                                    <span class="ml-2">{$createdByUser['name']}</span>
+                                    <span class="ml-2">{$createdByUser['username']}</span>
                                 </div>
                             {/if}
                             {if $module['updated_at']}
@@ -180,7 +180,7 @@
                             {if $updatedByUser}
                                 <div>
                                     <span class="font-semibold">Atualizado por:</span>
-                                    <span class="ml-2">{$updatedByUser['name']}</span>
+                                    <span class="ml-2">{$updatedByUser['username']}</span>
                                 </div>
                             {/if}
                         </div>
@@ -280,9 +280,12 @@
                                                         </div>
                                                     {else}
                                                         {* Campo dentro de colunas *}
+                                                        {var $isReference = !empty($item['foreign_table'])}
+                                                        {var $fieldType = $isReference ? ($item['input_type'] === 'radio' ? 'REFERENCE_RADIO' : 'REFERENCE_SELECT') : ($item['input_type'] ?? $item['type'])}
                                                         <div class="flex-1 flex items-start gap-2 p-2 rounded border border-base-200 bg-base-100">
                                                             <span class="material-symbols-outlined text-xs text-base-content/50">
                                                                 {if $item['is_primary'] ?? false}key
+                                                                {elseif $isReference}link
                                                                 {elseif ($item['type'] ?? '') === 'VARCHAR' || ($item['type'] ?? '') === 'TEXT'}text_fields
                                                                 {elseif ($item['type'] ?? '') === 'INT' || ($item['type'] ?? '') === 'DECIMAL'}numbers
                                                                 {elseif ($item['type'] ?? '') === 'DATE' || ($item['type'] ?? '') === 'DATETIME'}calendar_today
@@ -293,7 +296,7 @@
                                                             <div class="flex-1 min-w-0">
                                                                 <div class="font-semibold text-xs truncate">{$item['display_name']}</div>
                                                                 <div class="text-xs text-base-content/60">
-                                                                    <span x-text="getFieldLabel('{$item['input_type'] ?? $item['type']}')"></span>
+                                                                    <span x-text="getFieldLabel('{$fieldType}')"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -323,9 +326,12 @@
                                             </div>
                                         {else}
                                             {* Campo solo *}
+                                            {var $isReference = !empty($item['foreign_table'])}
+                                            {var $fieldType = $isReference ? ($item['input_type'] === 'radio' ? 'REFERENCE_RADIO' : 'REFERENCE_SELECT') : ($item['input_type'] ?? $item['type'])}
                                             <div class="flex items-center gap-2 p-2 rounded border border-base-200">
                                                 <span class="material-symbols-outlined text-sm text-base-content/50">
                                                     {if $item['is_primary'] ?? false}key
+                                                    {elseif $isReference}link
                                                     {elseif ($item['type'] ?? '') === 'VARCHAR' || ($item['type'] ?? '') === 'TEXT'}text_fields
                                                     {elseif ($item['type'] ?? '') === 'INT' || ($item['type'] ?? '') === 'DECIMAL'}numbers
                                                     {elseif ($item['type'] ?? '') === 'DATE' || ($item['type'] ?? '') === 'DATETIME'}calendar_today
@@ -336,7 +342,7 @@
                                                 <div class="flex-1">
                                                     <div class="font-semibold text-sm">{$item['display_name']}</div>
                                                     <div class="text-xs text-base-content/60">
-                                                        <span x-text="getFieldLabel('{$item['input_type'] ?? $item['type']}')"></span>
+                                                        <span x-text="getFieldLabel('{$fieldType}')"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -530,7 +536,8 @@
                                         is_searchable: Boolean(item.is_searchable),
                                         is_visible_list: Boolean(item.is_visible_list),
                                         is_visible_form: Boolean(item.is_visible_form),
-                                        is_foreign_key: Boolean(item.foreign_table)
+                                        is_foreign_key: Boolean(item.foreign_table),
+                                        _isExisting: true
                                     };
 
                                     columns.push({
@@ -576,7 +583,8 @@
                                     is_searchable: Boolean(item.is_searchable),
                                     is_visible_list: Boolean(item.is_visible_list),
                                     is_visible_form: Boolean(item.is_visible_form),
-                                    is_foreign_key: Boolean(item.foreign_table)
+                                    is_foreign_key: Boolean(item.foreign_table),
+                                    _isExisting: true
                                 });
                             }
                         }

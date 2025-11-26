@@ -449,7 +449,7 @@ class ModulesController
         }
         unset($col);
         
-        // Carregar modulos disponiveis para referencias
+        // Carregar modulos disponiveis para referencias (apenas não-internos + user)
         $tableRecordForModules = new TableRecord();
         $availableModules = $tableRecordForModules
             ->select('name, display_name')
@@ -458,6 +458,7 @@ class ModulesController
             ->findAllToArray();
         
         // Incluir tabela user (unica interna permitida para referencias)
+        $tableRecordForModules = new TableRecord();
         $userTable = $tableRecordForModules->equal('name', 'user')->find();
         if ($userTable->isHydrated()) {
             $availableModules[] = [

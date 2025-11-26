@@ -1008,35 +1008,28 @@ export default function formBuilderMixin() {
 
         async loadModuleColumns(field) {
             if (!field || !field.foreign_table) {
-                console.log('[loadModuleColumns] Abortando - field ou foreign_table vazio', field);
                 return;
             }
 
             if (this.moduleColumns[field.foreign_table]) {
-                console.log('[loadModuleColumns] Já em cache:', field.foreign_table, this.moduleColumns[field.foreign_table]);
                 return;
             }
 
             const url = `/panel/module/columns/${field.foreign_table}`;
-            console.log('[loadModuleColumns] Buscando:', url);
 
             try {
                 const response = await fetch(url);
-                console.log('[loadModuleColumns] Response status:', response.status);
 
                 if (response.ok) {
                     const data = await response.json();
                     const columns = data.columns || [];
-                    console.log('[loadModuleColumns] Colunas recebidas:', columns);
                     
                     // Forçar reatividade criando novo objeto
                     const newModuleColumns = Object.assign({}, this.moduleColumns);
                     newModuleColumns[field.foreign_table] = columns;
                     this.moduleColumns = newModuleColumns;
-                    console.log('[loadModuleColumns] moduleColumns atualizado:', this.moduleColumns);
                 }
             } catch (error) {
-                console.error('[loadModuleColumns] Erro:', error);
                 const newModuleColumns = Object.assign({}, this.moduleColumns);
                 newModuleColumns[field.foreign_table] = [];
                 this.moduleColumns = newModuleColumns;

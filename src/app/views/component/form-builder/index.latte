@@ -592,14 +592,20 @@
 
 
                     <template x-if="['REFERENCE_SELECT', 'REFERENCE_RADIO'].includes(selectedField.type)">
-                        <div>
+                        <div x-data="{ get isLocked() { return selectedField._isExisting === true && !!selectedField.foreign_table } }">
                             <div class="divider text-xs">Configuração de Referência</div>
+
+                            <div x-show="isLocked" class="alert alert-info text-xs mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>Para alterar a referência, exclua este campo e crie um novo.</span>
+                            </div>
 
                             <div class="form-control">
                                 <label class="label"><span class="label-text font-medium">Módulo de Referência</span></label>
                                 <select class="select select-sm select-bordered"
                                         x-model="selectedField.foreign_table"
-                                        @change="loadModuleColumns(selectedField)">
+                                        @change="loadModuleColumns(selectedField)"
+                                        :disabled="isLocked">
                                     <option value="">Selecione um módulo...</option>
                                     <template x-for="module in availableModules" :key="module.name">
                                         <option :value="module.name" x-text="module.display_name"></option>
@@ -611,18 +617,14 @@
                             <div class="form-control" x-show="selectedField.foreign_table">
                                 <label class="label"><span class="label-text font-medium">Campo para Exibição</span></label>
                                 <select class="select select-sm select-bordered"
-                                        x-model="selectedField.foreign_column">
+                                        x-model="selectedField.foreign_column"
+                                        :disabled="isLocked">
                                     <option value="">Selecione um campo...</option>
                                     <template x-for="column in (moduleColumns[selectedField.foreign_table] || [])" :key="column.name">
                                         <option :value="column.name" x-text="column.display_name || column.name"></option>
                                     </template>
                                 </select>
-                                <label class="label">
-                                    <span class="label-text-alt">Campo que será exibido nas opções</span>
-                                    <span class="label-text-alt text-info" x-show="!(moduleColumns[selectedField.foreign_table]?.length)" @click="loadModuleColumns(selectedField)">
-                                        <span class="link cursor-pointer">Carregar campos</span>
-                                    </span>
-                                </label>
+                                <label class="label"><span class="label-text-alt">Campo que será exibido nas opções</span></label>
                             </div>
                         </div>
                     </template>
