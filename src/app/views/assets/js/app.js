@@ -249,50 +249,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     getGlobalVars();
     processTheme();
-})
-
-// Verifica se há flash messages pendentes no sessionStorage
-const pendingFlash = sessionStorage.getItem('pendingFlash');
-if (pendingFlash) {
-    sessionStorage.removeItem('pendingFlash');
-    const { text, type } = JSON.parse(pendingFlash);
-    // Aguarda um frame para garantir que o DOM esteja pronto
-    requestAnimationFrame(() => window.flash(text, type));
-}
-
-// Listener para eventos toast - DEVE estar fora do DOMContentLoaded
-document.body.addEventListener('toast', (e) => {
-    let toast = JSON.parse(e.detail.value);
-
-    const genericStyle = 'flex flex-row gap-2 border-2 !shadow-md !rounded-full !px-4 !py-2';
-
-    const toastStyle = {
-        error: genericStyle + ' !bg-red-500 border-red-700',
-        success: genericStyle + ' !bg-green-500 border-green-700',
-        warn: genericStyle + ' !bg-yellow-500 border-yellow-700',
-    };
-
-    // Verificar se há um dialog/modal aberto e usar como container
-    const openDialog = document.querySelector('dialog[open]');
-    
-    Toastify({
-        text: toast.text,
-        duration: 4000,
-        destination: false,
-        newWindow: false,
-        close: true,
-        gravity: "top",
-        position: "center",
-        stopOnFocus: true,
-        className: toastStyle[toast.type] ?? toastStyle.error,
-        selector: openDialog || undefined,
-        style: {
-            background: 'none',
-            zIndex: '2147483647'
-        },
-        onClick: function () {
-        }
-    }).showToast();
 });
 
 // Page loading indicator - intercepta navegação de links
@@ -318,6 +274,9 @@ document.body.addEventListener('toast', (e) => {
             loadingBar.style.opacity = '0';
         }, 200);
     }
+
+    // Expor hideLoading globalmente para ser chamado pelo toast
+    window.hidePageLoading = hideLoading;
 
     // Intercepta cliques em links
     document.addEventListener('click', (e) => {
@@ -368,5 +327,54 @@ document.body.addEventListener('toast', (e) => {
         hideLoading();
     }
 })();
+
+// Verifica se há flash messages pendentes no sessionStorage
+const pendingFlash = sessionStorage.getItem('pendingFlash');
+if (pendingFlash) {
+    sessionStorage.removeItem('pendingFlash');
+    const { text, type } = JSON.parse(pendingFlash);
+    // Aguarda um frame para garantir que o DOM esteja pronto
+    requestAnimationFrame(() => window.flash(text, type));
+}
+
+// Listener para eventos toast - DEVE estar fora do DOMContentLoaded
+document.body.addEventListener('toast', (e) => {
+    // Cancelar loading quando toast aparecer
+    if (window.hidePageLoading) {
+        window.hidePageLoading();
+    }
+
+    let toast = JSON.parse(e.detail.value);
+
+    const genericStyle = 'flex flex-row gap-2 border-2 !shadow-md !rounded-full !px-4 !py-2';
+
+    const toastStyle = {
+        error: genericStyle + ' !bg-red-500 border-red-700',
+        success: genericStyle + ' !bg-green-500 border-green-700',
+        warn: genericStyle + ' !bg-yellow-500 border-yellow-700',
+    };
+
+    // Verificar se há um dialog/modal aberto e usar como container
+    const openDialog = document.querySelector('dialog[open]');
+    
+    Toastify({
+        text: toast.text,
+        duration: 4000,
+        destination: false,
+        newWindow: false,
+        close: true,
+        gravity: "top",
+        position: "center",
+        stopOnFocus: true,
+        className: toastStyle[toast.type] ?? toastStyle.error,
+        selector: openDialog || undefined,
+        style: {
+            background: 'none',
+            zIndex: '2147483647'
+        },
+        onClick: function () {
+        }
+    }).showToast();
+});
 
 Alpine.start()

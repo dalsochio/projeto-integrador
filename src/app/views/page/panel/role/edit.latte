@@ -187,6 +187,14 @@
                     </div>
                 </div>
 
+                <div x-show="role.role_name === 'user' || role.role_name === 'guest'" class="alert alert-warning mb-4">
+                    <span translate="no" class="material-symbols-outlined">shield</span>
+                    <div>
+                        <h3 class="font-bold">Restrição de Módulos</h3>
+                        <div class="text-sm">Roles de usuário comum (user/guest) não podem receber permissões em módulos internos do sistema. Apenas módulos personalizados são exibidos.</div>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto max-h-96">
                     <table class="table table-zebra table-pin-rows">
                         <thead>
@@ -281,7 +289,7 @@
                         this.permissions = {};
                     }
 
-                    // Inicializar permissions para todas as tabelas que não têm permissões definidas
+                    // Inicializar permissions e tempPermissions para todas as tabelas
                     this.tables.forEach(table => {
                         if (!this.permissions[table.name]) {
                             this.permissions[table.name] = {
@@ -297,8 +305,17 @@
                                 this.permissions[table.name].list = false;
                             }
                         }
+                        
+                        // Inicializar tempPermissions também
+                        this.tempPermissions[table.name] = {
+                            list: this.permissions[table.name]?.list || false,
+                            read: this.permissions[table.name]?.read || false,
+                            create: this.permissions[table.name]?.create || false,
+                            update: this.permissions[table.name]?.update || false,
+                            delete: this.permissions[table.name]?.delete || false
+                        };
                     });
-},
+                },
 
                 getTotalPermissions() {
                     let total = 0;

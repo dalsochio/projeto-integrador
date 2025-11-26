@@ -129,6 +129,15 @@ class RolesController
             ->orderBy('display_name ASC')
             ->findAllToArray();
 
+        // Para user/guest, filtrar tabelas do sistema (com prefixo DB_TABLE_PREFIX)
+        $isSystemRole = in_array($role->role_name, ['user', 'guest']);
+        $tablePrefix = $_ENV['DB_TABLE_PREFIX'] ?? 'panel_';
+        if ($isSystemRole) {
+            $tables = array_values(array_filter($tables, function($table) use ($tablePrefix) {
+                return strpos($table['name'], $tablePrefix) !== 0;
+            }));
+        }
+
         $permissions = $this->getRolePermissions($role->role_name);
 
         if (empty($permissions)) {
@@ -144,6 +153,7 @@ class RolesController
             'role' => $roleData,
             'tables' => $tables,
             'permissions' => $permissions,
+            'isSystemRole' => $isSystemRole,
         ]);
     }
 
@@ -228,6 +238,18 @@ class RolesController
             }
 
             $permissions = $data['permissions'] ?? [];
+            
+            // Para user/guest, remover permissões de tabelas do sistema
+            $isSystemRole = in_array($role->role_name, ['user', 'guest']);
+            $tablePrefix = $_ENV['DB_TABLE_PREFIX'] ?? 'panel_';
+            if ($isSystemRole) {
+                foreach ($permissions as $tableName => $actions) {
+                    if (strpos($tableName, $tablePrefix) === 0) {
+                        unset($permissions[$tableName]);
+                    }
+                }
+            }
+            
             $this->savePermissions($role->role_name, $permissions);
 
             Flight::json([
