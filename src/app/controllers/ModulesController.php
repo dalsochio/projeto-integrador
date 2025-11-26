@@ -193,8 +193,7 @@ class ModulesController
                 // Trabalhar com cópia
                 $field = $originalField;
                 
-                $isForeignKey = !empty($field['is_foreign_key']) || 
-                               !empty($field['foreign_table']) && !empty($field['foreign_column']);
+                $isForeignKey = !empty($field['is_foreign_key']) || !empty($field['foreign_table']);
 
                 if ($isForeignKey) {
                     $fieldSlug = $this->slugify->slugify($field['display_name']);
@@ -659,6 +658,14 @@ class ModulesController
                         $column->is_searchable = !empty($fieldData['is_searchable']) ? 1 : 0;
                         $column->is_nullable = !empty($fieldData['is_nullable']) ? 1 : 0;
                         $column->is_unique = !empty($fieldData['is_unique']) ? 1 : 0;
+                        
+                        // Salvar foreign_table e foreign_column
+                        if (isset($fieldData['foreign_table'])) {
+                            $column->foreign_table = $fieldData['foreign_table'] ?: null;
+                        }
+                        if (isset($fieldData['foreign_column'])) {
+                            $column->foreign_column = $fieldData['foreign_column'] ?: null;
+                        }
 
                         $column->save();
                         $columnIdMap[$fieldData['id']] = $column->id;
@@ -685,6 +692,14 @@ class ModulesController
                     $newColumn->is_searchable = !empty($fieldData['is_searchable']) ? 1 : 0;
                     $newColumn->is_sortable = 1;
                     $newColumn->is_filterable = 0;
+                    
+                    // Salvar foreign_table e foreign_column para novos campos
+                    if (!empty($fieldData['foreign_table'])) {
+                        $newColumn->foreign_table = $fieldData['foreign_table'];
+                    }
+                    if (!empty($fieldData['foreign_column'])) {
+                        $newColumn->foreign_column = $fieldData['foreign_column'];
+                    }
 
                     $newColumn->save();
                     $columnIdMap['new_' . $index] = $newColumn->id;

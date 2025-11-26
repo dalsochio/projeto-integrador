@@ -435,6 +435,19 @@
                         'markdown': 'MARKDOWN',
                         'code': 'CODE'
                     };
+                    
+                    // Funcao para determinar o tipo canvas baseado no campo
+                    const getCanvasType = (field) => {
+                        // Se tem foreign_table, é um campo de referência
+                        if (field.foreign_table) {
+                            return field.input_type === 'radio' ? 'REFERENCE_RADIO' : 'REFERENCE_SELECT';
+                        }
+                        // Senão, usar mapeamento padrão
+                        if (field.input_type && inputTypeToCanvasType[field.input_type]) {
+                            return inputTypeToCanvasType[field.input_type];
+                        }
+                        return field.type;
+                    };
 
                     // Combinar campos + divisores e ordenar por position
                     const allItems = [];
@@ -504,9 +517,7 @@
                                     });
                                 } else {
                                     // Campo dentro de row
-                                    const canvasType = item.input_type && inputTypeToCanvasType[item.input_type] 
-                                        ? inputTypeToCanvasType[item.input_type] 
-                                        : item.type;
+                                    const canvasType = getCanvasType(item);
 
                                     const fieldItem = {
                                         id: 'field_' + item.id,
@@ -518,7 +529,8 @@
                                         is_editable: Boolean(item.is_editable),
                                         is_searchable: Boolean(item.is_searchable),
                                         is_visible_list: Boolean(item.is_visible_list),
-                                        is_visible_form: Boolean(item.is_visible_form)
+                                        is_visible_form: Boolean(item.is_visible_form),
+                                        is_foreign_key: Boolean(item.foreign_table)
                                     };
 
                                     columns.push({
@@ -551,9 +563,7 @@
                                 });
                             } else {
                                 // Campo solo
-                                const canvasType = item.input_type && inputTypeToCanvasType[item.input_type] 
-                                    ? inputTypeToCanvasType[item.input_type] 
-                                    : item.type;
+                                const canvasType = getCanvasType(item);
 
                                 this.items.push({
                                     id: 'field_' + item.id,
@@ -565,7 +575,8 @@
                                     is_editable: Boolean(item.is_editable),
                                     is_searchable: Boolean(item.is_searchable),
                                     is_visible_list: Boolean(item.is_visible_list),
-                                    is_visible_form: Boolean(item.is_visible_form)
+                                    is_visible_form: Boolean(item.is_visible_form),
+                                    is_foreign_key: Boolean(item.foreign_table)
                                 });
                             }
                         }
@@ -573,6 +584,39 @@
 
                     this.fieldCounter = Math.max(userFields.length, this.dividers?.length || 0) + 1;
                     this.rowCounter = Math.max(...rowIndices.map(r => parseInt(r)), 0) + 1;
+                    
+                    // Carregar colunas de módulos referenciados
+                    this.loadReferencedModuleColumns();
+                },
+                
+                async loadReferencedModuleColumns() {
+                    // Coletar todos os foreign_table únicos dos campos
+                    const foreignTables = new Set();
+                    
+                    const collectForeignTables = (items) => {
+                        for (const item of items) {
+                            if (item.itemType === 'field' && item.foreign_table) {
+                                foreignTables.add(item.foreign_table);
+                            } else if (item.itemType === 'row' && item.columns) {
+                                for (const col of item.columns) {
+                                    if (col.fields) {
+                                        for (const field of col.fields) {
+                                            if (field.itemType === 'field' && field.foreign_table) {
+                                                foreignTables.add(field.foreign_table);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                    
+                    collectForeignTables(this.items);
+                    
+                    // Carregar colunas para cada módulo referenciado
+                    for (const tableName of foreignTables) {
+                        await this.loadModuleColumns({ foreign_table: tableName });
+                    }
                 },
 
                 

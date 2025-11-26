@@ -498,7 +498,8 @@
                     get hideNameField() { return this.selectedField?.type === 'STATUS' },
                     get hidePlaceholder() { return ['STATUS', 'TOGGLE', 'BOOLEAN', 'FILE', 'COLOR', 'DATE', 'DATETIME', 'CHECKBOX', 'RADIO', 'REFERENCE_RADIO', 'WYSIWYG', 'MARKDOWN', 'CODE'].includes(this.selectedField?.type) },
                     get hidePrefixSuffix() { return ['STATUS', 'TOGGLE', 'BOOLEAN', 'FILE', 'COLOR', 'DATE', 'DATETIME', 'SELECT', 'RADIO', 'CHECKBOX', 'REFERENCE_SELECT', 'REFERENCE_RADIO', 'WYSIWYG', 'MARKDOWN', 'CODE', 'TAGS', 'TEXT'].includes(this.selectedField?.type) }
-                }">
+                }"
+                x-effect="if (selectedField?.foreign_table && !moduleColumns[selectedField.foreign_table]) loadModuleColumns(selectedField)">
                     <div class="form-control" x-show="!hideNameField">
                         <label class="label"><span class="label-text font-medium">Nome de Exibição</span></label>
                         <input type="text" class="input input-sm input-bordered" x-model="selectedField.display_name">
@@ -612,11 +613,16 @@
                                 <select class="select select-sm select-bordered"
                                         x-model="selectedField.foreign_column">
                                     <option value="">Selecione um campo...</option>
-                                    <template x-for="column in moduleColumns[selectedField.foreign_table] || []" :key="column.name">
+                                    <template x-for="column in (moduleColumns[selectedField.foreign_table] || [])" :key="column.name">
                                         <option :value="column.name" x-text="column.display_name || column.name"></option>
                                     </template>
                                 </select>
-                                <label class="label"><span class="label-text-alt">Campo que será exibido nas opções</span></label>
+                                <label class="label">
+                                    <span class="label-text-alt">Campo que será exibido nas opções</span>
+                                    <span class="label-text-alt text-info" x-show="!(moduleColumns[selectedField.foreign_table]?.length)" @click="loadModuleColumns(selectedField)">
+                                        <span class="link cursor-pointer">Carregar campos</span>
+                                    </span>
+                                </label>
                             </div>
                         </div>
                     </template>
