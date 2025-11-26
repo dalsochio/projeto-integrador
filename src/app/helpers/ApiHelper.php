@@ -80,10 +80,7 @@ class ApiHelper extends Api
                 
                 $userId = $_SESSION['user']['id'] ?? null;
                 
-                if (!$userId) {
-                    return false;
-                }
-                
+                // Verifica permissões (userCan já trata guest quando userId é null)
                 $allowed = \App\Helpers\CasbinHelper::userCan($userId, $tableName, '*', $operation);
                 return $allowed;
             },
