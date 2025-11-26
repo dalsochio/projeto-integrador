@@ -32,8 +32,9 @@ class RolesController
             $role['is_locked'] = (bool)$role['is_locked'];
             $role['is_system'] = (bool)$role['is_system'];
             
-            $role['can_edit'] = !$role['is_system'];
-            $role['edit_reason'] = $role['is_system'] ? 'Roles de sistema não podem ser editadas' : '';
+            $isAdmin = $role['role_name'] === 'admin';
+            $role['can_edit'] = !$isAdmin;
+            $role['edit_reason'] = $isAdmin ? 'A role admin não pode ser editada' : '';
             $role['can_delete'] = !$role['is_system'];
             $role['delete_reason'] = $role['is_system'] ? 'Roles de sistema não podem ser deletadas' : '';
         }
@@ -116,9 +117,9 @@ class RolesController
             return;
         }
 
-        if ($role->is_system) {
-            Flight::flash()->error('Roles de sistema não podem ser editadas.');
-            Flight::redirect('/');
+        if ($role->role_name === 'admin') {
+            Flight::flash()->error('A role admin não pode ser editada.');
+            Flight::redirect('/panel/role');
             return;
         }
 
@@ -161,9 +162,11 @@ class RolesController
                 return;
             }
 
-            if ($role->is_system) {
-                Flight::flash()->error('Roles de sistema não podem ser editadas.');
-                Flight::redirect('/');
+            if ($role->role_name === 'admin') {
+                Flight::json([
+                    'success' => false,
+                    'message' => 'A role admin não pode ser editada.'
+                ], 403);
                 return;
             }
 
